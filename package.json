@@ -15,7 +15,9 @@
     "jest:watch": "jest --watch",
     "prettier:check": "prettier --check \"**/*.{ts,tsx}\"",
     "prettier:write": "prettier --write \"**/*.{ts,tsx}\"",
-    "test": "npm run prettier:check && npm run lint && npm run typecheck && npm run jest"
+    "test": "npm run prettier:check && npm run lint && npm run typecheck && npm run jest",
+    "start:backend": "ts-node backend/server.ts",
+    "start:all": "concurrently \"npm run start:backend\" \"npm run dev\""
   },
   "dependencies": {
     "@mantine/core": "7.16.3",
@@ -39,10 +41,12 @@
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.0",
     "@types/eslint-plugin-jsx-a11y": "^6",
+    "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
     "@types/react": "19.0.7",
     "babel-loader": "^9.2.1",
+    "concurrently": "^9.1.2",
     "eslint": "^9.20.1",
     "eslint-config-mantine": "^4.0.3",
     "eslint-config-next": "^15.1.7",
