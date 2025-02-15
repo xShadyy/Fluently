@@ -1,4 +1,14 @@
-import mantine from 'eslint-config-mantine';
-import tseslint from 'typescript-eslint';
+import { FlatCompat } from '@eslint/eslintrc'
 
-export default tseslint.config(...mantine, { ignores: ['**/*.{mjs,cjs,js,d.ts,d.mts}'] });
+const compat = new FlatCompat({
+  // import.meta.dirname is available after Node.js v20.11.0
+  baseDirectory: import.meta.dirname,
+})
+
+const eslintConfig = [
+  ...compat.config({
+    extends: ['next'],
+  }),
+]
+
+export default eslintConfig
