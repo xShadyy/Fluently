@@ -1,0 +1,15 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+  }
+  
+  .global-heading {
+    font-weight: bold;
+  }
+  
+  .global-link {
+    text-decoration: none;
+    color: inherit;
+  }

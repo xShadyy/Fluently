@@ -1,5 +1,7 @@
+import Link from 'next/link';
 import { Anchor, Text, Title } from '@mantine/core';
 import classes from './Welcome.module.css';
+import React from 'react';
 
 export function Welcome() {
   return (
