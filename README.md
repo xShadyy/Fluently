@@ -1,5 +1,5 @@
 <div align="center">
-	<img width="350" height="350" src="app/src/public/favicon.png" alt="FLUENT">
+	<img width="350" height="350" src="app/public/images/" alt="FLUENT">
 	<br>
 	<div>
 		<h2>
