@@ -1,8 +1,9 @@
-//import { Header } from './components/Header/Header';
+import { Header } from './components/Header/Header';
+
 export default function HomePage() {
   return (
     <>
-      {/* <Header/> */}
+      <Header/>
     </>
   );
 }

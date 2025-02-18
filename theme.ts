@@ -1,16 +1,12 @@
-import { Inter } from 'next/font/google';
-import { createTheme, DEFAULT_THEME } from '@mantine/core';
+// filepath: /c:/Users/yngsh/Desktop/Fluently/theme.ts
+'use client';
 
-const inter = Inter({ subsets: ['latin'] });
+import { createTheme } from '@mantine/core';
 
-const theme = createTheme({
-  fontFamily: inter.style.fontFamily,
-  fontFamilyMonospace: 'Monaco, Courier, monospace',
-  headings: {
-    fontFamily: `${inter.style.fontFamily}, ${DEFAULT_THEME.fontFamily}`,
-    fontWeight: '600',
+export const theme = createTheme({
+  colors: {
+    brand: ['#f0f', '#f0f', '#f0f', '#f0f', '#f0f', '#f0f', '#f0f', '#f0f', '#f0f', '#f0f'],
   },
-  primaryColor: 'dark',
+  fontFamily: 'Verdana, sans-serif',
+  headings: { fontFamily: 'Georgia, serif' },
 });
-
-export default theme;
