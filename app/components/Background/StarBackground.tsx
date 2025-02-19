@@ -5,6 +5,7 @@ import styles from "./StarBackground.module.css";
 interface ParticleProps {
   x: number;
   y: number;
+  size: number; // Added size property
 }
 
 class Particle {
@@ -77,11 +78,13 @@ export default function StarBackground({
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
 
+  
       stars.length = 0;
       for (let i = 0; i < starCount; i++) {
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
+          size: Math.random() * 2, 
         });
       }
     };
@@ -110,12 +113,14 @@ export default function StarBackground({
       ctx.fillStyle = backgroundColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  
       stars.forEach((star) => {
         ctx.fillStyle = starColor;
         ctx.beginPath();
-        ctx.arc(star.x, star.y, Math.random() * 2, 0, Math.PI * 2);
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
         ctx.fill();
       });
+
 
       particles = particles.filter((particle) => {
         particle.update(ctx);
@@ -125,8 +130,10 @@ export default function StarBackground({
       animationFrameId = requestAnimationFrame(animate);
     };
 
+
     initCanvas();
     animate();
+
 
     window.addEventListener("resize", initCanvas);
     window.addEventListener("mousemove", handleMouseMove);

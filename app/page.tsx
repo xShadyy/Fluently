@@ -1,11 +1,11 @@
-import { Header } from './components/Header/Header';
-import StarBackground  from './components/Background/StarBackground';
+import Navbar from './components/Navbar/Navbar';
+import StarBackground from './components/Background/StarBackground';
 
 export default function HomePage() {
   return (
     <>
       <StarBackground />
-      <Header />
+      <Navbar/>
     </>
   );
 }
