@@ -1,22 +1,9 @@
 ![fluently](fluently.png)
-<div align="center">
-	<br>
-	<div>
-		<h2>
-			FLUENTLY.
-			<br>
-      <br>
-			<sup>Elevate your studying experience</sup>
-		</h2>
-    <br>
-	</div>
-</div>
-
+***
 ## Features
 
-- More than 25+ classes to take
-- Personalized quiz to identify your language skills
-- Certificates
+- Personalized User Experience
+- Student friendly interface
 - Sleek and modern design
 
 ## Quick Start
@@ -46,6 +33,11 @@ npm run dev
 - `prettier:write` – formats all files with Prettier
 
 ## Why Fluently?
- - soon..
+
+ - We empower learners to master foreign languages with engaging resources and interactive tools.
+ - Focuse on practical language skills for real-life conversations.
+ - Our main goal is to make language learning accessible and enjoyable for everyone.
+ - Through personalized learning paths, Fluently adapts to each user's unique style and pace.
+
 
    
