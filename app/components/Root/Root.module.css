@@ -30,8 +30,7 @@
     margin-top: -0.5rem;
   }
 
-  .button {
-    font-family: "Arial Greek";
+.button {
+    font-family: "Arial Greek", Arial, sans-serif;
     font-weight: 100;
-    src: local("Arial"), local("Arial Greek");
-  }
+}

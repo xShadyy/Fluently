@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { IconBrandGithub, IconBrandInstagram, IconBrandLinkedin } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { Button, Container, Group, Image, Text } from '@mantine/core';
 import classes from './Header.module.css';
-import { IconBrandLinkedin, IconBrandGithub, IconBrandInstagram } from '@tabler/icons-react';
 
 export default function Header() {
   const router = useRouter();
@@ -24,16 +24,23 @@ export default function Header() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6, duration: 0.5 }}
-        >
+      >
         <Group gap="xl">
           <span className={classes.dot} />
           <Text size="md">
-            Made by <a href="https://github.com/xShadyy" style={{ color: 'rgb(251, 207, 232)', textDecoration: 'none' }} target="_blank" rel="noopener noreferrer">@xShadyy</a>
+            Made by{' '}
+            <a
+              href="https://github.com/xShadyy"
+              style={{ color: 'rgb(251, 207, 232)', textDecoration: 'none' }}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              @xShadyy
+            </a>
           </Text>
         </Group>
       </motion.div>
-        <Group gap="md">
-
+      <Group gap="md">
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -46,7 +53,7 @@ export default function Header() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <IconBrandInstagram size={32} color="white"/>
+            <IconBrandInstagram size={32} color="white" />
           </motion.a>
         </motion.div>
 
@@ -62,7 +69,7 @@ export default function Header() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <IconBrandLinkedin size={32} color="white"/>
+            <IconBrandLinkedin size={32} color="white" />
           </motion.a>
         </motion.div>
 
@@ -78,7 +85,7 @@ export default function Header() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <IconBrandGithub size={32} color="white"/>
+            <IconBrandGithub size={32} color="white" />
           </motion.a>
         </motion.div>
       </Group>

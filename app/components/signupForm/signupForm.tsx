@@ -47,36 +47,40 @@ export default function SignupForm() {
           Create Your Account
         </Title>
 
-        {error && <Text color="red" ta="center" mb="md">{error}</Text>}
+        {error && (
+          <Text color="red" ta="center" mb="md">
+            {error}
+          </Text>
+        )}
 
-        <TextInput 
-          label="Username" 
-          placeholder="Your username" 
-          size="md" 
-          value={username} 
+        <TextInput
+          label="Username"
+          placeholder="Your username"
+          size="md"
+          value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <TextInput 
-          label="Email address" 
-          placeholder="hello@gmail.com" 
-          size="md" 
-          value={email} 
+        <TextInput
+          label="Email address"
+          placeholder="hello@gmail.com"
+          size="md"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <PasswordInput 
-          label="Password" 
-          placeholder="Your password" 
-          mt="md" 
-          size="md" 
-          value={password} 
+        <PasswordInput
+          label="Password"
+          placeholder="Your password"
+          mt="md"
+          size="md"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <PasswordInput 
-          label="Confirm Password" 
-          placeholder="Confirm your password" 
-          mt="md" 
-          size="md" 
-          value={confirmPassword} 
+        <PasswordInput
+          label="Confirm Password"
+          placeholder="Confirm your password"
+          mt="md"
+          size="md"
+          value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
         <Button fullWidth mt="xl" size="md" onClick={handleSignup}>

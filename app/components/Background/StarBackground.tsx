@@ -6,7 +6,7 @@ import styles from './StarBackground.module.css';
 interface ParticleProps {
   x: number;
   y: number;
-  size: number; 
+  size: number;
 }
 
 class Particle {
@@ -107,20 +107,16 @@ export default function StarBackground({
       ctx.fillStyle = backgroundColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const gradient = ctx.createLinearGradient(
-        0, 0, 
-        canvas.width, canvas.height
-      );
-      
-      gradient.addColorStop(0, "rgba(200, 162, 200, 0.1)");
-      gradient.addColorStop(0.4, "rgba(100, 162, 255, 0.05)"); 
-      gradient.addColorStop(0.6, "rgba(144, 238, 144, 0.05)");
-      gradient.addColorStop(0.9, "rgba(0, 0, 0, 0.05)"); 
-      gradient.addColorStop(1, "rgba(0, 0, 0, 0.09)"); 
-      
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+
+      gradient.addColorStop(0, 'rgba(200, 162, 200, 0.1)');
+      gradient.addColorStop(0.4, 'rgba(100, 162, 255, 0.05)');
+      gradient.addColorStop(0.6, 'rgba(144, 238, 144, 0.05)');
+      gradient.addColorStop(0.9, 'rgba(0, 0, 0, 0.05)');
+      gradient.addColorStop(1, 'rgba(0, 0, 0, 0.09)');
+
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
 
       stars.forEach((star) => {
         ctx.fillStyle = starColor;

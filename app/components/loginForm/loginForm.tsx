@@ -38,10 +38,8 @@ export default function LoginForm() {
     const data = await response.json();
     if (response.ok) {
       if (keepLoggedIn) {
-
         document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}; Secure; HttpOnly`;
       } else {
-
         localStorage.setItem('token', data.token);
       }
       router.push('/dashboard');
@@ -57,28 +55,32 @@ export default function LoginForm() {
           Welcome back!
         </Title>
 
-        {error && <Text color="red" ta="center" mb="md">{error}</Text>}
+        {error && (
+          <Text color="red" ta="center" mb="md">
+            {error}
+          </Text>
+        )}
 
-        <TextInput 
-          label="Email address" 
-          placeholder="hello@gmail.com" 
-          size="md" 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
+        <TextInput
+          label="Email address"
+          placeholder="hello@gmail.com"
+          size="md"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
-        <PasswordInput 
-          label="Password" 
-          placeholder="Your password" 
-          mt="md" 
-          size="md" 
-          value={password} 
+        <PasswordInput
+          label="Password"
+          placeholder="Your password"
+          mt="md"
+          size="md"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <Checkbox 
-          label="Keep me logged in" 
-          mt="xl" 
-          size="md" 
-          checked={keepLoggedIn} 
+        <Checkbox
+          label="Keep me logged in"
+          mt="xl"
+          size="md"
+          checked={keepLoggedIn}
           onChange={(e) => setKeepLoggedIn(e.currentTarget.checked)}
         />
         <Button fullWidth mt="xl" size="md" onClick={handleLogin}>

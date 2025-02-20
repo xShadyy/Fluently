@@ -17,6 +17,6 @@
   .title {
     color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
     font-family:
-      Greycliff CF,
+      "Greycliff CF",
       var(--mantine-font-family);
   }
