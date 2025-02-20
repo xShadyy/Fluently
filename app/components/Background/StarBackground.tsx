@@ -1,11 +1,12 @@
 'use client';
-import { useEffect, useRef } from "react";
-import styles from "./StarBackground.module.css";
+
+import { useEffect, useRef } from 'react';
+import styles from './StarBackground.module.css';
 
 interface ParticleProps {
   x: number;
   y: number;
-  size: number; // Added size property
+  size: number; 
 }
 
 class Particle {
@@ -39,13 +40,7 @@ class Particle {
 
     ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
     ctx.beginPath();
-    ctx.arc(
-      this.position.x,
-      this.position.y,
-      this.size * scale,
-      0,
-      Math.PI * 2,
-    );
+    ctx.arc(this.position.x, this.position.y, this.size * scale, 0, Math.PI * 2);
     ctx.fill();
   }
 }
@@ -57,9 +52,9 @@ interface StarBackgroundProps {
 }
 
 export default function StarBackground({
-  starCount = 200,
-  starColor = "rgba(255, 255, 255, 0.8)",
-  backgroundColor = "#0a0a0a",
+  starCount = 30,
+  starColor = 'rgba(255, 255, 255, 0.8)',
+  backgroundColor = '#0a0a0a',
 }: StarBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -67,7 +62,7 @@ export default function StarBackground({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     let animationFrameId: number;
@@ -78,13 +73,12 @@ export default function StarBackground({
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
 
-  
       stars.length = 0;
       for (let i = 0; i < starCount; i++) {
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 2, 
+          size: Math.random() * 2,
         });
       }
     };
@@ -113,14 +107,27 @@ export default function StarBackground({
       ctx.fillStyle = backgroundColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  
+      const gradient = ctx.createLinearGradient(
+        0, 0, 
+        canvas.width, canvas.height
+      );
+      
+      gradient.addColorStop(0, "rgba(200, 162, 200, 0.1)");
+      gradient.addColorStop(0.4, "rgba(100, 162, 255, 0.05)"); 
+      gradient.addColorStop(0.6, "rgba(144, 238, 144, 0.05)");
+      gradient.addColorStop(0.9, "rgba(0, 0, 0, 0.05)"); 
+      gradient.addColorStop(1, "rgba(0, 0, 0, 0.09)"); 
+      
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+
       stars.forEach((star) => {
         ctx.fillStyle = starColor;
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
         ctx.fill();
       });
-
 
       particles = particles.filter((particle) => {
         particle.update(ctx);
@@ -130,22 +137,20 @@ export default function StarBackground({
       animationFrameId = requestAnimationFrame(animate);
     };
 
-
     initCanvas();
     animate();
 
-
-    window.addEventListener("resize", initCanvas);
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("touchmove", handleTouchMove, { passive: true });
-    window.addEventListener("touchstart", handleTouchMove, { passive: true });
+    window.addEventListener('resize', initCanvas);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchstart', handleTouchMove, { passive: true });
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("resize", initCanvas);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("touchstart", handleTouchMove);
+      window.removeEventListener('resize', initCanvas);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchstart', handleTouchMove);
     };
   }, [starCount, starColor, backgroundColor]);
 
