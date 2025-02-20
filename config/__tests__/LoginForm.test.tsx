@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { act } from "react-dom/test-utils";
 import { MantineProvider } from "@mantine/core";
-import LoginForm from "../app/components/LoginForm/loginForm";
+import LoginForm from "../../app/components/LoginForm/loginForm";
 import { useRouter } from "next/navigation";
 
 jest.mock("next/navigation", () => ({
