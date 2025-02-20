@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Button, Container, Group, Image, Text } from '@mantine/core';
-import classes from './Navbar.module.css';
+import classes from './Header.module.css';
 
-export default function Navbar() {
+export default function Header() {
   const router = useRouter();
   const navItems = ['Features', 'Pricing', 'About'];
 
