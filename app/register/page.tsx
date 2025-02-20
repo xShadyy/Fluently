@@ -1,6 +1,13 @@
-import React from 'react';
+import StarBackground from '../components/Background/StarBackground';
+import Header from '../components/Header/Header';
 import SignupForm from '../components/SignupForm/SignupForm';
 
-export default function RegisterPage() {
-  return <SignupForm />;
+export default function HomePage() {
+  return (
+    <>
+      <StarBackground />
+      <Header />
+      <SignupForm />
+    </>
+  );
 }
