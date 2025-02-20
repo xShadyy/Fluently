@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Button, Container, Group, Image, Text } from '@mantine/core';
 import classes from './Header.module.css';
+import { IconBrandLinkedin, IconBrandGithub, IconBrandInstagram } from '@tabler/icons-react';
 
 export default function Header() {
   const router = useRouter();
-  const navItems = ['Features', 'Pricing', 'About'];
 
   const MotionLink = motion.create(Link);
 
@@ -20,43 +20,50 @@ export default function Header() {
         </div>
       </MotionLink>
 
-      <Group gap="xl">
-        {navItems.map((text, i) => (
-          <motion.div
-            key={text}
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1, duration: 0.5 }}
-          >
-            <MotionLink
-              href={`/${text.toLowerCase()}`}
-              className={classes.navLink}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {text === 'Features' && <span className={classes.dot} />}
-              <Text size="md" component="span">
-                {text}
-              </Text>
-            </MotionLink>
-          </motion.div>
-        ))}
-      </Group>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6, duration: 0.5 }}
+        >
+        <Group gap="xl">
+          <span className={classes.dot} />
+          <Text size="md">
+            Made by <a href="https://github.com/xShadyy" style={{ color: 'rgb(251, 207, 232)', textDecoration: 'none' }} target="_blank" rel="noopener noreferrer">@xShadyy</a>
+          </Text>
+        </Group>
+      </motion.div>
+        <Group gap="md">
 
-      <Group gap="md">
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
         >
-          <MotionLink
-            href="/login"
-            className={classes.navLink}
+          <motion.a
+            href="https://www.instagram.com/g80.shadyy/"
+            target="_blank"
+            rel="noopener noreferrer"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Text size="lg">Login</Text>
-          </MotionLink>
+            <IconBrandInstagram size={32} color="white"/>
+          </motion.a>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+        >
+          <motion.a
+            href="https://www.linkedin.com/in/tymoteusz-netter/"
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <IconBrandLinkedin size={32} color="white"/>
+          </motion.a>
         </motion.div>
 
         <motion.div
@@ -64,11 +71,15 @@ export default function Header() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5, duration: 0.5 }}
         >
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button component={Link} href="/signup" variant="filled" color="gray.9">
-              <Text size="lg">SignUp</Text>
-            </Button>
-          </motion.div>
+          <motion.a
+            href="https://github.com/xShadyy"
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <IconBrandGithub size={32} color="white"/>
+          </motion.a>
         </motion.div>
       </Group>
     </Container>

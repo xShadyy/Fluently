@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-
 @keyframes blink {
   0%,
   100% {
@@ -17,7 +15,6 @@
   align-items: center;
   color: #B8BDBF;
   box-shadow: 0 0.1px 0 #B8BDBF;
-  font-family: 'Montserrat', ; 
 }
 
 .logo {
@@ -40,7 +37,8 @@
   width: 5px;
   height: 5px;
   position: relative;
-  top: -2px;
+  top: 2px;
+  right: -35px;
   background-color: var(--mantine-color-pink-2);
   border-radius: 50%;
   display: inline-block;
