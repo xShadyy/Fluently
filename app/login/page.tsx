@@ -1,6 +1,13 @@
-import React from 'react';
-import { LoginForm } from '../components/loginForm/loginForm';
+import StarBackground from '../components/Background/StarBackground';
+import Header from '../components/Header/Header';
+import LoginForm from '../components/LoginForm/LoginForm';
 
-export default function LoginPage() {
-  return <LoginForm />;
+export default function HomePage() {
+  return (
+    <>
+      <StarBackground />
+      <Header />
+      <LoginForm />
+    </>
+  );
 }

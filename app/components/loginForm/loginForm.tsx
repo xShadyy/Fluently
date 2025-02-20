@@ -10,9 +10,9 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import classes from './loginForm.module.css';
+import classes from './LoginForm.module.css';
 
-export function LoginForm() {
+export default function LoginForm() {
   return (
     <div className={classes.wrapper}>
       <Paper className={classes.form} radius={0} p={30}>
