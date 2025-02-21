@@ -1,16 +1,135 @@
 .wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #f5f5f5;
+  min-height: 100vh;
+  background-color: #030303;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  height: 80px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  background-color: #030303;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  text-decoration: none;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background-color: rgb(251, 207, 232);
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+  animation: blink 4s ease-in-out infinite;
+}
+
+.content {
+  margin-top: -150px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.heading {
+  color: white;
+  font-size: 4.5rem;
+  margin-bottom: -0.2rem;
+  text-align: center;
+}
+
+.subheading {
+  color: #b8bdbf;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.highlight {
+  color: rgb(251, 207, 232);
+}
+
+.contactCard {
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  backdrop-filter: blur(16px);
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.contactInfo {
+  color: white;
+}
+
+.contactName {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.contactTitle {
+  color: #b8bdbf;
+  font-size: 0.9rem;
+}
+
+.form {
+  width: 100%;
+  max-width: 400px;
+  max-height: 550px;
+  background-color: rgba(64, 64, 64, 0.3);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 0 20px rgba(147, 51, 234, 0.3),
+    0 0 40px rgba(147, 51, 234, 0.1);
+  animation: glow 3s ease-in-out infinite alternate;
+}
+
+.title {
+  color: white;
+  font-family:
+    Greycliff CF,
+    sans-serif;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0;
   }
-  
-  .form {
-    max-width: 400px;
-    width: 100%;
+  50% {
+    opacity: 1;
   }
-  
-  .title {
-    font-weight: 700;
+}
+
+@keyframes glow {
+  from {
+    box-shadow:
+      0 0 20px rgba(147, 51, 234, 0.3),
+      0 0 40px rgba(147, 51, 234, 0.1);
   }
+  to {
+    box-shadow:
+      0 0 25px rgba(147, 51, 234, 0.4),
+      0 0 50px rgba(147, 51, 234, 0.2);
+  }
+}

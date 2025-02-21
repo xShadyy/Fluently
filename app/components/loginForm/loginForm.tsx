@@ -174,14 +174,14 @@ export default function LoginForm() {
           <div className={classes.avatar}>
             <Image
               src="/images/avatar.jpg"
-              alt="Tom Bruce"
+              alt="Avatar"
               width={60}
               height={60}
             />
           </div>
           <div className={classes.contactInfo}>
             <div className={classes.contactName}>Tymoteusz Netter</div>
-            <div className={classes.contactTitle}>Founder @ Fluently</div>
+            <div className={classes.contactTitle}>Founder @ <span className={classes.highlight}>Fluently</span> </div>
           </div>
           <motion.a
             href="https://github.com/xShadyy"
@@ -199,7 +199,7 @@ export default function LoginForm() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          <Paper  w={600} h={700} className={classes.form} radius={10} p={40}>
+          <Paper w={400} h={500} className={classes.form} radius={10} p={40}>
             {error && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -259,24 +259,24 @@ export default function LoginForm() {
                 label: { color: "white" },
               }}
             />
-          <Center>
-            <Button
-              w="250px"
-              h="50px"
-              mt="xl"
-              size="md"
-              onClick={handleLogin}
-              variant="gradient"
-              gradient={{ from: "purple", to: "pink" }}
-              styles={{
-                root: {
-                  backgroundColor: keepLoggedIn ? "#030303" : undefined,
-                },
-              }}
-            >
-              Login
-            </Button>
-          </Center>
+            <Center>
+              <Button
+                w="250px"
+                h="50px"
+                mt="xl"
+                size="md"
+                onClick={handleLogin}
+                variant="gradient"
+                gradient={{ from: "purple", to: "pink" }}
+                styles={{
+                  root: {
+                    backgroundColor: keepLoggedIn ? "#030303" : undefined,
+                  },
+                }}
+              >
+                Login
+              </Button>
+            </Center>
 
             <Text ta="center" mt="md" c="white">
               Don&apos;t have an account?{" "}

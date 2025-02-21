@@ -1,11 +1,15 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { IconBrandGithub, IconBrandInstagram, IconBrandLinkedin } from '@tabler/icons-react';
-import { motion } from 'framer-motion';
-import { Button, Container, Group, Image, Text } from '@mantine/core';
-import classes from './Header.module.css';
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  IconBrandGithub,
+  IconBrandInstagram,
+  IconBrandLinkedin,
+} from "@tabler/icons-react";
+import { motion } from "framer-motion";
+import { Button, Container, Group, Image, Text } from "@mantine/core";
+import classes from "./Header.module.css";
 
 export default function Header() {
   const router = useRouter();
@@ -16,7 +20,12 @@ export default function Header() {
     <Container size="100%" className={classes.container}>
       <MotionLink href="/" className={classes.logo}>
         <div>
-          <Image src="/images/fluently-clean-wh.png" alt="Fluently Logo" w={150} h={100} />
+          <Image
+            src="/images/fluently-clean-wh.png"
+            alt="Fluently Logo"
+            w={150}
+            h={100}
+          />
         </div>
       </MotionLink>
 
@@ -28,10 +37,10 @@ export default function Header() {
         <Group gap="xl">
           <span className={classes.dot} />
           <Text size="md">
-            Made by{' '}
+            Made by{" "}
             <a
               href="https://github.com/xShadyy"
-              style={{ color: 'rgb(251, 207, 232)', textDecoration: 'none' }}
+              style={{ color: "rgb(251, 207, 232)", textDecoration: "none" }}
               target="_blank"
               rel="noopener noreferrer"
             >

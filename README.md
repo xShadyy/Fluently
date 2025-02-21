@@ -5,9 +5,9 @@
  ![WEB Project](https://img.shields.io/badge/WEB-PROJECT-white.svg?style=flat-square)
 [![license](https://img.shields.io/badge/LICENSE-MIT-white)](LICENSE)
 <br><br>
-![typescript](https://img.shields.io/badge/TYPESCRIPT-6.9-white?logo=typescript)
-![react](https://img.shields.io/badge/REACT-6.9-white?logo=react)
-![nextjs](https://img.shields.io/badge/NEXTJS-6.9-white?logo=nextdotjs)
+![typescript](https://img.shields.io/badge/TYPESCRIPT-5.7.3-white?logo=typescript)
+![react](https://img.shields.io/badge/REACT-19.0.0-white?logo=react)
+![nextjs](https://img.shields.io/badge/NEXTJS-15.1.5-white?logo=nextdotjs)
 
 The [Fluently](https://www.youtube.com/watch?v=dQw4w9WgXcQ) is an app for students to **study** world faster🚀.  
 Embrace power of learning and broaden your horizons 
