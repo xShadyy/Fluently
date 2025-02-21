@@ -183,7 +183,7 @@ export default function SignupForm() {
 
           <div className={classes.contactInfo}>
             <div className={classes.contactName}>Tymoteusz Netter</div>
-            <div className={classes.contactTitle}>Founder @ Fluently</div>
+            <div className={classes.contactTitle}>Founder @ <span className={classes.highlight}>Fluently</span> </div>
           </div>
 
           <motion.a
@@ -202,7 +202,7 @@ export default function SignupForm() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          <Paper w={600} h={700} className={classes.form} radius={10} p={40}>
+          <Paper w={400} h={550} className={classes.form} radius={10} p={40}>
 
             {error && (
               <Text color="red" ta="center" mb="md">

@@ -94,7 +94,7 @@
 .form {
   width: 100%;
   max-width: 400px;
-  max-height: 500px;
+  max-height: 550px;
   background-color: rgba(64, 64, 64, 0.3);
   backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.1);
