@@ -175,7 +175,7 @@ export default function SignupForm() {
           <div className={classes.avatar}>
             <Image
               src="/images/avatar.jpg"
-              alt="Tom Bruce"
+              alt="Avatar"
               width={60}
               height={60}
             />
