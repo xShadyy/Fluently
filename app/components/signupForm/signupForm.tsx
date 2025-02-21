@@ -22,7 +22,7 @@ import {
   IconBrandLinkedin,
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
-import classes from "./SignupForm.module.css";
+import classes from "./signupForm.module.css";
 
 export default function SignupForm() {
   const [email, setEmail] = useState("");
