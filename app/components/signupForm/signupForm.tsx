@@ -212,7 +212,7 @@ export default function SignupForm() {
 
             <TextInput
               label="Username"
-              placeholder="Coolguy"
+              placeholder="CoolGuy"
               size="md"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
