@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { getToken } from '../utils/auth';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { getToken } from "../utils/auth";
 
 export default function Dashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -11,7 +11,7 @@ export default function Dashboard() {
   useEffect(() => {
     const token = getToken();
     if (!token) {
-      router.push('/login');
+      router.push("/login");
     } else {
       setIsAuthenticated(true);
     }
