@@ -52,8 +52,9 @@ npm run dev
 - `test` – runs `jest`, `prettier:check`, `lint` and `typecheck` scripts
 
 ### Other scripts
-- `start:all` - starts frontend and backend using [concurrently](https://www.npmjs.com/package/concurrently)
+- `start:all` – starts frontend and backend using [concurrently](https://www.npmjs.com/package/concurrently)
 - `prettier:write` – formats all files with Prettier
+- `seed` – updates the DB with new dashboard games content using [prisma](https://www.prisma.io/)
 
 
 
