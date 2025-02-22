@@ -42,16 +42,12 @@ export default function LoginForm() {
     const response = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, keepLoggedIn, isRegister: false }),
+      credentials: "include",
     });
 
     const data = await response.json();
     if (response.ok) {
-      if (keepLoggedIn) {
-        document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}; Secure; HttpOnly`;
-      } else {
-        localStorage.setItem("token", data.token);
-      }
       router.push("/dashboard");
     } else {
       setError(data.error || "Invalid email or password");
@@ -245,20 +241,20 @@ export default function LoginForm() {
               }}
             />
 
-            <Checkbox
-              label="Keep me logged in"
-              mt="xl"
-              size="md"
-              checked={keepLoggedIn}
-              onChange={(e) => setKeepLoggedIn(e.currentTarget.checked)}
-              styles={{
-                input: {
-                  backgroundColor: keepLoggedIn ? "#030303" : undefined,
-                  borderColor: "rgba(255, 255, 255, 0.1)",
-                },
-                label: { color: "white" },
-              }}
-            />
+<Checkbox
+          label="Keep me logged in"
+          mt="xl"
+          size="md"
+          checked={keepLoggedIn}
+          onChange={(e) => setKeepLoggedIn(e.currentTarget.checked)}
+          styles={{
+            input: {
+              backgroundColor: keepLoggedIn ? "#030303" : undefined,
+              borderColor: "rgba(255, 255, 255, 0.1)",
+            },
+            label: { color: "white" },
+          }}
+        />
             <Center>
               <Button
                 w="250px"

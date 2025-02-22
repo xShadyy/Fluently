@@ -13,4 +13,13 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
+  Session   Session?
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
 }

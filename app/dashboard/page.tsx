@@ -1,28 +1,35 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { getToken } from "../utils/auth";
-import Header from "../components/Header/Header";
+import UserCard from "../components/UserCard/UserCard"; 
 
 export default function Dashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      router.push("/login");
-    } else {
-      setIsAuthenticated(true);
-    }
-  }, [router]);
+    const fetchUser = async () => {
+      const res = await fetch("/api/user", {
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setUser(data.user);
+      } else {
+        setError(data.error || "Failed to fetch user data");
+      }
+    };
 
-  if (!isAuthenticated) return <p>Loading...</p>;
+    fetchUser();
+  }, []);
+
+  if (error) return <div>Error: {error}</div>;
+  if (!user) return <div>Loading...</div>;
 
   return (
-    <>
-      <Header />
-    </>
+    <div>
+      <h1>Dashboard</h1>
+      <UserCard user={user} />
+    </div>
   );
 }

@@ -1,0 +1,33 @@
+.card {
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Replaces Mantine's spacing prop */
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-weight: 500;      /* Custom weight styling */
+  font-size: 1.25rem;      /* Roughly equivalent to Mantine's "lg" */
+  margin: 0;
+}
+
+.email {
+  color: #6c757d;          /* Dimmed text color */
+  font-size: 0.875rem;     /* Roughly equivalent to Mantine's "sm" */
+  margin: 0;
+}
+
+.memberSince {
+  margin-top: 16px;
+  font-size: 0.875rem;
+  color: #6c757d;
+}
