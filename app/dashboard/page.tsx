@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from "react";
 import UserCard from "../components/UserCard/UserCard"; 
+import MultipleChoiceGame from "../components/MultipleChoiceGame/MultipleChoiceGame";
 
 export default function Dashboard() {
+  const [mcResult, setMcResult] = useState<string | null>(null);
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
+
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -19,7 +22,6 @@ export default function Dashboard() {
         setError(data.error || "Failed to fetch user data");
       }
     };
-
     fetchUser();
   }, []);
 

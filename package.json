@@ -17,12 +17,14 @@
     "prettier:write": "prettier --write \"**/*.{ts,tsx}\"",
     "test": "npm run prettier:check && npm run lint && npm run typecheck && npm run jest",
     "start:backend": "ts-node backend/server.ts",
-    "start:all": "concurrently \"npm run start:backend\" \"npm run dev\""
+    "start:all": "concurrently \"npm run start:backend\" \"npm run dev\"",
+    "seed": "ts-node backend/prisma/seed.ts"
   },
   "dependencies": {
     "@mantine/core": "^7.16.3",
     "@mantine/hooks": "7.16.3",
     "@next/bundle-analyzer": "^15.1.5",
+    "@prisma/client": "^6.4.1",
     "@tabler/icons-react": "^3.28.1",
     "bcrypt": "^5.1.1",
     "esbuild": "^0.25.0",
@@ -30,6 +32,7 @@
     "jsonwebtoken": "^9.0.2",
     "next": "15.1.5",
     "next-auth": "^4.24.11",
+    "prisma": "^6.4.1",
     "react": "19.0.0",
     "react-dom": "19.0.0"
   },
