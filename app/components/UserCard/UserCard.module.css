@@ -6,7 +6,7 @@
 .header {
   display: flex;
   align-items: center;
-  gap: 16px; /* Replaces Mantine's spacing prop */
+  gap: 16px; 
 }
 
 .userDetails {
@@ -15,14 +15,14 @@
 }
 
 .username {
-  font-weight: 500;      /* Custom weight styling */
-  font-size: 1.25rem;      /* Roughly equivalent to Mantine's "lg" */
+  font-weight: 500;     
+  font-size: 1.25rem;    
   margin: 0;
 }
 
 .email {
-  color: #6c757d;          /* Dimmed text color */
-  font-size: 0.875rem;     /* Roughly equivalent to Mantine's "sm" */
+  color: #6c757d;         
+  font-size: 0.875rem; 
   margin: 0;
 }
 
