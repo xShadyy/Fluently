@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getToken } from "../utils/auth";
+import Header from "../components/Header/Header";
 
 export default function Dashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -19,5 +20,9 @@ export default function Dashboard() {
 
   if (!isAuthenticated) return <p>Loading...</p>;
 
-  return <h1>Welcome to the Dashboard!</h1>;
+  return (
+    <>
+      <Header />
+    </>
+  );
 }
