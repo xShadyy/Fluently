@@ -18,7 +18,11 @@ export default function Header() {
 
   return (
     <Container size="100%" className={classes.container}>
-      <MotionLink href="/" className={classes.logo}>
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.4, duration: 0.5 }}
+      >
         <div>
           <Image
             src="/images/fluently-clean-wh.png"
@@ -27,7 +31,7 @@ export default function Header() {
             h={100}
           />
         </div>
-      </MotionLink>
+    </motion.div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

@@ -1,0 +1,50 @@
+@keyframes blink {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    
+    50% {
+      opacity: 1;
+    }
+  }
+  
+  .container {
+    height: 80px;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #B8BDBF;
+    box-shadow: 0 0.1px 0 #B8BDBF;
+  }
+  
+  .logo {
+    font-size: var(--mantine-font-size-xl);
+    font-weight: bold;
+    color: var(--mantine-color-white);
+  }
+  
+  .navLink {
+    color: var(--mantine-color-gray-4);
+    transition: color 0.1s ease;
+    text-decoration: none;
+  }
+  
+  .navLink:hover {
+    color: var(--mantine-color-white);
+  }
+  
+  .dot {
+    width: 5px;
+    height: 5px;
+    position: relative;
+    top: 2px;
+    right: -35px;
+    background-color: var(--mantine-color-pink-2);
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: var(--mantine-spacing-xs);
+    animation: blink 4s ease-in-out infinite;
+  }
+  
