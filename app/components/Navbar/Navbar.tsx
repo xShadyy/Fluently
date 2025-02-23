@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -53,17 +53,10 @@ export default function Header() {
         transition={{ delay: 0.6, duration: 0.5 }}
       >
         <Group gap="xl">
-          <span className={classes.dot} />
+         
           <Text size="md">
             Made by{" "}
-            <a
-              href="https://github.com/xShadyy"
-              style={{ color: "rgb(251, 207, 232)", textDecoration: "none" }}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
               @xShadyy
-            </a>
           </Text>
         </Group>
       </motion.div>
@@ -74,8 +67,10 @@ export default function Header() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
         >
+          <span className={classes.dot} />
           {user ? (
             <UserCard user={user} />
+            
           ) : (
             <Text size="sm" color="dimmed">
               Not logged in

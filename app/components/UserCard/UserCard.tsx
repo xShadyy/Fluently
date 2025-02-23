@@ -1,37 +1,65 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import classes from "./UserCard.module.css";
-
-interface User {
-  username: string;
-  email: string;
-}
+import { Group, Stack, Text, Avatar, Menu } from '@mantine/core';
+import { useRouter } from 'next/navigation';
 
 function getInitials(name: string): string {
-  if (!name) return "";
-  const names = name.trim().split(" ");
+  if (!name) return '';
+  const names = name.trim().split(' ');
   if (names.length === 1) return names[0].slice(0, 2).toUpperCase();
-  return names
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
+  return names.map((n) => n[0]).join('').toUpperCase();
 }
 
-export default function UserCard({ user }: { user: User }) {
-  return (
-    <motion.div
-      className={classes.contactCard}
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.5, duration: 0.5 }}
-    >
-      <div className={classes.avatar}>{getInitials(user.username)}</div>
+export default function UserCard({ user }: { user: { username: string; email: string; createdAt: string } }) {
+  const router = useRouter();
 
-      <div className={classes.contactInfo}>
-        <div className={classes.contactName}>{user.username}</div>
-        <div className={classes.contactEmail}>{user.email}</div>
-      </div>
-    </motion.div>
+  const handleLogout = async () => {
+    try {
+      const res = await fetch('/api/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      if (res.ok) {
+        router.push('/login');
+      } else {
+        console.error('Logout failed');
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
+
+  return (
+    
+    <Group gap="sm" mb="1.5rem">
+      <Stack gap={0} align="flex-end">
+        <Text size="lg" c="#B8BDBF" fw={500}>
+          Welcome back {user.username}
+        </Text>
+        <Text size="md" c="rgb(251, 207, 232)">
+          {user.email}
+        </Text>
+      </Stack>
+
+      <Menu transitionProps={{ transition: 'rotate-right', duration: 150 }} trigger="click" position="bottom" offset={1} withArrow arrowPosition="center"> 
+      <div style={{ cursor: 'pointer' }}>
+        <Menu.Target>
+          <Avatar
+            size="lg"
+            radius="xl"
+            color="gray"
+            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`}
+          >
+            {getInitials(user.username)}
+          </Avatar>
+
+        </Menu.Target>
+        </div>
+        <Menu.Dropdown>
+          <Menu.Item onClick={handleLogout}>Logout</Menu.Item>
+        </Menu.Dropdown>
+
+      </Menu>
+    </Group>
   );
 }

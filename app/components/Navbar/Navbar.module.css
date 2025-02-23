@@ -39,8 +39,8 @@
     width: 5px;
     height: 5px;
     position: relative;
-    top: 2px;
-    right: -35px;
+    top: 27px;
+    right: 15px;
     background-color: var(--mantine-color-pink-2);
     border-radius: 50%;
     display: inline-block;
