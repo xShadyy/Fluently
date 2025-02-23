@@ -1,15 +1,14 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar/Navbar";
-import { useDisclosure } from '@mantine/hooks';
-import { LoadingOverlay, Button, Group, Box } from '@mantine/core';
+import { useDisclosure } from "@mantine/hooks";
+import { LoadingOverlay, Button, Group, Box } from "@mantine/core";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
   const [visible, { toggle }] = useDisclosure(false);
-
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -27,10 +26,14 @@ export default function Dashboard() {
   }, []);
 
   if (error) return <div>Error: {error}</div>;
-  if (!user) return 
-    <Box pos="relative">
-      <LoadingOverlay visible={visible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-    </Box>;
+  if (!user) return;
+  <Box pos="relative">
+    <LoadingOverlay
+      visible={visible}
+      zIndex={1000}
+      overlayProps={{ radius: "sm", blur: 2 }}
+    />
+  </Box>;
 
   return (
     <div>

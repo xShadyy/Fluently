@@ -31,7 +31,7 @@ export default function Header() {
             h={100}
           />
         </div>
-    </motion.div>
+      </motion.div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

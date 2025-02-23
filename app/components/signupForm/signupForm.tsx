@@ -153,7 +153,8 @@ export default function SignupForm() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.5 }}
         >
-          Join <span className={classes.highlight}>Us</span> and conquer the world
+          Join <span className={classes.highlight}>Us</span> and conquer the
+          world
         </motion.h1>
 
         <motion.p
@@ -164,7 +165,8 @@ export default function SignupForm() {
         >
           Create account and start learning languages with ease
           <br></br>
-          allowing <span className={classes.highlight}>You</span> to explore new possibilities
+          allowing <span className={classes.highlight}>You</span> to explore new
+          possibilities
         </motion.p>
 
         <motion.div
@@ -184,7 +186,9 @@ export default function SignupForm() {
 
           <div className={classes.contactInfo}>
             <div className={classes.contactName}>Tymoteusz Netter</div>
-            <div className={classes.contactTitle}>Founder @ <span className={classes.highlight}>Fluently</span> </div>
+            <div className={classes.contactTitle}>
+              Founder @ <span className={classes.highlight}>Fluently</span>{" "}
+            </div>
           </div>
 
           <motion.a
@@ -204,7 +208,6 @@ export default function SignupForm() {
           transition={{ delay: 0.2, duration: 0.5 }}
         >
           <Paper w={400} h={550} className={classes.form} radius={10} p={40}>
-
             {error && (
               <Text color="red" ta="center" mb="md">
                 {error}

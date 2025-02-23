@@ -17,17 +17,14 @@ export async function GET(request: NextRequest) {
     });
 
     if (!game) {
-      return NextResponse.json(
-        { error: "Game not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Game not found" }, { status: 404 });
     }
     return NextResponse.json({ questions: game.questions });
   } catch (error) {
     console.error("Error fetching questions:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

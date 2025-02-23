@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     if (!email || !password || !username) {
       return NextResponse.json(
         { error: "Email, password, and username are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -22,14 +22,20 @@ export async function POST(request: NextRequest) {
       where: { email },
     });
     if (existingUserByEmail) {
-      return NextResponse.json({ error: "A user with this email already exists" }, { status: 409 });
+      return NextResponse.json(
+        { error: "A user with this email already exists" },
+        { status: 409 },
+      );
     }
 
     const existingUserByUsername = await prisma.user.findUnique({
       where: { username },
     });
     if (existingUserByUsername) {
-      return NextResponse.json({ error: "Username is already taken" }, { status: 409 });
+      return NextResponse.json(
+        { error: "Username is already taken" },
+        { status: 409 },
+      );
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -42,9 +48,15 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ message: "User created successfully" }, { status: 201 });
+    return NextResponse.json(
+      { message: "User created successfully" },
+      { status: 201 },
+    );
   } catch (error) {
     console.error("Registration error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

@@ -42,7 +42,12 @@ export default function LoginForm() {
     const response = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, keepLoggedIn, isRegister: false }),
+      body: JSON.stringify({
+        email,
+        password,
+        keepLoggedIn,
+        isRegister: false,
+      }),
       credentials: "include",
     });
 
@@ -177,7 +182,9 @@ export default function LoginForm() {
           </div>
           <div className={classes.contactInfo}>
             <div className={classes.contactName}>Tymoteusz Netter</div>
-            <div className={classes.contactTitle}>Founder @ <span className={classes.highlight}>Fluently</span> </div>
+            <div className={classes.contactTitle}>
+              Founder @ <span className={classes.highlight}>Fluently</span>{" "}
+            </div>
           </div>
           <motion.a
             href="https://github.com/xShadyy"
@@ -241,20 +248,20 @@ export default function LoginForm() {
               }}
             />
 
-<Checkbox
-          label="Keep me logged in"
-          mt="xl"
-          size="md"
-          checked={keepLoggedIn}
-          onChange={(e) => setKeepLoggedIn(e.currentTarget.checked)}
-          styles={{
-            input: {
-              backgroundColor: keepLoggedIn ? "#030303" : undefined,
-              borderColor: "rgba(255, 255, 255, 0.1)",
-            },
-            label: { color: "white" },
-          }}
-        />
+            <Checkbox
+              label="Keep me logged in"
+              mt="xl"
+              size="md"
+              checked={keepLoggedIn}
+              onChange={(e) => setKeepLoggedIn(e.currentTarget.checked)}
+              styles={{
+                input: {
+                  backgroundColor: keepLoggedIn ? "#030303" : undefined,
+                  borderColor: "rgba(255, 255, 255, 0.1)",
+                },
+                label: { color: "white" },
+              }}
+            />
             <Center>
               <Button
                 w="250px"

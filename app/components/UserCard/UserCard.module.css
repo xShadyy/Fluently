@@ -1,33 +1,37 @@
-.card {
-  max-width: 400px;
-  margin: 20px auto;
-}
-
-.header {
+.contactCard {
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;;
   display: flex;
   align-items: center;
-  gap: 16px; 
+  gap: 1rem;
+  backdrop-filter: blur(16px);
 }
 
-.userDetails {
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #6c757d; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.contactInfo {
   display: flex;
   flex-direction: column;
 }
 
-.username {
-  font-weight: 500;     
-  font-size: 1.25rem;    
-  margin: 0;
+.contactName {
+  font-size: 1.25rem;
+  font-weight: 500;
 }
 
-.email {
-  color: #6c757d;         
-  font-size: 0.875rem; 
-  margin: 0;
-}
-
-.memberSince {
-  margin-top: 16px;
-  font-size: 0.875rem;
+.contactEmail {
+  font-size: 1rem;
   color: #6c757d;
 }

@@ -1,15 +1,15 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
   // Upsert the game so it won't create duplicates if you run the script multiple times
   const game = await prisma.game.upsert({
-    where: { name: 'MultipleChoice' },
+    where: { name: "MultipleChoice" },
     update: {},
     create: {
-      name: 'MultipleChoice',
-      description: 'Multiple choice game questions',
+      name: "MultipleChoice",
+      description: "Multiple choice game questions",
     },
   });
 
@@ -19,19 +19,19 @@ async function main() {
       text: "What is the Spanish word for 'apple'?",
       gameId: game.id,
       // Leave correctOptionId blank for now; we'll update after creating the options
-      correctOptionId: '', 
+      correctOptionId: "",
     },
   });
 
   // Create options individually to capture their IDs
   const option1 = await prisma.option.create({
-    data: { text: 'Manzana', questionId: question.id },
+    data: { text: "Manzana", questionId: question.id },
   });
   const option2 = await prisma.option.create({
-    data: { text: 'Naranja', questionId: question.id },
+    data: { text: "Naranja", questionId: question.id },
   });
   const option3 = await prisma.option.create({
-    data: { text: 'Pera', questionId: question.id },
+    data: { text: "Pera", questionId: question.id },
   });
 
   // Assume the correct answer is "Manzana", so update the question with option1's id
@@ -40,7 +40,7 @@ async function main() {
     data: { correctOptionId: option1.id },
   });
 
-  console.log('Seeded game with a sample question and options.');
+  console.log("Seeded game with a sample question and options.");
 }
 
 main()
