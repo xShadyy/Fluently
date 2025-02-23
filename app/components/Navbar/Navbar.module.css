@@ -10,7 +10,7 @@
   }
   
   .container {
-    height: 80px;
+    height: 100px;
     overflow: hidden;
     display: flex;
     justify-content: space-between;
@@ -47,4 +47,3 @@
     margin-right: var(--mantine-spacing-xs);
     animation: blink 4s ease-in-out infinite;
   }
-  

@@ -2,6 +2,7 @@
 
 import { Group, Stack, Text, Avatar, Menu } from '@mantine/core';
 import { useRouter } from 'next/navigation';
+import classes from './UserCard.module.css';
 
 function getInitials(name: string): string {
   if (!name) return '';
@@ -41,6 +42,7 @@ export default function UserCard({ user }: { user: { username: string; email: st
         </Text>
       </Stack>
 
+
       <Menu transitionProps={{ transition: 'rotate-right', duration: 150 }} trigger="click" position="bottom" offset={1} withArrow arrowPosition="center"> 
       <div style={{ cursor: 'pointer' }}>
         <Menu.Target>
@@ -58,8 +60,8 @@ export default function UserCard({ user }: { user: { username: string; email: st
         <Menu.Dropdown>
           <Menu.Item onClick={handleLogout}>Logout</Menu.Item>
         </Menu.Dropdown>
-
       </Menu>
-    </Group>
+    </Group> 
+
   );
 }

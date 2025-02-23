@@ -62,16 +62,20 @@ export default function LoginForm() {
   return (
     <div className={classes.wrapper}>
       <Container size="100%" className={classes.header}>
-        <motion.a href="/" className={classes.logo}>
-          <div>
-            <Image
-              src="/images/fluently-clean-wh.png"
-              alt="Fluently Logo"
-              w={150}
-              h={100}
-            />
-          </div>
-        </motion.a>
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.4, duration: 0.5 }}
+      >
+        <div>
+          <Image
+            src="/images/fluently-clean-wh.png"
+            alt="Fluently Logo"
+            w={150}
+            h={100}
+          />
+        </div>
+      </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
