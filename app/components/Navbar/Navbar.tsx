@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -73,7 +73,7 @@ export default function Header() {
         >
           <Text size="md">Języki</Text>
         </motion.div>
-    </Group>
+      </Group>
 
       <Group gap="md">
         <motion.div
@@ -84,7 +84,6 @@ export default function Header() {
           <span className={classes.dot} />
           {user ? (
             <UserCard user={user} />
-            
           ) : (
             <Text size="sm" color="dimmed">
               Not logged in

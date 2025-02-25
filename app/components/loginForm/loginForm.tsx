@@ -10,11 +10,11 @@ import {
   PasswordInput,
   Text,
   TextInput,
-  Title,
   Container,
   Group,
   Center,
   Image,
+  Box,
 } from "@mantine/core";
 import {
   IconBrandGithub,
@@ -39,103 +39,146 @@ export default function LoginForm() {
       return;
     }
 
-    const response = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email,
-        password,
-        keepLoggedIn,
-        isRegister: false,
-      }),
-      credentials: "include",
-    });
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          password,
+          keepLoggedIn,
+          isRegister: false,
+        }),
+        credentials: "include",
+      });
 
-    const data = await response.json();
-    if (response.ok) {
-      router.push("/dashboard");
-    } else {
-      setError(data.error || "Invalid email or password");
+      const data = await response.json();
+      if (response.ok) {
+        router.push("/dashboard");
+      } else {
+        setError(data.error || "Invalid email or password");
+      }
+    } catch (error) {
+      setError("An error occurred during login");
     }
   };
 
   return (
-    <div className={classes.wrapper}>
-      <Container size="100%" className={classes.header}>
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.4, duration: 0.5 }}
-      >
-        <div>
+    <Box className={classes.pageWrapper}>
+      <Group className={classes.header}>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+        >
           <Image
             src="/images/fluently-clean-wh.png"
             alt="Fluently Logo"
-            w={150}
-            h={100}
+            width={35}
+            height={35}
           />
-        </div>
-      </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-        >
-          <Group gap="xl">
-            <span className={classes.dot} />
-            <Text size="md" color="white">
-              Made by{" "}
-              <a
-                href="https://github.com/xShadyy"
-                style={{ color: "rgb(251, 207, 232)", textDecoration: "none" }}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                @xShadyy
-              </a>
-            </Text>
-          </Group>
         </motion.div>
 
+        <Group className={classes.centerSection}>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
+            <Group gap="xl" align="center">
+              <span className={classes.dot} />
+              <Text size="md" c="white">
+                Made by{" "}
+                <Anchor
+                  href="https://github.com/xShadyy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  c="rgb(251, 207, 232)"
+                  td="none"
+                >
+                  @xShadyy
+                </Anchor>
+              </Text>
+            </Group>
+          </motion.div>
+        </Group>
+
         <Group gap="md">
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-          >
+          {[
+            {
+              icon: IconBrandInstagram,
+              href: "https://www.instagram.com/g80.shadyy/",
+            },
+            {
+              icon: IconBrandLinkedin,
+              href: "https://www.linkedin.com/in/tymoteusz-netter/",
+            },
+            {
+              icon: IconBrandGithub,
+              href: "https://github.com/xShadyy",
+            },
+          ].map((social, index) => (
             <motion.a
-              href="https://www.instagram.com/g80.shadyy/"
+              key={social.href}
+              href={social.href}
               target="_blank"
               rel="noopener noreferrer"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <IconBrandInstagram size={32} color="white" />
+              <social.icon size={32} color="white" />
             </motion.a>
-          </motion.div>
+          ))}
+        </Group>
+      </Group>
 
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+      <Container size="lg" className={classes.wrapper}>
+        <Group className={classes.content}>
+          <motion.h1
+            className={classes.heading}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
+            Save <span className={classes.highlight}>100+</span> hours of
+            studying
+          </motion.h1>
+
+          <motion.p
+            className={classes.subheading}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.5 }}
           >
-            <motion.a
-              href="https://www.linkedin.com/in/tymoteusz-netter/"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <IconBrandLinkedin size={32} color="white" />
-            </motion.a>
-          </motion.div>
+            Join our platform and accelerate your learning journey
+            <br />
+            while using innovative tools and solutions helping you grow
+          </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+            className={classes.contactCard}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
           >
+            <Group>
+              <Image
+                src="/images/avatar.jpg"
+                alt="Avatar"
+                width={60}
+                height={60}
+                radius="xl"
+              />
+            </Group>
+            <div className={classes.contactInfo}>
+              <div className={classes.contactName}>Tymoteusz Netter</div>
+              <div className={classes.contactTitle}>
+                Founder @ <span className={classes.highlight}>Fluently</span>
+              </div>
+            </div>
             <motion.a
               href="https://github.com/xShadyy"
               target="_blank"
@@ -143,161 +186,108 @@ export default function LoginForm() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <IconBrandGithub size={32} color="white" />
+              <IconBrandGithub size={24} color="white" />
             </motion.a>
+          </motion.div>
+
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            style={{ width: "100%", maxWidth: "400px" }}
+          >
+            <Paper className={classes.form} radius="md" p="xl">
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Text c="red" ta="center" mb="md">
+                    {error}
+                  </Text>
+                </motion.div>
+              )}
+
+              <TextInput
+                label="Email address"
+                placeholder="hello@gmail.com"
+                size="md"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                styles={{
+                  label: { color: "white" },
+                  input: {
+                    borderColor: "rgba(255, 255, 255, 0.4)",
+                  },
+                }}
+              />
+
+              <PasswordInput
+                label="Password"
+                placeholder="Your password"
+                mt="md"
+                size="md"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                styles={{
+                  label: { color: "white" },
+                  input: {
+                    borderColor: "rgba(255, 255, 255, 0.4)",
+                  },
+                }}
+              />
+
+              <Center>
+                <Checkbox
+                  label="Keep me logged in"
+                  mt="xl"
+                  size="md"
+                  checked={keepLoggedIn}
+                  onChange={(e) => setKeepLoggedIn(e.currentTarget.checked)}
+                  styles={{
+                    label: { color: "white" },
+                    input: {
+                      backgroundColor: keepLoggedIn
+                        ? "#030303 !important"
+                        : "transparent",
+                      borderColor: "white",
+                      "&:checked": {
+                        backgroundColor: "#030303 !important",
+                      },
+                    },
+                  }}
+                />
+              </Center>
+
+              <Center>
+                <Button
+                  w="50%"
+                  mt="xl"
+                  size="md"
+                  onClick={handleLogin}
+                  variant="gradient"
+                  gradient={{ from: "purple", to: "pink" }}
+                >
+                  Login
+                </Button>
+              </Center>
+
+              <Text ta="center" mt="md" c="white">
+                Don&apos;t have an account?{" "}
+                <Anchor
+                  href="/register"
+                  fw={700}
+                  c="rgb(251, 207, 232)"
+                  td="none"
+                >
+                  Register
+                </Anchor>
+              </Text>
+            </Paper>
           </motion.div>
         </Group>
       </Container>
-
-      <div className={classes.content}>
-        <motion.h1
-          className={classes.heading}
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-        >
-          Save <span className={classes.highlight}>100+</span> hours of studying
-        </motion.h1>
-
-        <motion.p
-          className={classes.subheading}
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-        >
-          Join our platform and accelerate your learning journey
-          <br></br>
-          while using innovative tools and solutions helping you grow
-        </motion.p>
-
-        <motion.div
-          className={classes.contactCard}
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-        >
-          <div className={classes.avatar}>
-            <Image
-              src="/images/avatar.jpg"
-              alt="Avatar"
-              width={60}
-              height={60}
-            />
-          </div>
-          <div className={classes.contactInfo}>
-            <div className={classes.contactName}>Tymoteusz Netter</div>
-            <div className={classes.contactTitle}>
-              Founder @ <span className={classes.highlight}>Fluently</span>{" "}
-            </div>
-          </div>
-          <motion.a
-            href="https://github.com/xShadyy"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <IconBrandGithub size={24} color="white" />
-          </motion.a>
-        </motion.div>
-
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-        >
-          <Paper w={400} h={500} className={classes.form} radius={10} p={40}>
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Text color="red" ta="center" mb="md">
-                  {error}
-                </Text>
-              </motion.div>
-            )}
-
-            <TextInput
-              label="Email address"
-              placeholder="hello@gmail.com"
-              size="md"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              styles={{
-                input: {
-                  backgroundColor: "#030303",
-                  borderColor: "rgba(255, 255, 255, 0.1)",
-                  color: "white",
-                },
-                label: { color: "white" },
-              }}
-            />
-
-            <PasswordInput
-              label="Password"
-              placeholder="Your password"
-              mt="md"
-              size="md"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              styles={{
-                input: {
-                  backgroundColor: "#030303",
-                  borderColor: "rgba(255, 255, 255, 0.1)",
-                  color: "white",
-                },
-                label: { color: "white" },
-              }}
-            />
-
-            <Checkbox
-              label="Keep me logged in"
-              mt="xl"
-              size="md"
-              checked={keepLoggedIn}
-              onChange={(e) => setKeepLoggedIn(e.currentTarget.checked)}
-              styles={{
-                input: {
-                  backgroundColor: keepLoggedIn ? "#030303" : undefined,
-                  borderColor: "rgba(255, 255, 255, 0.1)",
-                },
-                label: { color: "white" },
-              }}
-            />
-            <Center>
-              <Button
-                w="250px"
-                h="50px"
-                mt="xl"
-                size="md"
-                onClick={handleLogin}
-                variant="gradient"
-                gradient={{ from: "purple", to: "pink" }}
-                styles={{
-                  root: {
-                    backgroundColor: keepLoggedIn ? "#030303" : undefined,
-                  },
-                }}
-              >
-                Login
-              </Button>
-            </Center>
-
-            <Text ta="center" mt="md" c="white">
-              Don&apos;t have an account?{" "}
-              <Anchor<"a">
-                href="/register"
-                fw={700}
-                style={{ color: "rgb(251, 207, 232)" }}
-              >
-                Register
-              </Anchor>
-            </Text>
-          </Paper>
-        </motion.div>
-      </div>
-    </div>
+    </Box>
   );
 }

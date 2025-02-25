@@ -1,58 +1,87 @@
-.wrapper {
-  min-height: 100vh;
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.pageWrapper {
+  height: 100vh;
   background-color: #030303;
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  overflow: hidden;
 }
 
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 80px;
-  width: 100%;
+  padding: 0 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2rem;
-  background-color: #030303;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  background-color: rgba(3, 3, 3, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.1); 
 }
 
-.logo {
-  text-decoration: none;
+.centerSection {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   background-color: rgb(251, 207, 232);
   border-radius: 50%;
   display: inline-block;
-  margin-right: 8px;
   animation: blink 4s ease-in-out infinite;
 }
 
+.wrapper {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 80px;
+}
+
 .content {
-  margin-top: -150px;
-  flex: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
 .heading {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: bold;
   color: white;
-  font-size: 4.5rem;
-  margin-bottom: -0.2rem;
   text-align: center;
+  line-height: 1.2;
+  margin: 0;
 }
 
 .subheading {
+  font-size: clamp(1rem, 3vw, 1.25rem);
   color: #b8bdbf;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
   text-align: center;
+  line-height: 1.6;
+  margin: 0;
 }
 
 .highlight {
@@ -60,30 +89,24 @@
 }
 
 .contactCard {
-  padding: 1.5rem;
-  border-radius: 10px;
-  margin-bottom: 2rem;
   display: flex;
   align-items: center;
   gap: 1rem;
-  backdrop-filter: blur(16px);
-}
-
-.avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  overflow: hidden;
+  padding: 1rem;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  margin: 1rem 0;
+  width: fit-content;
 }
 
 .contactInfo {
-  color: white;
+  text-align: left;
 }
 
 .contactName {
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin-bottom: 0.25rem;
+  color: white;
+  font-weight: 500;
+  font-size: 1.1rem;
 }
 
 .contactTitle {
@@ -92,44 +115,32 @@
 }
 
 .form {
-  width: 100%;
-  max-width: 400px;
-  max-height: 550px;
-  background-color: rgba(64, 64, 64, 0.3);
-  backdrop-filter: blur(16px);
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:
-    0 0 20px rgba(147, 51, 234, 0.3),
-    0 0 40px rgba(147, 51, 234, 0.1);
-  animation: glow 3s ease-in-out infinite alternate;
+  width: 100%;
 }
 
-.title {
-  color: white;
-  font-family:
-    Greycliff CF,
-    sans-serif;
+@media (max-width: 768px) {
+  .header {
+    padding: 0 1rem;
+  }
+
+  .content {
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+
+  .contactCard {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+    width: 100%;
+  }
+
+  .contactInfo {
+    text-align: center;
+  }
 }
 
-@keyframes blink {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-}
 
-@keyframes glow {
-  from {
-    box-shadow:
-      0 0 20px rgba(147, 51, 234, 0.3),
-      0 0 40px rgba(147, 51, 234, 0.1);
-  }
-  to {
-    box-shadow:
-      0 0 25px rgba(147, 51, 234, 0.4),
-      0 0 50px rgba(147, 51, 234, 0.2);
-  }
-}

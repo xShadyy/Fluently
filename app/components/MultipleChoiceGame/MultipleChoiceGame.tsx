@@ -31,7 +31,9 @@ export default function MultipleChoiceGame({
   };
 
   const handleSubmit = () => {
-    if (!selectedOptionId) return;
+    if (!selectedOptionId) {
+      return;
+    }
     setIsAnswered(true);
     onAnswer(selectedOptionId === correctOptionId);
   };

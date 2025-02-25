@@ -8,99 +8,83 @@ import {
   IconBrandLinkedin,
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
-import { Button, Container, Group, Image, Text } from "@mantine/core";
+import { Container, Group, Image, rem, Text, Anchor } from "@mantine/core";
 import classes from "./Header.module.css";
 
 export default function Header() {
   const router = useRouter();
-
   const MotionLink = motion.create(Link);
 
   return (
     <Container size="100%" className={classes.container}>
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.4, duration: 0.5 }}
-      >
-        <div>
+      <Group className={classes.header}>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+        >
           <Image
             src="/images/fluently-clean-wh.png"
             alt="Fluently Logo"
-            w={150}
-            h={100}
+            width={35}
+            height={35}
           />
-        </div>
-      </motion.div>
+        </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.5 }}
-      >
-        <Group gap="xl">
-          <span className={classes.dot} />
-          <Text size="md">
-            Made by{" "}
-            <a
-              href="https://github.com/xShadyy"
-              style={{ color: "rgb(251, 207, 232)", textDecoration: "none" }}
+        <Group className={classes.centerSection}>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
+            <Group gap="xl" align="center">
+              <span className={classes.dot} />
+              <Text size="md" c="white">
+                Made by{" "}
+                <Anchor
+                  href="https://github.com/xShadyy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  c="rgb(251, 207, 232)"
+                  td="none"
+                >
+                  @xShadyy
+                </Anchor>
+              </Text>
+            </Group>
+          </motion.div>
+        </Group>
+
+        <Group gap="md">
+          {[
+            {
+              icon: IconBrandInstagram,
+              href: "https://www.instagram.com/g80.shadyy/",
+            },
+            {
+              icon: IconBrandLinkedin,
+              href: "https://www.linkedin.com/in/tymoteusz-netter/",
+            },
+            {
+              icon: IconBrandGithub,
+              href: "https://github.com/xShadyy",
+            },
+          ].map((social, index) => (
+            <motion.a
+              key={social.href}
+              href={social.href}
               target="_blank"
               rel="noopener noreferrer"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 + index * 0.1, duration: 0.5 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              @xShadyy
-            </a>
-          </Text>
+              <social.icon size={32} color="white" />
+            </motion.a>
+          ))}
         </Group>
-      </motion.div>
-      <Group gap="md">
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-        >
-          <motion.a
-            href="https://www.instagram.com/g80.shadyy/"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <IconBrandInstagram size={32} color="white" />
-          </motion.a>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-        >
-          <motion.a
-            href="https://www.linkedin.com/in/tymoteusz-netter/"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <IconBrandLinkedin size={32} color="white" />
-          </motion.a>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-        >
-          <motion.a
-            href="https://github.com/xShadyy"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <IconBrandGithub size={32} color="white" />
-          </motion.a>
-        </motion.div>
       </Group>
     </Container>
   );

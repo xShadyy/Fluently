@@ -25,8 +25,12 @@ export default function Dashboard() {
     fetchUser();
   }, []);
 
-  if (error) return <div>Error: {error}</div>;
-  if (!user) return;
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+  if (!user) {
+    return;
+  }
   <Box pos="relative">
     <LoadingOverlay
       visible={visible}
