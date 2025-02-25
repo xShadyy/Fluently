@@ -30,6 +30,8 @@ export default function LoginForm() {
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
 
   const handleLogin = async () => {
     setError("");
@@ -215,25 +217,31 @@ export default function LoginForm() {
                 size="md"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onFocus={() => setIsEmailFocused(true)}
+                onBlur={() => setIsEmailFocused(false)}
                 styles={{
                   label: { color: "white" },
                   input: {
-                    borderColor: "rgba(255, 255, 255, 0.4)",
+                    borderColor: isEmailFocused  ? "rgb(251, 207, 232)" : "rgba(255, 255, 255, 0.4)",
+                    transition: "border-color 0.3s ease",
                   },
                 }}
               />
 
-              <PasswordInput
+            <PasswordInput
                 label="Password"
                 placeholder="Your password"
                 mt="md"
                 size="md"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onFocus={() => setIsPasswordFocused(true)}
+                onBlur={() => setIsPasswordFocused(false)}
                 styles={{
                   label: { color: "white" },
                   input: {
-                    borderColor: "rgba(255, 255, 255, 0.4)",
+                    borderColor: isPasswordFocused  ? "rgb(251, 207, 232)" : "rgba(255, 255, 255, 0.4)",
+                    transition: "border-color 0.3s ease",
                   },
                 }}
               />

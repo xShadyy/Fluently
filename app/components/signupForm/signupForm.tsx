@@ -31,6 +31,10 @@ export default function SignupForm() {
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+  const [isUsernameFocused, setIsUsernameFocused] = useState(false);
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] = useState(false);
 
   const handleSignup = async () => {
     setError("");
@@ -213,10 +217,13 @@ export default function SignupForm() {
                 size="md"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                onFocus={() => setIsUsernameFocused(true)}
+                onBlur={() => setIsUsernameFocused(false)}
                 styles={{
                   label: { color: "white" },
                   input: {
-                    borderColor: "rgba(255, 255, 255, 0.4)",
+                    borderColor: isUsernameFocused ? "rgb(251, 207, 232)" : "rgba(255, 255, 255, 0.4)",
+                    transition: "border-color 0.3s ease",
                   },
                 }}
               />
@@ -228,10 +235,13 @@ export default function SignupForm() {
                 mt="md"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onFocus={() => setIsEmailFocused(true)}
+                onBlur={() => setIsEmailFocused(false)}
                 styles={{
                   label: { color: "white" },
                   input: {
-                    borderColor: "rgba(255, 255, 255, 0.4)",
+                    borderColor: isEmailFocused ? "rgb(251, 207, 232)" : "rgba(255, 255, 255, 0.4)",
+                    transition: "border-color 0.3s ease",
                   },
                 }}
               />
@@ -243,10 +253,13 @@ export default function SignupForm() {
                 size="md"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onFocus={() => setIsPasswordFocused(true)}
+                onBlur={() => setIsPasswordFocused(false)}
                 styles={{
                   label: { color: "white" },
                   input: {
-                    borderColor: "rgba(255, 255, 255, 0.4)",
+                    borderColor: isPasswordFocused ? "rgb(251, 207, 232)" : "rgba(255, 255, 255, 0.4)",
+                    transition: "border-color 0.3s ease",
                   },
                 }}
               />
@@ -258,10 +271,13 @@ export default function SignupForm() {
                 size="md"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                onFocus={() => setIsConfirmPasswordFocused(true)}
+                onBlur={() => setIsConfirmPasswordFocused(false)}
                 styles={{
                   label: { color: "white" },
                   input: {
-                    borderColor: "rgba(255, 255, 255, 0.4)",
+                    borderColor: isConfirmPasswordFocused ? "rgb(251, 207, 232)" : "rgba(255, 255, 255, 0.4)",
+                    transition: "border-color 0.3s ease",
                   },
                 }}
               />
