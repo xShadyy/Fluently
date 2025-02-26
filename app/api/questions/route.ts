@@ -1,30 +1,36 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+
 const prisma = new PrismaClient();
 
-export async function GET(request: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const gameName = searchParams.get("game") || "MultipleChoice";
+    const { searchParams } = new URL(req.url);
+    const game = searchParams.get("game");
 
-    const game = await prisma.game.findUnique({
-      where: { name: gameName },
+    if (!game) {
+      return NextResponse.json({ error: "Missing game parameter" }, { status: 400 });
+    }
+
+    const gameData = await prisma.game.findFirst({
+      where: { name: game },
       include: {
         questions: {
-          include: { options: true },
+          include: {
+            options: true,
+            correctAnswer: true,
+          },
         },
       },
     });
 
-    if (!game) {
-      return NextResponse.json({ error: "Game not found" }, { status: 404 });
+    if (!gameData || !gameData.questions.length) {
+      return NextResponse.json({ error: "No questions found for this game" }, { status: 404 });
     }
-    return NextResponse.json({ questions: game.questions });
+
+    return NextResponse.json({ questions: gameData.questions });
   } catch (error) {
     console.error("Error fetching questions:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

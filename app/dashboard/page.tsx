@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar/Navbar";
-import Test from "../components/test/test";
+import Navbar from "../components/ui/Navbar/Navbar";
+import Test from "../components/ui/test/test";
 import { useDisclosure } from "@mantine/hooks";
 import { LoadingOverlay, Button, Group, Box } from "@mantine/core";
 

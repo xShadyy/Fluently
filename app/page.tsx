@@ -1,6 +1,6 @@
-import StarBackground from "./components/Background/StarBackground";
-import Header from "./components/Header/Header";
-import Root from "./components/Root/Root";
+import StarBackground from "./components/ui/Background/StarBackground";
+import Header from "./components/ui/Header/Header";
+import Root from "./components/ui/Root/Root";
 
 export default function HomePage() {
   return (
