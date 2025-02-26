@@ -9,7 +9,7 @@ import {
   Stack,
 } from "@mantine/core";
 import { motion, AnimatePresence } from "framer-motion";
-import styles from "./test.module.css";
+import styles from "./ProficiencyQuiz.module.css";
 
 interface Option {
   id: string;
@@ -23,13 +23,14 @@ interface Question {
   correctOptionId: string;
 }
 
-export default function LanguageTest() {
+export default function ProficiencyQuiz() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const progressValue = (currentQuestion / questions.length) * 100;
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -88,13 +89,6 @@ export default function LanguageTest() {
     }, 1000);
   };
 
-  const restart = () => {
-    setCurrentQuestion(0);
-    setScore(0);
-    setShowResult(false);
-    setSelectedAnswer(null);
-  };
-
   if (showResult) {
     return (
       <motion.div
@@ -106,7 +100,6 @@ export default function LanguageTest() {
           <Title order={2} mb="md">Quiz Complete!</Title>
           <Text size="xl" mb="md">Your Score: {score} out of {questions.length}</Text>
           <Progress value={(score / questions.length) * 100} size="xl" mb="xl" />
-          <Button onClick={restart} size="lg">Try Again</Button>
         </Paper>
       </motion.div>
     );
@@ -114,7 +107,15 @@ export default function LanguageTest() {
 
   return (
     <Container className={styles.quizContainer}>
-      <Progress value={(currentQuestion / questions.length) * 100} size="sm" mb="xl" />
+      <Progress
+        color="black"
+        value={progressValue}
+        size="xl"
+        radius="md"
+        animated
+        className={styles.progressBar}
+      />
+
       <AnimatePresence mode="wait">
         <motion.div
           key={currentQuestion}
@@ -124,7 +125,7 @@ export default function LanguageTest() {
           transition={{ duration: 0.3 }}
         >
           <Paper shadow="md" p="xl" className={styles.questionCard}>
-            <Title order={3} mb="xl">Question {currentQuestion + 1}</Title>
+            <Title c="green" order={3} mb="xl">Question {currentQuestion + 1}</Title>
             <Text size="lg" mb="xl">{questions[currentQuestion].text}</Text>
             <Stack gap="md">
               {questions[currentQuestion].options.map((option) => (
@@ -144,7 +145,7 @@ export default function LanguageTest() {
                         ? option.id === questions[currentQuestion].correctOptionId
                           ? "green"
                           : "red"
-                        : "blue"
+                        : "grape"
                     }
                     onClick={() => !selectedAnswer && handleAnswer(option.id)}
                   >

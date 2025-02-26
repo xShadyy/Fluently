@@ -17,8 +17,7 @@
     "prettier:write": "prettier --write \"**/*.{ts,tsx}\"",
     "test": "npm run prettier:check && npm run lint && npm run typecheck && npm run jest",
     "start:backend": "ts-node backend/server.ts",
-    "start:all": "concurrently \"npm run start:backend\" \"npm run dev\"",
-    "seed": "ts-node backend/prisma/seed.ts"
+    "start:all": "concurrently \"npm run start:backend\" \"npm run dev\""
   },
   "dependencies": {
     "@mantine/core": "^7.16.3",

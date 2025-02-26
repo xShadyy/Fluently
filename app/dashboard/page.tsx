@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Navbar from "../components/ui/Navbar/Navbar";
-import Test from "../components/ui/test/test";
+import ProficiencyQuiz from "../components/ui/ProficiencyQuiz/ProficiencyQuiz";
 import { useDisclosure } from "@mantine/hooks";
 import { LoadingOverlay, Button, Group, Box } from "@mantine/core";
+import next from "next";
+import classes from "./layout.module.css";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -41,9 +43,9 @@ export default function Dashboard() {
   </Box>;
 
   return (
-    <div>
+    <div className={classes.background}>
       <Navbar />
-      <Test/>
+      <ProficiencyQuiz/>
     </div>
   );
 }

@@ -44,7 +44,7 @@ export default function UserCard({
   return (
     <Group gap="sm" mb="1.5rem">
       <Stack gap={0} align="flex-end">
-        <Text size="lg" c="#B8BDBF" fw={500}>
+        <Text size="lg" c="whitesmoke" fw={500}>
           Welcome back {user.username}
         </Text>
         <Text size="md" c="rgb(251, 207, 232)">
