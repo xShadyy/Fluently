@@ -125,8 +125,8 @@ export default function ProficiencyQuiz() {
           transition={{ duration: 0.3 }}
         >
           <Paper shadow="md" p="xl" className={styles.questionCard}>
-            <Title c="green" order={3} mb="xl">Question {currentQuestion + 1}</Title>
-            <Text size="lg" mb="xl">{questions[currentQuestion].text}</Text>
+            <Title c="#03DAC6" order={3} mb="xl">Question {currentQuestion + 1}</Title>
+            <Text c="black" size="lg" mb="xl">{questions[currentQuestion].text}</Text>
             <Stack gap="md">
               {questions[currentQuestion].options.map((option) => (
                 <motion.div key={option.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -145,7 +145,7 @@ export default function ProficiencyQuiz() {
                         ? option.id === questions[currentQuestion].correctOptionId
                           ? "green"
                           : "red"
-                        : "grape"
+                        : "#3700B3"
                     }
                     onClick={() => !selectedAnswer && handleAnswer(option.id)}
                   >
