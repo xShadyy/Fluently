@@ -32,65 +32,66 @@ export default function Header() {
 
   return (
     <Container size="100%" className={classes.container}>
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.4, duration: 0.5 }}
-      >
-        <div>
-          <Image
-            src="/images/fluently-clean-wh.png"
-            alt="Fluently Logo"
-            width={150}
-            height={100}
-          />
-        </div>
-      </motion.div>
-
-      <Group align="center" gap="xl">
+      <Group className={classes.header}>
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-        >
-          <Text size="md">
-            Made by <span>@xShadyy</span>
-          </Text>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-        >
-          <Text size="md">Kursy</Text>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-        >
-          <Text size="md">Języki</Text>
-        </motion.div>
-      </Group>
-
-      <Group gap="md">
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
+          initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
         >
-          <span className={classes.dot} />
-          {user ? (
-            <UserCard user={user} />
-          ) : (
-            <Text size="sm" color="dimmed">
-              Not logged in
-            </Text>
-          )}
+          <Image
+            src="/images/fluently-clean-wh.png"
+            alt="Fluently Logo"
+            width={35}
+            height={35}
+          />
         </motion.div>
+
+        <Group className={classes.centerSection}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
+            <Text size="md">
+              cos tam
+            </Text>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
+            <Text size="md">Kursy</Text>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
+            <Text size="md">Języki</Text>
+          </motion.div>
+        </Group>
+
+        <Group gap="md" mt="sm">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            {user ? (
+              <UserCard user={user} />
+            ) : (
+              <Text size="sm" color="dimmed">
+                Not logged in
+              </Text>
+            )}
+          </motion.div>
+        </Group>
       </Group>
     </Container>
   );
 }
+
+

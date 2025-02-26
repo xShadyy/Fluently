@@ -1,0 +1,41 @@
+.quizContainer {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .questionCard {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .resultContainer {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .progressBar {
+    margin: 2rem 0;
+  }
+  
+  .answerButton {
+    transition: transform 0.2s;
+  }
+  
+  .answerButton:hover {
+    transform: translateY(-2px);
+  }
+  
+  .confetti {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+  }
+  
