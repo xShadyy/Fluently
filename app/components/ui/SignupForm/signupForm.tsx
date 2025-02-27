@@ -34,7 +34,8 @@ export default function SignupForm() {
   const [isUsernameFocused, setIsUsernameFocused] = useState(false);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
-  const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] = useState(false);
+  const [isConfirmPasswordFocused, setIsConfirmPasswordFocused] =
+    useState(false);
 
   const handleSignup = async () => {
     setError("");
@@ -222,7 +223,9 @@ export default function SignupForm() {
                 styles={{
                   label: { color: "white" },
                   input: {
-                    borderColor: isUsernameFocused ? "rgb(251, 207, 232)" : "rgba(255, 255, 255, 0.4)",
+                    borderColor: isUsernameFocused
+                      ? "rgb(251, 207, 232)"
+                      : "rgba(255, 255, 255, 0.4)",
                     transition: "border-color 0.3s ease",
                   },
                 }}
@@ -240,7 +243,9 @@ export default function SignupForm() {
                 styles={{
                   label: { color: "white" },
                   input: {
-                    borderColor: isEmailFocused ? "rgb(251, 207, 232)" : "rgba(255, 255, 255, 0.4)",
+                    borderColor: isEmailFocused
+                      ? "rgb(251, 207, 232)"
+                      : "rgba(255, 255, 255, 0.4)",
                     transition: "border-color 0.3s ease",
                   },
                 }}
@@ -258,7 +263,9 @@ export default function SignupForm() {
                 styles={{
                   label: { color: "white" },
                   input: {
-                    borderColor: isPasswordFocused ? "rgb(251, 207, 232)" : "rgba(255, 255, 255, 0.4)",
+                    borderColor: isPasswordFocused
+                      ? "rgb(251, 207, 232)"
+                      : "rgba(255, 255, 255, 0.4)",
                     transition: "border-color 0.3s ease",
                   },
                 }}
@@ -276,7 +283,9 @@ export default function SignupForm() {
                 styles={{
                   label: { color: "white" },
                   input: {
-                    borderColor: isConfirmPasswordFocused ? "rgb(251, 207, 232)" : "rgba(255, 255, 255, 0.4)",
+                    borderColor: isConfirmPasswordFocused
+                      ? "rgb(251, 207, 232)"
+                      : "rgba(255, 255, 255, 0.4)",
                     transition: "border-color 0.3s ease",
                   },
                 }}

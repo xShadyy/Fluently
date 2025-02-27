@@ -140,32 +140,48 @@
   text-align: center;
 }
 
+
+.progressBar {
+  background: gray;
+  margin: 2rem 0 1rem 0; 
+  width: 100%;
+}
+
 .questionCard {
-  background: white;
-  border-radius: 15px;
+  background-color: #f5faff;
   padding: 2rem;
-  margin-top: 10rem;
-  margin-bottom: 1rem;
+  margin-top: 2rem; 
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  border: 2px solid #f5faff; 
+  box-shadow: 0 0 10px #f5faff; 
 }
 
 .resultContainer {
-  text-align: center;
-  padding: 2rem;
+  height: 100vh; 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
+  padding: 2rem;
 }
 
-.progressBar {
-  background: gray;
-  margin: 2rem 0;
-  width: 100%;
+.resultCard {
+  width: 80%; /* Make it bigger */
+  max-width: 600px; /* Limit the maximum width */
+  padding: 3rem; /* Increase padding */
+  margin: 2rem 0; /* Add margin */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add box shadow */
+  border-radius: 10px; /* Add border radius */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .answerButton {

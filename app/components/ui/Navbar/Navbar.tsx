@@ -52,9 +52,7 @@ export default function Header() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.5 }}
           >
-            <Text size="md">
-              cos tam
-            </Text>
+            <Text size="md">cos tam</Text>
           </motion.div>
 
           <motion.div
@@ -93,5 +91,3 @@ export default function Header() {
     </Container>
   );
 }
-
-

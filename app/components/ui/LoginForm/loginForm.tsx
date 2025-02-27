@@ -222,13 +222,15 @@ export default function LoginForm() {
                 styles={{
                   label: { color: "white" },
                   input: {
-                    borderColor: isEmailFocused  ? "rgb(251, 207, 232)" : "rgba(255, 255, 255, 0.4)",
+                    borderColor: isEmailFocused
+                      ? "rgb(251, 207, 232)"
+                      : "rgba(255, 255, 255, 0.4)",
                     transition: "border-color 0.3s ease",
                   },
                 }}
               />
 
-            <PasswordInput
+              <PasswordInput
                 label="Password"
                 placeholder="Your password"
                 mt="md"
@@ -240,7 +242,9 @@ export default function LoginForm() {
                 styles={{
                   label: { color: "white" },
                   input: {
-                    borderColor: isPasswordFocused  ? "rgb(251, 207, 232)" : "rgba(255, 255, 255, 0.4)",
+                    borderColor: isPasswordFocused
+                      ? "rgb(251, 207, 232)"
+                      : "rgba(255, 255, 255, 0.4)",
                     transition: "border-color 0.3s ease",
                   },
                 }}

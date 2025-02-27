@@ -45,7 +45,7 @@ export default function Dashboard() {
   return (
     <div className={classes.background}>
       <Navbar />
-      <ProficiencyQuiz/>
+      <ProficiencyQuiz />
     </div>
   );
 }

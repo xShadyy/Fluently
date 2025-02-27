@@ -10,6 +10,7 @@ import {
 } from "@mantine/core";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./ProficiencyQuiz.module.css";
+import { bubblePop } from "../../../utils/sound";
 
 interface Option {
   id: string;
@@ -35,19 +36,21 @@ export default function ProficiencyQuiz() {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const res = await fetch("/api/questions?game=EnglishGrammarQuiz"); 
+        const res = await fetch("/api/questions?game=EnglishGrammarQuiz");
         const data = await res.json();
 
         if (res.ok) {
-          const formattedQuestions: Question[] = data.questions.map((q: any) => ({
-            id: q.id,
-            text: q.text,
-            options: q.options.map((opt: any) => ({
-              id: opt.id,
-              text: opt.text,
-            })),
-            correctOptionId: q.correctAnswer.optionId,
-          }));
+          const formattedQuestions: Question[] = data.questions.map(
+            (q: any) => ({
+              id: q.id,
+              text: q.text,
+              options: q.options.map((opt: any) => ({
+                id: opt.id,
+                text: opt.text,
+              })),
+              correctOptionId: q.correctAnswer.optionId,
+            }),
+          );
 
           setQuestions(formattedQuestions);
         } else {
@@ -62,6 +65,15 @@ export default function ProficiencyQuiz() {
 
     fetchQuestions();
   }, []);
+
+  const getLanguageLevel = (score: number, total: number) => {
+    const percentage = (score / total) * 100;
+    if (percentage >= 90) return "C1";
+    if (percentage >= 75) return "B2";
+    if (percentage >= 50) return "B1";
+    if (percentage >= 25) return "A2";
+    return "A1";
+  };
 
   if (loading) {
     return <Text>Loading questions...</Text>;
@@ -90,16 +102,28 @@ export default function ProficiencyQuiz() {
   };
 
   if (showResult) {
+    const languageLevel = getLanguageLevel(score, questions.length);
     return (
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className={styles.resultContainer}
       >
-        <Paper shadow="md" p="xl" className={styles.questionCard}>
-          <Title order={2} mb="md">Quiz Complete!</Title>
-          <Text size="xl" mb="md">Your Score: {score} out of {questions.length}</Text>
-          <Progress value={(score / questions.length) * 100} size="xl" mb="xl" />
+        <Paper shadow="md" p="xl" className={styles.resultCard}>
+          <Title order={2} mb="md">
+            Quiz Complete!
+          </Title>
+          <Text size="xl" mb="md">
+            Your Score: {score} out of {questions.length}
+          </Text>
+          <Text size="xl" mb="md">
+            Your predicted language Level: {languageLevel}
+          </Text>
+          <Progress
+            value={(score / questions.length) * 100}
+            size="xl"
+            mb="xl"
+          />
         </Paper>
       </motion.div>
     );
@@ -125,29 +149,36 @@ export default function ProficiencyQuiz() {
           transition={{ duration: 0.3 }}
         >
           <Paper shadow="md" p="xl" className={styles.questionCard}>
-            <Title c="#03DAC6" order={3} mb="xl">Question {currentQuestion + 1}</Title>
-            <Text c="black" size="lg" mb="xl">{questions[currentQuestion].text}</Text>
+            <Title c="black" order={3} mb="xl">
+              QUESTION {currentQuestion + 1}
+            </Title>
+            <Text c="black" size="lg" mb="xl" fw="700">
+              {questions[currentQuestion].text}
+            </Text>
             <Stack gap="md">
               {questions[currentQuestion].options.map((option) => (
-                <motion.div key={option.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <motion.div
+                  key={option.id}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
                   <Button
+                    fw="500"
                     fullWidth
                     size="lg"
-                    variant={
-                      selectedAnswer === option.id
-                        ? option.id === questions[currentQuestion].correctOptionId
-                          ? "filled"
-                          : "light"
-                        : "outline"
-                    }
-                    color={
-                      selectedAnswer === option.id
-                        ? option.id === questions[currentQuestion].correctOptionId
-                          ? "green"
-                          : "red"
-                        : "#3700B3"
-                    }
-                    onClick={() => !selectedAnswer && handleAnswer(option.id)}
+                    variant="outline"
+                    color="black"
+                    styles={(theme) => ({
+                      root: {
+                        borderWidth: 2,
+                      },
+                    })}
+                    onClick={() => {
+                      if (!selectedAnswer) {
+                        bubblePop.play();
+                        handleAnswer(option.id);
+                      }
+                    }}
                   >
                     {option.text}
                   </Button>
