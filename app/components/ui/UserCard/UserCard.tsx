@@ -3,6 +3,7 @@
 import { Group, Stack, Text, Avatar, Menu } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import classes from "./UserCard.module.css";
+import { uiClick } from "../../../utils/sound";
 
 function getInitials(name: string): string {
   if (!name) {
@@ -63,6 +64,7 @@ export default function UserCard({
         <div style={{ cursor: "pointer" }}>
           <Menu.Target>
             <Avatar
+              onClick={() => uiClick.play()}
               size="lg"
               radius="xl"
               color="gray"

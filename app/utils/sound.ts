@@ -7,5 +7,5 @@ export const bubblePop = new Howl({
 
 export const uiClick = new Howl({
   src: ["/sounds/ui-click.wav"],
-  volume: 0.5,
+  volume: 1,
 });
