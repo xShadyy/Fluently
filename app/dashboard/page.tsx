@@ -39,5 +39,8 @@ export default function Dashboard() {
     />
   </Box>;
 
-  return <DashRoot />;
+  return (
+    <DashRoot />
+    
+  );
 }

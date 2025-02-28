@@ -1,5 +1,5 @@
 import Sidebar from "../SideMenu/SideMenu";
-import Navbar from "../Navbar/Navbar";
+import Navbar from "../DashboardHeader/DashboardHeader";
 import ProficiencyQuiz from "../ProficiencyQuiz/ProficiencyQuiz";
 import styles from "./DashboardContent.module.css";
 

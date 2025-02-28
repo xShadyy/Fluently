@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import UserCard from "../UserCard/UserCard";
 import { Button, Container, Group, Image, Text } from "@mantine/core";
-import classes from "./Navbar.module.css";
+import classes from "./DashboardHeader.module.css";
 
 export default function Header() {
   const router = useRouter();
@@ -44,33 +44,8 @@ export default function Header() {
             width={35}
             height={35}
           />
+          
         </motion.div>
-
-        <Group className={classes.centerSection}>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-          >
-            <Text size="md">Modules</Text>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-          >
-            <Text size="md">Courses</Text>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-          >
-            <Text size="md"></Text>
-          </motion.div>
-        </Group>
 
         <Group gap="md" mt="sm">
           <motion.div

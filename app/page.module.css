@@ -1,0 +1,46 @@
+.page {
+    background-color: black;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .splineContainer {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: 100vh;
+    transition: transform 1.5s ease-in-out;
+  }
+  
+  .moveLeft {
+    transform: translateX(-75%);
+  }
+  
+  .rootContainer {
+    position: absolute;
+    top: 50%;
+    right: 10%;
+    opacity: 0;
+    transform: translateY(-50%);
+    transition: opacity 1.5s ease-in-out;
+    pointer-events: none;
+  }
+  
+  .rootContainer button,
+  .rootContainer a,
+  .rootContainer input,
+  .rootContainer select,
+  .rootContainer [role="button"] {
+    pointer-events: auto;
+  }
+  
+  
+  
+  
+  .showRoot {
+    opacity: 1;
+  }
+  
