@@ -1,12 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Navbar from "../components/ui/Navbar/Navbar";
-import ProficiencyQuiz from "../components/ui/ProficiencyQuiz/ProficiencyQuiz";
 import { useDisclosure } from "@mantine/hooks";
 import { LoadingOverlay, Button, Group, Box } from "@mantine/core";
-import next from "next";
-import classes from "./layout.module.css";
+import DashRoot from "../components/ui/DashboardContent/DashboardContent";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -42,10 +39,5 @@ export default function Dashboard() {
     />
   </Box>;
 
-  return (
-    <div className={classes.background}>
-      <Navbar />
-      <ProficiencyQuiz />
-    </div>
-  );
+  return <DashRoot />;
 }

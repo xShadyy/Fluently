@@ -1,0 +1,112 @@
+.navbar {
+    background-color: rgba(248, 249, 250, 0.8);
+    border-right: 1px solid rgba(233, 236, 239, 0.5);
+    transition: width 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 80px);
+    margin-top: 80px;
+}
+
+  
+  .sidebarContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(233, 236, 239, 0.5);
+  }
+  
+  .footer {
+    padding-top: 20px;
+    margin-top: auto;
+    border-top: 1px solid rgba(233, 236, 239, 0.5);
+  }
+  
+  .logo {
+    color: #228be6;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    letter-spacing: -0.5px;
+  }
+  
+  .link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin-bottom: 8px;
+    color: rgba(0, 0, 0, 0.8);
+  }
+  
+  .link:hover {
+    background-color: rgba(241, 243, 245, 0.8);
+  }
+  
+  .active {
+    background-color: rgba(231, 245, 255, 0.8);
+  }
+  
+  .iconWrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(241, 243, 245, 0.8);
+    color: #228be6;
+    transition: all 0.2s ease;
+  }
+  
+  .activeIcon {
+    background-color: #228be6;
+    color: white;
+  }
+  
+  .chevron {
+    transition: transform 0.2s ease;
+    opacity: 0.5;
+  }
+  
+  .link:hover .chevron {
+    transform: translateX(3px);
+    opacity: 0.8;
+  }
+  
+  .linkLabel {
+    transition: color 0.2s ease;
+  }
+  
+  .link:hover .linkLabel {
+    color: #228be6;
+  }
+  
+  .collapseBtn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+  }
+  
+  .collapseBtn:hover {
+    background-color: rgba(233, 236, 239, 0.8);
+  }
+  
+  .linksContainer {
+    margin-top: 30px;
+  }
+  

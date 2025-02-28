@@ -52,7 +52,7 @@ export default function Header() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.5 }}
           >
-            <Text size="md">cos tam</Text>
+            <Text size="md">Modules</Text>
           </motion.div>
 
           <motion.div
@@ -60,7 +60,7 @@ export default function Header() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.5 }}
           >
-            <Text size="md">Kursy</Text>
+            <Text size="md">Courses</Text>
           </motion.div>
 
           <motion.div
@@ -68,7 +68,7 @@ export default function Header() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.5 }}
           >
-            <Text size="md">Języki</Text>
+            <Text size="md"></Text>
           </motion.div>
         </Group>
 

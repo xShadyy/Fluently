@@ -68,7 +68,6 @@ export default function UserCard({
               size="lg"
               radius="xl"
               color="gray"
-            
               src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`}
             >
               {getInitials(user.username)}

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Button, Container } from "@mantine/core";
-import styles from "./Root.module.css";
+import styles from "./RootContents.module.css";
 
 const Root = () => {
   const router = useRouter();

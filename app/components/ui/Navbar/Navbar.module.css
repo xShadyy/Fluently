@@ -16,6 +16,7 @@
   right: 0;
   height: 80px;
   padding: 0 2rem;
+  background-color: rgba(0, 0, 0, 0.7);
   color: whitesmoke;
   display: flex;
   justify-content: space-between;
@@ -24,6 +25,7 @@
   z-index: 100;
   border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.1); 
 }
+
 
 .centerSection {
   position: absolute;
