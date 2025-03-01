@@ -161,7 +161,7 @@ export default function ProficiencyQuiz() {
             <Title c="black" order={3} mb="xl">
               QUESTION {currentQuestion + 1}
             </Title>
-            <Text c="black" size="lg" mb="xl" fw="700">
+            <Text c="black" size="lg" mb="xl" fw="500">
               {questions[currentQuestion].text}
             </Text>
             <Stack gap="md">
@@ -172,7 +172,7 @@ export default function ProficiencyQuiz() {
                   whileTap={{ scale: 0.98 }}
                 >
                   <Button
-                    fw="500"
+                    fw="700"
                     fullWidth
                     size="lg"
                     variant="outline"
