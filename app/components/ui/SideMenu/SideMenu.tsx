@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from "react";
 import { Group, Text, UnstyledButton } from "@mantine/core";
 import { motion } from "framer-motion";
@@ -8,11 +10,11 @@ import {
   IconUser,
   IconChevronRight,
   IconLanguage,
-  IconAward,
-  IconChartBar,
   IconLogout,
 } from "@tabler/icons-react";
 import classes from "./SideMenu.module.css";
+import { useRouter } from "next/navigation";
+import { uiClick } from "../../../utils/sound";
 
 interface NavbarLinkProps {
   icon: React.ReactNode;
@@ -45,27 +47,45 @@ function NavbarLink({ icon, label, active, onClick }: NavbarLinkProps) {
 }
 
 const navItems = [
-  { icon: <IconHome size={20} stroke={1.5} />, label: "Dashboard" },
-  { icon: <IconBook size={20} stroke={1.5} />, label: "Lessons" },
-  { icon: <IconLanguage size={20} stroke={1.5} />, label: "Languages" },
-  { icon: <IconAward size={20} stroke={1.5} />, label: "Achievements" },
-  { icon: <IconChartBar size={20} stroke={1.5} />, label: "Progress" },
-  { icon: <IconUser size={20} stroke={1.5} />, label: "Profile" },
-  { icon: <IconSettings size={20} stroke={1.5} />, label: "Settings" },
+  { icon: <IconHome size={20} stroke={1.5} />, label: "Dashboard", path: "" },
+  { icon: <IconBook size={20} stroke={1.5} />, label: "Lessons", path: "" },
+  { icon: <IconLanguage size={20} stroke={1.5} />, label: "Words", path: "" },
+  { icon: <IconUser size={20} stroke={1.5} />, label: "Profile", path: "" },
+  { icon: <IconSettings size={20} stroke={1.5} />, label: "Settings", path: "" },
 ];
 
 export function Sidebar() {
   const [active, setActive] = useState(0);
-  const [collapsed, setCollapsed] = useState(false);
+  const router = useRouter();
 
   const links = navItems.map((item, index) => (
     <NavbarLink
       {...item}
       key={item.label}
       active={index === active}
-      onClick={() => setActive(index)}
+      onClick={() => {
+        uiClick.play();
+        setActive(index);
+        router.push(item.path);
+      }}
     />
   ));
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (res.ok) {
+        router.push("/login");
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
 
   return (
     <motion.div
@@ -75,33 +95,12 @@ export function Sidebar() {
     >
       <div
         style={{
-          width: collapsed ? 80 : 300,
+          width: 250,
           padding: "16px",
         }}
         className={classes.navbar}
       >
         <div className={classes.sidebarContent}>
-          <div className={classes.header}>
-            {!collapsed && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                <Text size="xl" fw={700} className={classes.logo}>
-                  Menu
-                </Text>
-              </motion.div>
-            )}
-            <UnstyledButton
-              onClick={() => setCollapsed(!collapsed)}
-              className={classes.collapseBtn}
-            >
-              <motion.div animate={{ rotate: collapsed ? 180 : 0 }}>
-                <IconChevronRight size={20} stroke={1.5} />
-              </motion.div>
-            </UnstyledButton>
-          </div>
           <div className={classes.linksContainer}>{links}</div>
         </div>
 
@@ -109,6 +108,10 @@ export function Sidebar() {
           <NavbarLink
             icon={<IconLogout size={20} stroke={1.5} />}
             label="Logout"
+            onClick={() => {
+              uiClick.play();
+              handleLogout();
+            }}
           />
         </div>
       </div>

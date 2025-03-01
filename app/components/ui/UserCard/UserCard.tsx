@@ -1,9 +1,6 @@
 "use client";
 
 import { Group, Stack, Text, Avatar, Menu } from "@mantine/core";
-import { useRouter } from "next/navigation";
-import classes from "./UserCard.module.css";
-import { uiClick } from "../../../utils/sound";
 
 function getInitials(name: string): string {
   if (!name) {
@@ -19,28 +16,11 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
-export default function UserCard({
-  user,
-}: {
-  user: { username: string; email: string; createdAt: string };
-}) {
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    try {
-      const res = await fetch("/api/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-      if (res.ok) {
-        router.push("/login");
-      } else {
-        console.error("Logout failed");
-      }
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
-  };
+  export default function UserCard({
+    user,
+  }: {
+    user: { username: string; email: string; createdAt: string };
+  }) {
 
   return (
     <Group gap="sm" mb="1.5rem">
@@ -61,10 +41,9 @@ export default function UserCard({
         withArrow
         arrowPosition="center"
       >
-        <div style={{ cursor: "pointer" }}>
+        <div>
           <Menu.Target>
             <Avatar
-              onClick={() => uiClick.play()}
               size="lg"
               radius="xl"
               color="gray"
@@ -74,9 +53,6 @@ export default function UserCard({
             </Avatar>
           </Menu.Target>
         </div>
-        <Menu.Dropdown>
-          <Menu.Item onClick={handleLogout}>Logout</Menu.Item>
-        </Menu.Dropdown>
       </Menu>
     </Group>
   );

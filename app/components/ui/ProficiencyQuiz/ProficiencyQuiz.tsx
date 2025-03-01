@@ -132,7 +132,7 @@ export default function ProficiencyQuiz() {
   return (
     <Container className={styles.quizContainer}>
       <Progress
-        color="black"
+        color="lightblue"
         value={progressValue}
         size="xl"
         radius="md"
