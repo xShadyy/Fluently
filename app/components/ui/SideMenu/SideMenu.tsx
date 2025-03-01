@@ -47,11 +47,11 @@ function NavbarLink({ icon, label, active, onClick }: NavbarLinkProps) {
 }
 
 const navItems = [
-  { icon: <IconHome size={20} stroke={1.5} />, label: "Dashboard", path: "" },
-  { icon: <IconBook size={20} stroke={1.5} />, label: "Lessons", path: "" },
-  { icon: <IconLanguage size={20} stroke={1.5} />, label: "Words", path: "" },
-  { icon: <IconUser size={20} stroke={1.5} />, label: "Profile", path: "" },
-  { icon: <IconSettings size={20} stroke={1.5} />, label: "Settings", path: "" },
+  { icon: <IconHome size={20} stroke={1.5} />, label: "Dashboard", path: "dashboard" },
+  { icon: <IconBook size={20} stroke={1.5} />, label: "Lessons", path: "dashboard/lessons" },
+  { icon: <IconLanguage size={20} stroke={1.5} />, label: "Words", path: "dashboard/words" },
+  { icon: <IconUser size={20} stroke={1.5} />, label: "Profile", path: "dashboard/profile" },
+  { icon: <IconSettings size={20} stroke={1.5} />, label: "Settings", path: "dashboard/settings" },
 ];
 
 export function Sidebar() {
