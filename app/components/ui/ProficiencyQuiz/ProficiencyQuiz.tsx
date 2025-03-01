@@ -31,6 +31,7 @@ export default function ProficiencyQuiz() {
   const [showResult, setShowResult] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [resultVisible, setResultVisible] = useState(true);
   const progressValue = (currentQuestion / questions.length) * 100;
 
   useEffect(() => {
@@ -95,6 +96,9 @@ export default function ProficiencyQuiz() {
         setCurrentQuestion((prev) => prev + 1);
       } else {
         setShowResult(true);
+        setTimeout(() => {
+          setResultVisible(false);
+        }, 6000); 
       }
 
       setSelectedAnswer(null);
@@ -104,28 +108,33 @@ export default function ProficiencyQuiz() {
   if (showResult) {
     const languageLevel = getLanguageLevel(score, questions.length);
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className={styles.resultContainer}
-      >
-        <Paper shadow="md" p="xl" className={styles.resultCard}>
-          <Title order={2} mb="md">
-            Quiz Complete!
-          </Title>
-          <Text size="xl" mb="md">
-            Your Score: {score} out of {questions.length}
-          </Text>
-          <Text size="xl" mb="md">
-            Your predicted language Level: {languageLevel}
-          </Text>
-          <Progress
-            value={(score / questions.length) * 100}
-            size="xl"
-            mb="xl"
-          />
-        </Paper>
-      </motion.div>
+      <AnimatePresence>
+        {resultVisible && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={styles.resultContainer}
+          >
+            <Paper shadow="md" p="xl" className={styles.resultCard}>
+              <Title order={2} mb="md">
+                Quiz Complete!
+              </Title>
+              <Text size="xl" mb="md">
+                Your Score: {score} out of {questions.length}
+              </Text>
+              <Text size="xl" mb="md">
+                Your predicted language Level: {languageLevel}
+              </Text>
+              <Progress
+                value={(score / questions.length) * 100}
+                size="xl"
+                mb="xl"
+              />
+            </Paper>
+          </motion.div>
+        )}
+      </AnimatePresence>
     );
   }
 
