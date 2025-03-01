@@ -54,7 +54,6 @@ npm run dev
 ### Other scripts
 - `start:all` – starts frontend and backend using [concurrently](https://www.npmjs.com/package/concurrently)
 - `prettier:write` – formats all files with Prettier
-- `seed` – updates the DB with new dashboard games content using [prisma](https://www.prisma.io/)
 
 
 
