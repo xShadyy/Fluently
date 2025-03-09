@@ -1,17 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import UserCard from "../UserCard/UserCard";
-import { Button, Container, Group, Image, Text } from "@mantine/core";
-import classes from "./DashboardHeader.module.css";
+import UserCard from "../../UserCard/UserCard";
+import { Container, Group, Image, Text } from "@mantine/core";
+import classes from "./UserHeader.module.css";
 
-export default function Header() {
-  const router = useRouter();
+export default function DashboardHeader() {
   const [user, setUser] = useState(null);
-  const MotionLink = motion.create(Link);
 
   useEffect(() => {
     async function fetchUser() {
@@ -33,26 +28,15 @@ export default function Header() {
   return (
     <Container size="100%" className={classes.container}>
       <Group className={classes.header}>
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-        >
           <Image
             src="/images/fluently-clean-wh.png"
             alt="Fluently Logo"
             width={35}
             height={35}
           />
-          
-        </motion.div>
 
         <Group gap="md" mt="sm">
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-          >
+          
             {user ? (
               <UserCard user={user} />
             ) : (
@@ -60,7 +44,7 @@ export default function Header() {
                 Not logged in
               </Text>
             )}
-          </motion.div>
+
         </Group>
       </Group>
     </Container>

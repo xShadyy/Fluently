@@ -1,12 +1,12 @@
 import Sidebar from "../SideMenu/SideMenu";
-import Navbar from "../DashboardHeader/DashboardHeader";
+import DashboardHeader from "../UserHeader/UserHeader";
 import ProficiencyQuiz from "../ProficiencyQuiz/ProficiencyQuiz";
-import styles from "./DashboardContent.module.css";
+import styles from "./DashboardGrouped.module.css";
 
 export default function DashRoot() {
   return (
     <div className={styles.container}>
-      <Navbar />
+      <DashboardHeader />
       <div className={styles.main}>
         <Sidebar />
         <div className={styles.content}>

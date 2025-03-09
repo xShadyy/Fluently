@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { LoadingOverlay, Button, Group, Box } from "@mantine/core";
-import DashRoot from "../components/ui/DashboardContent/DashboardContent";
+import DashRoot from "../components/ui/DashboardGrouped/DashboardGrouped";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -39,7 +39,5 @@ export default function Dashboard() {
     />
   </Box>;
 
-  return (    
-    <DashRoot />
-  );
+  return <DashRoot />;
 }

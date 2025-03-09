@@ -16,12 +16,11 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
-  export default function UserCard({
-    user,
-  }: {
-    user: { username: string; email: string; createdAt: string };
-  }) {
-
+export default function UserCard({
+  user,
+}: {
+  user: { username: string; email: string; createdAt: string };
+}) {
   return (
     <Group gap="sm" mb="1.5rem">
       <Stack gap={0} align="flex-end">

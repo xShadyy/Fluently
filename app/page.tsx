@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import Header from "./components/ui/Header/Header";
+import Header from "./components/ui/RootHeader/Header";
 import Root from "./components/ui/RootContents/RootContents";
 import styles from "./page.module.css";
 import Spline from "@splinetool/react-spline";
@@ -11,7 +11,8 @@ export default function HomePage() {
   useEffect(() => {
     const script = document.createElement("script");
     script.type = "module";
-    script.src = "https://unpkg.com/@splinetool/viewer@1.9.72/build/spline-viewer.js";
+    script.src =
+      "https://unpkg.com/@splinetool/viewer@1.9.72/build/spline-viewer.js";
     document.body.appendChild(script);
 
     setTimeout(() => {
@@ -25,19 +26,19 @@ export default function HomePage() {
 
   return (
     <div className={styles.page}>
-
       <Header />
 
-      <div className={`${styles.splineContainer} ${startAnimation ? styles.moveLeft : ""}`}>
-        <Spline
-          scene="https://prod.spline.design/IV4HnLV5h5pOmWxH/scene.splinecode" 
-        />
+      <div
+        className={`${styles.splineContainer} ${startAnimation ? styles.moveLeft : ""}`}
+      >
+        <Spline scene="https://prod.spline.design/IV4HnLV5h5pOmWxH/scene.splinecode" />
       </div>
 
-      <div className={`${styles.rootContainer} ${startAnimation ? styles.showRoot : ""}`}>
+      <div
+        className={`${styles.rootContainer} ${startAnimation ? styles.showRoot : ""}`}
+      >
         <Root />
       </div>
-      
     </div>
   );
 }

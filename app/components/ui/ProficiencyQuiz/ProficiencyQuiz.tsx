@@ -98,7 +98,7 @@ export default function ProficiencyQuiz() {
         setShowResult(true);
         setTimeout(() => {
           setResultVisible(false);
-        }, 6000); 
+        }, 6000);
       }
 
       setSelectedAnswer(null);

@@ -1,8 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Group, Text, UnstyledButton } from "@mantine/core";
-import { motion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import {
   IconBook,
@@ -14,7 +12,7 @@ import {
   IconLogout,
 } from "@tabler/icons-react";
 import classes from "./SideMenu.module.css";
-import { uiClick } from "../../../utils/sound";
+import { uiClick } from "../../../../utils/sound";
 
 interface NavbarLinkProps {
   icon: React.ReactNode;
@@ -25,7 +23,6 @@ interface NavbarLinkProps {
 
 function NavbarLink({ icon, label, active, onClick }: NavbarLinkProps) {
   return (
-    <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
       <UnstyledButton
         onClick={onClick}
         className={`${classes.link} ${active ? classes.active : ""}`}
@@ -42,7 +39,6 @@ function NavbarLink({ icon, label, active, onClick }: NavbarLinkProps) {
         </Group>
         <IconChevronRight size={16} className={classes.chevron} />
       </UnstyledButton>
-    </motion.div>
   );
 }
 
@@ -79,11 +75,6 @@ export function SideMenu() {
   const router = useRouter();
 
   return (
-    <motion.div
-      initial={{ x: -300 }}
-      animate={{ x: 0 }}
-      transition={{ type: "spring", stiffness: 100 }}
-    >
       <div className={classes.navbar} style={{ width: 250, padding: "16px" }}>
         <div className={classes.sidebarContent}>
           <div className={classes.linksContainer}>
@@ -113,7 +104,6 @@ export function SideMenu() {
           />
         </div>
       </div>
-    </motion.div>
   );
 }
 

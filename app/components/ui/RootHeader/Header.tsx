@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   IconBrandGithub,
   IconBrandInstagram,
@@ -12,9 +10,6 @@ import { Container, Group, Image, rem, Text, Anchor } from "@mantine/core";
 import classes from "./Header.module.css";
 
 export default function Header() {
-  const router = useRouter();
-  const MotionLink = motion.create(Link);
-
   return (
     <Container size="100%" className={classes.container}>
       <Group className={classes.header}>
