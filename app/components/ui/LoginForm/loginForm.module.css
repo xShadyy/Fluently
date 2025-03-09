@@ -1,0 +1,146 @@
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.pageWrapper {
+  height: 100vh;
+  background-color: #030303;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(3, 3, 3, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  border-bottom: 0.0625rem solid rgba(255, 255, 255, 0.1); 
+}
+
+.centerSection {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  background-color: rgb(251, 207, 232);
+  border-radius: 50%;
+  display: inline-block;
+  animation: blink 4s ease-in-out infinite;
+}
+
+.wrapper {
+height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 80px;
+}
+
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.heading {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.subheading {
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  color: #b8bdbf;
+  text-align: center;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.highlight {
+  color: rgb(251, 207, 232);
+}
+
+.contactCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  margin: 1rem 0;
+  width: fit-content;
+}
+
+.contactInfo {
+  text-align: left;
+}
+
+.contactName {
+  color: white;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.contactTitle {
+  color: #b8bdbf;
+  font-size: 0.9rem;
+}
+
+.form {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0 1rem;
+  }
+
+  .content {
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+
+  .contactCard {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+    width: 100%;
+  }
+
+  .contactInfo {
+    text-align: center;
+  }
+}
+
+

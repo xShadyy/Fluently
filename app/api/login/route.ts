@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-
 const prisma = new PrismaClient();
-const SECRET_KEY = process.env.JWT_SECRET || "your-secret-key";
+import bcrypt from "bcrypt";
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const { email, password } = await req.json();
+    const { email, password, keepLoggedIn, isRegister } = await request.json();
+
+    if (isRegister) {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
 
     if (!email || !password) {
       return NextResponse.json(
@@ -17,7 +18,10 @@ export async function POST(req: Request) {
       );
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
     if (!user) {
       return NextResponse.json(
         { error: "Invalid email or password" },
@@ -33,20 +37,44 @@ export async function POST(req: Request) {
       );
     }
 
-    const token = jwt.sign({ userId: user.id, email: user.email }, SECRET_KEY, {
-      expiresIn: "7d",
+    const expiresAt = new Date();
+    if (keepLoggedIn) {
+      expiresAt.setDate(expiresAt.getDate() + 30);
+    } else {
+      expiresAt.setHours(expiresAt.getHours() + 1);
+    }
+
+    const session = await prisma.session.upsert({
+      where: { userId: user.id },
+      update: { expiresAt },
+      create: {
+        user: { connect: { id: user.id } },
+        expiresAt,
+      },
     });
 
-    return NextResponse.json(
-      {
-        token,
-        user: { id: user.id, email: user.email, username: user.username },
+    const response = NextResponse.json({
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        createdAt: user.createdAt,
       },
-      { status: 200 },
-    );
+    });
+
+    response.cookies.set("sessionId", session.id, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      expires: expiresAt,
+    });
+
+    return response;
   } catch (error) {
+    console.error("Login error:", error);
     return NextResponse.json(
-      { error: "Something went wrong" },
+      { error: "Internal server error" },
       { status: 500 },
     );
   }

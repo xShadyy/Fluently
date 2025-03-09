@@ -13,4 +13,44 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
+  Session   Session?
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
+
+model Game {
+  id        String     @id @default(uuid())
+  name      String
+  questions Question[]
+}
+
+model Question {
+  id            String         @id @default(uuid())
+  text          String
+  gameId        String
+  game          Game           @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  options       Option[]
+  correctAnswer CorrectAnswer?
+}
+
+model Option {
+  id            String         @id @default(uuid())
+  text          String
+  questionId    String
+  question      Question       @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  CorrectAnswer CorrectAnswer?
+}
+
+model CorrectAnswer {
+  id         String   @id @default(uuid())
+  questionId String   @unique
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  optionId   String   @unique
+  option     Option   @relation(fields: [optionId], references: [id], onDelete: Cascade)
 }

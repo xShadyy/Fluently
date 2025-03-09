@@ -1,23 +1,43 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { getToken } from "../utils/auth";
+import { useDisclosure } from "@mantine/hooks";
+import { LoadingOverlay, Button, Group, Box } from "@mantine/core";
+import DashRoot from "../components/ui/DashboardGrouped/DashboardGrouped";
 
 export default function Dashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState("");
+  const [visible, { toggle }] = useDisclosure(false);
 
   useEffect(() => {
-    const token = getToken();
-    if (!token) {
-      router.push("/login");
-    } else {
-      setIsAuthenticated(true);
-    }
-  }, [router]);
+    const fetchUser = async () => {
+      const res = await fetch("/api/user", {
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setUser(data.user);
+      } else {
+        setError(data.error || "Failed to fetch user data");
+      }
+    };
+    fetchUser();
+  }, []);
 
-  if (!isAuthenticated) return <p>Loading...</p>;
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+  if (!user) {
+    return;
+  }
+  <Box pos="relative">
+    <LoadingOverlay
+      visible={visible}
+      zIndex={1000}
+      overlayProps={{ radius: "sm", blur: 2 }}
+    />
+  </Box>;
 
-  return <h1>Welcome to the Dashboard!</h1>;
+  return <DashRoot />;
 }

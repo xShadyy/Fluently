@@ -1,31 +1,46 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 import bcrypt from "bcrypt";
 
-const prisma = new PrismaClient();
-
-export async function POST(req: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { email, password, username } = await req.json();
+    const { email, password, username, isRegister } = await request.json();
+
+    if (!isRegister) {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
 
     if (!email || !password || !username) {
       return NextResponse.json(
-        { error: "All fields are required" },
+        { error: "Email, password, and username are required" },
         { status: 400 },
       );
     }
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) {
+    const existingUserByEmail = await prisma.user.findUnique({
+      where: { email },
+    });
+    if (existingUserByEmail) {
       return NextResponse.json(
-        { error: "User already exists" },
-        { status: 400 },
+        { error: "A user with this email already exists" },
+        { status: 409 },
+      );
+    }
+
+    const existingUserByUsername = await prisma.user.findUnique({
+      where: { username },
+    });
+    if (existingUserByUsername) {
+      return NextResponse.json(
+        { error: "Username is already taken" },
+        { status: 409 },
       );
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         email,
         username,
@@ -33,10 +48,14 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(user, { status: 201 });
-  } catch (error) {
     return NextResponse.json(
-      { error: "Something went wrong" },
+      { message: "User created successfully" },
+      { status: 201 },
+    );
+  } catch (error) {
+    console.error("Registration error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
       { status: 500 },
     );
   }
