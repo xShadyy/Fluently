@@ -39,5 +39,5 @@ export default function Dashboard() {
     />
   </Box>;
 
-  return <UserProfileDataGrouped disableAnimation/>;
+  return <UserProfileDataGrouped disableAnimation />;
 }

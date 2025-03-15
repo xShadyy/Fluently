@@ -14,7 +14,7 @@ export default function DashRoot({ disableAnimation = false }: DashRootProps) {
       <div className={styles.main}>
         <Sidemenu disableAnimation={disableAnimation} />
         <div className={styles.content}>
-          <UserProfileData/>
+          <UserProfileData />
         </div>
       </div>
     </div>

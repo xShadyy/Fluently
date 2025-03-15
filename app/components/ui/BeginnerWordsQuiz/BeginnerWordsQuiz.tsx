@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import { Container, Paper, Button, Title, Text, Progress, Stack } from "@mantine/core";
+import {
+  Container,
+  Paper,
+  Button,
+  Title,
+  Text,
+  Progress,
+  Stack,
+} from "@mantine/core";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./BeginnerWordsQuiz.module.css";
 
@@ -64,14 +72,18 @@ export default function WordsQuiz() {
     if (selectedAnswer) return;
     setSelectedAnswer(optionId);
     const isCorrect =
-      !timeExpired && optionId === questions[currentQuestion].correctAnswer?.optionId;
+      !timeExpired &&
+      optionId === questions[currentQuestion].correctAnswer?.optionId;
     if (isCorrect) {
       setScore((prev) => prev + 1);
     } else {
       setLives((prev) => prev - 1);
     }
     setTimeout(() => {
-      if (lives - (isCorrect ? 0 : 1) <= 0 || currentQuestion === questions.length - 1) {
+      if (
+        lives - (isCorrect ? 0 : 1) <= 0 ||
+        currentQuestion === questions.length - 1
+      ) {
         setQuizOver(true);
         setTimeout(() => setResultVisible(false), 6000);
       } else {
@@ -99,10 +111,17 @@ export default function WordsQuiz() {
     return (
       <AnimatePresence>
         {resultVisible && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className={styles.resultContainer}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={styles.resultContainer}
+          >
             <Paper shadow="md" p="xl" className={styles.resultCard}>
               <Title order={2}>Quiz Complete!</Title>
-              <Text size="xl">Your Score: {score} out of {questions.length}</Text>
+              <Text size="xl">
+                Your Score: {score} out of {questions.length}
+              </Text>
               <Text size="xl">Performance: {getRating()}</Text>
             </Paper>
           </motion.div>
@@ -113,12 +132,18 @@ export default function WordsQuiz() {
 
   return (
     <Container className={styles.quizContainer}>
-      <Progress value={(currentQuestion / questions.length) * 100} size="xl" className={styles.progressBar} />
+      <Progress
+        value={(currentQuestion / questions.length) * 100}
+        size="xl"
+        className={styles.progressBar}
+      />
 
       <div className={styles.roadmap}>
         {questions.map((_, index) => (
           <div key={index} className={styles.roadmapItem}>
-            <div className={`${styles.circle} ${index === currentQuestion ? styles.active : ""}`}>
+            <div
+              className={`${styles.circle} ${index === currentQuestion ? styles.active : ""}`}
+            >
               {index + 1}
             </div>
             {index < questions.length - 1 && <div className={styles.line} />}
@@ -128,7 +153,9 @@ export default function WordsQuiz() {
 
       <div className={styles.lives}>
         {Array.from({ length: lives }).map((_, index) => (
-          <span key={index} className={styles.heart}>❤️</span>
+          <span key={index} className={styles.heart}>
+            ❤️
+          </span>
         ))}
       </div>
 
@@ -144,10 +171,16 @@ export default function WordsQuiz() {
           className={styles.questionCard}
         >
           <Title order={3}>Question {currentQuestion + 1}</Title>
-          <Text size="lg" mt="md">{questions[currentQuestion].text}</Text>
+          <Text size="lg" mt="md">
+            {questions[currentQuestion].text}
+          </Text>
           <Stack gap="md" mt="xl">
             {questions[currentQuestion].options.map((option) => (
-              <motion.div key={option.id} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <motion.div
+                key={option.id}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
                 <Button
                   fullWidth
                   size="lg"

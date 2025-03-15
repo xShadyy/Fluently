@@ -1,59 +1,234 @@
-.quizContainer {
-  width: 100%;
-  max-width: 800px;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.resultContainer {
+  text-align: center;
+  background: linear-gradient(135deg, #ffffff, #f7f7f7);
+  border-radius: 20px;
+  margin: 3rem auto;
+  max-width: 900px;
+  padding: 2.5rem 3rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
 }
 
-.questionCard {
-  background: white;
-  border-radius: 15px;
-  padding: 2rem;
-  margin-top: 10rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.scoreCircle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem;
+  position: relative;
+  background: #ffffff;
+  box-shadow: 0 6px 12px rgba(52, 211, 153, 0.3);
+}
+
+.scoreCircle::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  z-index: -1;
+}
+
+.scoreValue {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #34d399;
+}
+
+.resultDetails {
+  margin-bottom: 2.5rem;
+  font-size: 1.25rem;
+  color: #374151;
+}
+
+.levelBadge {
+  display: inline-block;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  background-color: #34d399;
+  border-radius: 50px;
+  margin: 1rem 0;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 6px 16px rgba(52, 211, 153, 0.3);
+}
+
+.levelDescription {
+  font-style: italic;
+  color: #6b7280;
+  max-width: 600px;
+  margin: 0.5rem auto;
+  font-size: 1.1rem;
+}
+
+.quizContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 600px;
+  width: 65vh;
+  margin: 2rem auto;
+  border-radius: 12px;
+  background-color: rgb(248, 249, 250);
+}
+
+.welcomeContainer {
+  max-width: 800px;
+  margin: 2rem auto;
+  background-color: #121212;
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgb(251, 207, 232);
+  text-align: center;
+  color: white;
+}
+
+.welcomeTitle {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+.welcomeContent {
+  width: 100%;
+}
+
+.welcomeContent h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: rgb(251, 207, 232);
+}
+
+.welcomeContent p {
+  font-size: 1.1rem;
+  color: white;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.welcomeButton {
+  margin: 2rem auto;
+  border: 2px solid white;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  color: white;
+}
+
+.welcomeButton:hover {
+  background-color: #121212;
+}
+
+.questionText {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #1a1a1a;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.optionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 1rem;
 }
 
 .optionsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
-  width: 100%;
+  margin-bottom: 2rem;
 }
 
-.progressBar {
-  background: gray;
-  margin: 2rem 0 1rem;
-  width: 100%;
+.optionButton {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 50px;
+  font-size: 1rem;
+  border: 2px solid #cccccc73;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
 }
 
-.resultContainer {
+.optionButton:hover {
+  border-color: #999;
+  background-color: #cccccc37;
+}
+
+.correctOption {
+  background-color: #ecfdf5;
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.incorrectOption {
+  background-color: #fef2f2;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.unselectedOption {
+  background-color: #555 !important;
+  color: white !important;
+  border-color: #555 !important;
+}
+
+.feedback {
+  border-radius: 8px;
+  margin-top: 1rem;
   text-align: center;
-  padding: 2rem;
+  font-weight: 500;
+  padding: 1rem;
+  font-size: 1.5rem;
+}
+
+.correctFeedback {
+  background-color: rgb(52, 211, 153);
+  border: 1px solid rgb(52, 211, 153);
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.incorrectFeedback {
+  background-color: rgb(248, 113, 113);
+  border: 1px solid rgb(248, 113, 113);
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.loadingContainer {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  background-color: var(--card-background);
+  border-radius: 12px;
+  margin: 2rem auto;
+  max-width: 800px;
 }
 
-.resultCard {
-  width: 80%;
-  max-width: 600px;
-  padding: 3rem;
-  margin: 2rem 0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.errorContainer {
   text-align: center;
+  color: var(--error-color);
+  background-color: var(--card-background);
+  border-radius: 12px;
+  border: 1px solid var(--error-color);
+  margin: 2rem auto;
+  max-width: 800px;
+}
+
+.optionText {
+  font-size: 1rem;
 }

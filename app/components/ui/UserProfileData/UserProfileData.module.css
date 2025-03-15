@@ -1,9 +1,9 @@
 .profile {
-  width: 50%;
+  width: 35%;
   top: 1.5em;
-  height: 60vh;
+  height: 40vh;
   justify-content: center;
-  background-color: #0C0C0C;
+  background-color: hsl(0, 0%, 13%);
   box-shadow: 0 0 20px 5px rgb(251, 207, 232);
 }
 

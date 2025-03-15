@@ -1,8 +1,13 @@
 import { Howl } from "howler";
 
-export const bubblePop = new Howl({
-  src: ["/sounds/bubble-pop.wav"],
-  volume: 0.5,
+export const correct = new Howl({
+  src: ["/sounds/correct.wav"],
+  volume: 1,
+});
+
+export const wrong = new Howl({
+  src: ["/sounds/wrong.wav"],
+  volume: 1,
 });
 
 export const uiClick = new Howl({

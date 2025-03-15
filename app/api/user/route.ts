@@ -56,7 +56,10 @@ export async function PUT(request: NextRequest) {
     const { username } = body;
 
     if (!username || username.trim() === "") {
-      return NextResponse.json({ error: "Username cannot be empty" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Username cannot be empty" },
+        { status: 400 }
+      );
     }
 
     const updatedUser = await prisma.user.update({
@@ -67,6 +70,9 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ user: updatedUser });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Failed to update user" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update user" },
+      { status: 500 }
+    );
   }
 }

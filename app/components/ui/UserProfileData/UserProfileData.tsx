@@ -1,7 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, Avatar, Text, Loader, Stack, TextInput, Button, Notification, Group, ActionIcon } from "@mantine/core";
+import {
+  Card,
+  Avatar,
+  Text,
+  Loader,
+  Stack,
+  TextInput,
+  Button,
+  Notification,
+  Group,
+  ActionIcon,
+} from "@mantine/core";
 import { IconPencil } from "@tabler/icons-react";
 import styles from "./UserProfileData.module.css";
 
@@ -38,7 +49,8 @@ export default function UserProfileData() {
   }, []);
 
   const handleUsernameUpdate = async () => {
-    if (!user || newUsername.trim() === "" || newUsername === user.username) return;
+    if (!user || newUsername.trim() === "" || newUsername === user.username)
+      return;
 
     setLoading(true);
     setError(null);
@@ -68,12 +80,21 @@ export default function UserProfileData() {
   if (!user) return <Loader size="lg" className={styles.loader} />;
 
   return (
-    <Card className={styles.profile} shadow="sm" padding="lg" radius="md" withBorder>
+    <Card
+      className={styles.profile}
+      shadow="sm"
+      padding="lg"
+      radius="md"
+      withBorder
+    >
       <Stack align="center">
         <Avatar
           size="xl"
           radius="xl"
-          src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`}
+          src={
+            user.avatar ||
+            `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`
+          }
           className={styles.avatar}
         />
 
@@ -94,7 +115,6 @@ export default function UserProfileData() {
               }}
             />
 
-  
             {(error || success) && (
               <Notification
                 color={error ? "red" : "green"}
@@ -111,14 +131,22 @@ export default function UserProfileData() {
             <Group justify="space-between" mt="sm">
               <Button
                 onClick={handleUsernameUpdate}
-                disabled={loading || newUsername.trim() === "" || newUsername === user.username}
+                disabled={
+                  loading ||
+                  newUsername.trim() === "" ||
+                  newUsername === user.username
+                }
                 style={{
                   backgroundColor:
-                    loading || newUsername.trim() === "" || newUsername === user.username
+                    loading ||
+                    newUsername.trim() === "" ||
+                    newUsername === user.username
                       ? "gray"
                       : "white",
                   color:
-                    loading || newUsername.trim() === "" || newUsername === user.username
+                    loading ||
+                    newUsername.trim() === "" ||
+                    newUsername === user.username
                       ? "darkgray"
                       : "black",
                 }}
@@ -154,7 +182,6 @@ export default function UserProfileData() {
               </ActionIcon>
             </Group>
 
-          
             {(error || success) && (
               <Notification
                 color={error ? "red" : "green"}
@@ -174,7 +201,11 @@ export default function UserProfileData() {
           E-mail: {user.email}
         </Text>
         <Text size="xl" c="rgb(248, 249, 250)" className={styles.description}>
-          {user.username} has been a <span style={{ color: "rgb(251, 207, 232)", fontWeight: "500" }}>Fluently</span> member since {new Date(user.createdAt).toLocaleDateString()}.
+          {user.username} has been a{" "}
+          <span style={{ color: "rgb(251, 207, 232)", fontWeight: "500" }}>
+            Fluently
+          </span>{" "}
+          member since {new Date(user.createdAt).toLocaleDateString()}.
         </Text>
       </Stack>
     </Card>
