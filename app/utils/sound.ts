@@ -12,5 +12,5 @@ export const uiClick = new Howl({
 
 export const victory = new Howl({
   src: ["/sounds/victory.wav"],
-  volume: 0.5,
+  volume: 1,
 });
