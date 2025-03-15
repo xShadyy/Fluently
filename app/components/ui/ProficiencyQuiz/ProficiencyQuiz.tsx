@@ -52,7 +52,7 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
                 q.correctAnswer && q.correctAnswer.option
                   ? q.correctAnswer.option.id.toString()
                   : "",
-            })
+            }),
           );
           setQuestions(formattedQuestions);
         } else {
@@ -179,10 +179,12 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
             <div className={styles.welcomeContent}>
               <Title order={2}>Test Your Language Skills</Title>
               <Text>
-                This quiz will assess your language proficiency level from A1 (beginner) to C1 (advanced). You'll
+                This quiz will assess your language proficiency level from A1
+                (beginner) to C1 (advanced). You'll
               </Text>
               <Text mt="-1rem">
-                answer {questions.length} questions about grammar, vocabulary, and comprehension.
+                answer {questions.length} questions about grammar, vocabulary,
+                and comprehension.
               </Text>
               <div className={styles.levelExplanation}>
                 <Title c="rgb(251, 207, 232)" order={3}>
@@ -190,19 +192,29 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
                 </Title>
                 <ul>
                   <li>
-                    <Text>C1: Advanced proficiency with near-native fluency</Text>
+                    <Text>
+                      C1: Advanced proficiency with near-native fluency
+                    </Text>
                   </li>
                   <li>
-                    <Text mt="-1rem">B2: Upper intermediate level with good fluency</Text>
+                    <Text mt="-1rem">
+                      B2: Upper intermediate level with good fluency
+                    </Text>
                   </li>
                   <li>
-                    <Text mt="-1rem">B1: Intermediate level with functional fluency</Text>
+                    <Text mt="-1rem">
+                      B1: Intermediate level with functional fluency
+                    </Text>
                   </li>
                   <li>
-                    <Text mt="-1rem">A2: Elementary level with basic communication skills</Text>
+                    <Text mt="-1rem">
+                      A2: Elementary level with basic communication skills
+                    </Text>
                   </li>
                   <li>
-                    <Text mt="-1rem">A1: Beginner level with very basic understanding</Text>
+                    <Text mt="-1rem">
+                      A1: Beginner level with very basic understanding
+                    </Text>
                   </li>
                 </ul>
               </div>
@@ -211,7 +223,8 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
                   Instructions:
                 </Title>
                 <Text mt="md">
-                  Select the correct answer for each question. Your score will determine your proficiency level.
+                  Select the correct answer for each question. Your score will
+                  determine your proficiency level.
                 </Text>
                 <Text mt="-1rem">
                   You'll receive immediate feedback after each answer.
@@ -244,9 +257,11 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
               </Title>
               <div
                 className={styles.scoreCircle}
-                style={{
-                  "--percentage": `${Math.round((score / questions.length) * 100)}%`,
-                } as React.CSSProperties}
+                style={
+                  {
+                    "--percentage": `${Math.round((score / questions.length) * 100)}%`,
+                  } as React.CSSProperties
+                }
               >
                 <div className={styles.scoreValue}>
                   {Math.round((score / questions.length) * 100)}%
@@ -254,7 +269,8 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
               </div>
               <div className={styles.resultDetails}>
                 <Text>
-                  You scored <strong>{score}</strong> out of <strong>{questions.length}</strong> points
+                  You scored <strong>{score}</strong> out of{" "}
+                  <strong>{questions.length}</strong> points
                 </Text>
                 <Title order={3}>Your language proficiency level:</Title>
                 <div className={styles.levelBadge}>{getLanguageLevel()}</div>
@@ -294,46 +310,54 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.3 }}
               >
-                <Title ta="center" mt="xl" mb="xl" order={3} className={styles.questionText}>
+                <Title
+                  ta="center"
+                  mt="xl"
+                  mb="xl"
+                  order={3}
+                  className={styles.questionText}
+                >
                   {questions[currentQuestionIndex].question}
                 </Title>
                 <div
                   className={
                     questions[currentQuestionIndex].options.every(
-                      (option) => option.text.length < 15
+                      (option) => option.text.length < 15,
                     )
                       ? styles.optionsGrid
                       : styles.optionsContainer
                   }
                 >
-                  {questions[currentQuestionIndex].options.map((option, index) => {
-                    const prefix = String.fromCharCode(65 + index) + ".";
-                    return (
-                      <Button
-                        c="black"
-                        variant="outline"
-                        key={index}
-                        className={`${styles.optionButton} ${
-                          selectedOption === option.id
-                            ? isCorrect
-                              ? styles.correctOption
-                              : styles.incorrectOption
-                            : showFeedback
-                            ? styles.unselectedOption
-                            : ""
-                        }`}
-                        component={motion.button}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => handleOptionSelect(option.id)}
-                        disabled={showFeedback}
-                      >
-                        <span className={styles.optionText}>
-                          {prefix} {option.text}
-                        </span>
-                      </Button>
-                    );
-                  })}
+                  {questions[currentQuestionIndex].options.map(
+                    (option, index) => {
+                      const prefix = String.fromCharCode(65 + index) + ".";
+                      return (
+                        <Button
+                          c="black"
+                          variant="outline"
+                          key={index}
+                          className={`${styles.optionButton} ${
+                            selectedOption === option.id
+                              ? isCorrect
+                                ? styles.correctOption
+                                : styles.incorrectOption
+                              : showFeedback
+                                ? styles.unselectedOption
+                                : ""
+                          }`}
+                          component={motion.button}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleOptionSelect(option.id)}
+                          disabled={showFeedback}
+                        >
+                          <span className={styles.optionText}>
+                            {prefix} {option.text}
+                          </span>
+                        </Button>
+                      );
+                    },
+                  )}
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -351,7 +375,9 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
                     ? "Correct, good job!"
                     : `Incorrect. The correct answer is: ${
                         questions[currentQuestionIndex].options.find(
-                          (opt) => opt.id === questions[currentQuestionIndex].correctAnswer
+                          (opt) =>
+                            opt.id ===
+                            questions[currentQuestionIndex].correctAnswer,
                         )?.text || "N/A"
                       }`}
                 </Text>

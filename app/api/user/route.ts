@@ -58,7 +58,7 @@ export async function PUT(request: NextRequest) {
     if (!username || username.trim() === "") {
       return NextResponse.json(
         { error: "Username cannot be empty" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -72,7 +72,7 @@ export async function PUT(request: NextRequest) {
     console.error(error);
     return NextResponse.json(
       { error: "Failed to update user" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
