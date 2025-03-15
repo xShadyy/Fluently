@@ -1,0 +1,155 @@
+.quizContainer {
+  width: 100%;
+  max-width: 800px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.navbar {
+  height: 100vh;
+  background: linear-gradient(180deg, #2C3E50 0%, #3498DB 100%);
+  padding: 20px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 40px;
+  justify-content: center;
+}
+
+.logoText {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin: 8px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  justify-content: center;
+}
+
+.navItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.navText {
+  font-size: 16px;
+  text-align: center;
+}
+
+.questionCard {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  margin-top: 10rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.resultContainer {
+  text-align: center;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.progressBar {
+  background: gray;
+  margin: 2rem 0 1rem;
+  width: 100%;
+}
+
+.resultCard {
+  width: 80%;
+  max-width: 600px;
+  padding: 3rem;
+  margin: 2rem 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.roadmap {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 20px;
+}
+
+.roadmapItem {
+  display: flex;
+  align-items: center;
+}
+
+.circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  color: #333;
+}
+
+.active {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.line {
+  width: 20px;
+  height: 2px;
+  background-color: #ccc;
+  margin: 0 5px;
+}
+
+.lives {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.heart {
+  font-size: 24px;
+}
+
+.timer {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.loading {
+  text-align: center;
+  font-size: 18px;
+  padding: 20px;
+}
