@@ -7,6 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum GameType {
+  WORDS
+  ENGLISH_GRAMMAR_TEST
+}
+
 model User {
   id        String   @id @default(uuid())
   username  String   @unique
@@ -25,9 +36,11 @@ model Session {
 }
 
 model Game {
-  id        String     @id @default(uuid())
-  name      String
-  questions Question[]
+  id              String            @id @default(uuid())
+  name            String
+  type            GameType          @default(WORDS)
+  questions       Question[]
+  wordsQuestions  WordsQuestion[]
 }
 
 model Question {
@@ -40,11 +53,11 @@ model Question {
 }
 
 model Option {
-  id            String         @id @default(uuid())
+  id            String       @id @default(uuid())
   text          String
   questionId    String
-  question      Question       @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  CorrectAnswer CorrectAnswer?
+  question      Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  correctAnswer CorrectAnswer?
 }
 
 model CorrectAnswer {
@@ -53,4 +66,30 @@ model CorrectAnswer {
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
   optionId   String   @unique
   option     Option   @relation(fields: [optionId], references: [id], onDelete: Cascade)
+}
+
+model WordsQuestion {
+  id            String         @id @default(uuid())
+  text          String
+  difficulty    Difficulty   
+  gameId        String
+  game          Game           @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  options       WordsOption[]
+  correctAnswer WordsCorrectAnswer?
+}
+
+model WordsOption {
+  id                String         @id @default(uuid())
+  text              String
+  wordsQuestionId   String
+  wordsQuestion     WordsQuestion  @relation(fields: [wordsQuestionId], references: [id], onDelete: Cascade)
+  correctAnswer     WordsCorrectAnswer?
+}
+
+model WordsCorrectAnswer {
+  id                String         @id @default(uuid())
+  wordsQuestionId   String         @unique
+  wordsQuestion     WordsQuestion  @relation(fields: [wordsQuestionId], references: [id], onDelete: Cascade)
+  wordsOptionId     String         @unique
+  wordsOption       WordsOption    @relation(fields: [wordsOptionId], references: [id], onDelete: Cascade)
 }

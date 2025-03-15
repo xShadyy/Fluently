@@ -21,11 +21,25 @@ interface NavbarLinkProps {
   label: string;
   active?: boolean;
   onClick?(): void;
+  disableAnimation?: boolean;
 }
 
-function NavbarLink({ icon, label, active, onClick }: NavbarLinkProps) {
+function NavbarLink({
+  icon,
+  label,
+  active,
+  onClick,
+  disableAnimation,
+}: NavbarLinkProps) {
+  const Wrapper = disableAnimation ? "div" : motion.div;
+
   return (
-    <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+    <Wrapper
+      {...(!disableAnimation && {
+        whileHover: { scale: 1.03 },
+        whileTap: { scale: 0.97 },
+      })}
+    >
       <UnstyledButton
         onClick={onClick}
         className={`${classes.link} ${active ? classes.active : ""}`}
@@ -42,7 +56,7 @@ function NavbarLink({ icon, label, active, onClick }: NavbarLinkProps) {
         </Group>
         <IconChevronRight size={16} className={classes.chevron} />
       </UnstyledButton>
-    </motion.div>
+    </Wrapper>
   );
 }
 
@@ -74,15 +88,22 @@ const navItems = [
   },
 ];
 
-export function SideMenu() {
+export function SideMenu({
+  disableAnimation = false,
+}: {
+  disableAnimation?: boolean;
+}) {
   const pathname = usePathname();
   const router = useRouter();
+  const Wrapper = disableAnimation ? "div" : motion.div;
 
   return (
-    <motion.div
-      initial={{ x: -300 }}
-      animate={{ x: 0 }}
-      transition={{ type: "spring", stiffness: 100 }}
+    <Wrapper
+      {...(!disableAnimation && {
+        initial: { x: -300 },
+        animate: { x: 0 },
+        transition: { type: "spring", stiffness: 100 },
+      })}
     >
       <div className={classes.navbar} style={{ width: 250, padding: "16px" }}>
         <div className={classes.sidebarContent}>
@@ -97,6 +118,7 @@ export function SideMenu() {
                   uiClick.play();
                   router.push(item.path);
                 }}
+                disableAnimation={disableAnimation}
               />
             ))}
           </div>
@@ -110,10 +132,11 @@ export function SideMenu() {
               uiClick.play();
               router.push("/login");
             }}
+            disableAnimation={disableAnimation}
           />
         </div>
       </div>
-    </motion.div>
+    </Wrapper>
   );
 }
 
