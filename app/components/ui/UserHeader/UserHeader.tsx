@@ -8,7 +8,7 @@ import UserCard from "../UserCard/UserCard";
 import { Button, Container, Group, Image, Text } from "@mantine/core";
 import classes from "./UserHeader.module.css";
 
-export default function UserHeader() {
+export default function UserHeader({ disableAnimation = false }: { disableAnimation?: boolean }) {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const MotionLink = motion.create(Link);
@@ -34,9 +34,7 @@ export default function UserHeader() {
     <Container size="100%" className={classes.container}>
       <Group className={classes.header}>
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
+          {...(!disableAnimation && { initial: { opacity: 0, x: -20 }, animate: { opacity: 1, x: 0 }, transition: { delay: 0.4, duration: 0.5 } })}
         >
           <Image
             src="/images/fluently-clean-wh.png"
@@ -48,9 +46,7 @@ export default function UserHeader() {
 
         <Group gap="md" mt="sm">
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
+            {...(!disableAnimation && { initial: { opacity: 0, x: 20 }, animate: { opacity: 1, x: 0 }, transition: { delay: 0.4, duration: 0.5 } })}
           >
             {user ? (
               <UserCard user={user} />

@@ -8,56 +8,6 @@
   align-items: center;
 }
 
-.navbar {
-  height: 100vh;
-  background: linear-gradient(180deg, #2C3E50 0%, #3498DB 100%);
-  padding: 20px;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 40px;
-  justify-content: center;
-}
-
-.logoText {
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center;
-}
-
-.navItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  margin: 8px 0;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  justify-content: center;
-}
-
-.navItem:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.active {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.navText {
-  font-size: 16px;
-  text-align: center;
-}
-
 .questionCard {
   background: white;
   border-radius: 15px;
@@ -69,6 +19,20 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 600px;
+}
+
+.optionsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  width: 100%;
+}
+
+.progressBar {
+  background: gray;
+  margin: 2rem 0 1rem;
+  width: 100%;
 }
 
 .resultContainer {
@@ -80,23 +44,16 @@
   align-items: center;
 }
 
-.progressBar {
-  background: gray;
-  margin: 2rem 0 1rem;
-  width: 100%;
-}
-
 .resultCard {
-  width: 80%; 
-  max-width: 600px; 
-  padding: 3rem; 
-  margin: 2rem 0; 
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
-  border-radius: 10px; 
+  width: 80%;
+  max-width: 600px;
+  padding: 3rem;
+  margin: 2rem 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
 }
-

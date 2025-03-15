@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+'use client';
+
+import { useState, useEffect, useRef } from "react";
 import {
   Paper,
   Button,
@@ -9,8 +11,10 @@ import {
   Stack,
 } from "@mantine/core";
 import { motion, AnimatePresence } from "framer-motion";
+import confetti from "canvas-confetti";
 import styles from "./ProficiencyQuiz.module.css";
 import { bubblePop } from "../../../utils/sound";
+import { victory } from "../../../utils/sound";
 
 interface Option {
   id: string;
@@ -32,12 +36,15 @@ export default function ProficiencyQuiz() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [resultVisible, setResultVisible] = useState(true);
+  const resultRef = useRef<HTMLDivElement | null>(null);
+  const GRID_LETTER_LIMIT = 15;
+  
   const progressValue = (currentQuestion / questions.length) * 100;
 
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const res = await fetch("/api/questions?game=EnglishGrammarQuiz");
+        const res = await fetch("/api/proficiencyquiz");
         const data = await res.json();
 
         if (res.ok) {
@@ -49,10 +56,9 @@ export default function ProficiencyQuiz() {
                 id: opt.id,
                 text: opt.text,
               })),
-              correctOptionId: q.correctAnswer.optionId,
-            }),
+              correctOptionId: q.correctAnswer?.optionId || "",
+            })
           );
-
           setQuestions(formattedQuestions);
         } else {
           console.error("Error fetching questions:", data.error);
@@ -66,6 +72,21 @@ export default function ProficiencyQuiz() {
 
     fetchQuestions();
   }, []);
+
+  useEffect(() => {
+    if (showResult && resultRef.current) {
+      const rect = resultRef.current.getBoundingClientRect();
+      confetti({
+        particleCount: 150,
+        spread: 90,
+        origin: {
+          x: (rect.left + rect.width / 2) / window.innerWidth,
+          y: (rect.top + rect.height / 2) / window.innerHeight
+        }
+      });
+      victory.play()
+    }
+  }, [showResult]);
 
   const getLanguageLevel = (score: number, total: number) => {
     const percentage = (score / total) * 100;
@@ -84,6 +105,11 @@ export default function ProficiencyQuiz() {
     return <Text>No questions available.</Text>;
   }
 
+  const currentOptions = questions[currentQuestion].options;
+  const allShortAnswers = currentOptions.every(
+    (option) => option.text.trim().length <= GRID_LETTER_LIMIT
+  );
+
   const handleAnswer = (selectedOptionId: string) => {
     setSelectedAnswer(selectedOptionId);
 
@@ -100,7 +126,6 @@ export default function ProficiencyQuiz() {
           setResultVisible(false);
         }, 6000);
       }
-
       setSelectedAnswer(null);
     }, 1000);
   };
@@ -111,6 +136,7 @@ export default function ProficiencyQuiz() {
       <AnimatePresence>
         {resultVisible && (
           <motion.div
+            ref={resultRef}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -140,6 +166,7 @@ export default function ProficiencyQuiz() {
 
   return (
     <Container className={styles.quizContainer}>
+      
       <Progress
         color="lightblue"
         value={progressValue}
@@ -164,36 +191,69 @@ export default function ProficiencyQuiz() {
             <Text c="black" size="lg" mb="xl" fw="500">
               {questions[currentQuestion].text}
             </Text>
-            <Stack gap="md">
-              {questions[currentQuestion].options.map((option) => (
-                <motion.div
-                  key={option.id}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Button
-                    fw="700"
-                    fullWidth
-                    size="lg"
-                    variant="outline"
-                    color="black"
-                    styles={(theme) => ({
-                      root: {
-                        borderWidth: 2,
-                      },
-                    })}
-                    onClick={() => {
-                      if (!selectedAnswer) {
-                        bubblePop.play();
-                        handleAnswer(option.id);
-                      }
-                    }}
+            {allShortAnswers ? (
+              <div className={styles.optionsGrid}>
+                {currentOptions.map((option) => (
+                  <motion.div
+                    key={option.id}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    {option.text}
-                  </Button>
-                </motion.div>
-              ))}
-            </Stack>
+                    <Button
+                      fw="700"
+                      fullWidth
+                      size="lg"
+                      variant="outline"
+                      color="black"
+                      styles={() => ({
+                        root: {
+                          borderWidth: 2,
+                        },
+                      })}
+                      onClick={() => {
+                        if (!selectedAnswer) {
+                          bubblePop.play();
+                          handleAnswer(option.id);
+                        }
+                      }}
+                    >
+                      {option.text}
+                    </Button>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <Stack gap="md">
+                {currentOptions.map((option) => (
+                  <motion.div
+                    key={option.id}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Button
+                      fw="700"
+                      fullWidth
+                      size="lg"
+                      variant="outline"
+                      color="black"
+                      styles={() => ({
+                        root: {
+                          borderWidth: 2,
+                        },
+                      })}
+                      onClick={() => {
+                        if (!selectedAnswer) {
+                          bubblePop.play();
+                          handleAnswer(option.id);
+                        }
+                      }}
+                    >
+                      {option.text}
+                    </Button>
+                  </motion.div>
+                ))}
+              </Stack>
+            )}
           </Paper>
         </motion.div>
       </AnimatePresence>

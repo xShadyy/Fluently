@@ -1,16 +1,20 @@
-import Sidemenu from "../Static/SideMenu/SideMenu";
-import DashboardHeader from "../Static/UserHeader/UserHeader";
-import WordsQuiz from "../WordsQuiz/WordsQuiz";
+import Sidemenu from "../SideMenu/SideMenu";
+import UserHeader from "../UserHeader/UserHeader";
+import WordsQuiz from "../WordsQuizDifficulty/WordsQuizDifficulty";
 import styles from "./WordsQuizGrouped.module.css";
 
-export default function DashRoot() {
+interface DashRootProps {
+  disableAnimation?: boolean;
+}
+
+export default function DashRoot({ disableAnimation = false }: DashRootProps) {
   return (
     <div className={styles.container}>
-      <DashboardHeader />
+      <UserHeader disableAnimation={disableAnimation} />
       <div className={styles.main}>
-        <Sidemenu />
+        <Sidemenu disableAnimation={disableAnimation} />
         <div className={styles.content}>
-          <WordsQuiz />
+          <WordsQuiz/>
         </div>
       </div>
     </div>

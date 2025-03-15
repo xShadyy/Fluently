@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Skull, Flame, Zap, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import styles from "./WordsQuiz.module.css";
+import styles from "./WordsQuizDifficulty.module.css";
 
 interface DifficultySelectorProps {
   onSelect?: (difficulty: "beginner" | "intermediate" | "advanced") => void;
