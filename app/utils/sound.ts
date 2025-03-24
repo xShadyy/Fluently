@@ -1,12 +1,12 @@
 import { Howl } from "howler";
 
 export const correct = new Howl({
-  src: ["/sounds/correct.wav"],
+  src: ["/sounds/correct.mp3"],
   volume: 1,
 });
 
 export const wrong = new Howl({
-  src: ["/sounds/wrong.wav"],
+  src: ["/sounds/wrong.mp3"],
   volume: 1,
 });
 
@@ -15,7 +15,7 @@ export const uiClick = new Howl({
   volume: 1,
 });
 
-export const victory = new Howl({
-  src: ["/sounds/victory.wav"],
+export const completed = new Howl({
+  src: ["/sounds/completed.mp3"],
   volume: 1,
 });

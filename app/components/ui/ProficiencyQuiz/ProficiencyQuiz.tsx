@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { correct, wrong, victory } from "../../../utils/sound";
+import { correct, wrong, completed, uiClick } from "@/app/utils/sound";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import styles from "./ProficiencyQuiz.module.css";
@@ -52,7 +52,7 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
                 q.correctAnswer && q.correctAnswer.option
                   ? q.correctAnswer.option.id.toString()
                   : "",
-            }),
+            })
           );
           setQuestions(formattedQuestions);
         } else {
@@ -94,7 +94,7 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
   const completeQuiz = () => {
     setQuizCompleted(true);
     setShowResults(true);
-    victory.play();
+    completed.play();
     triggerConfetti();
     if (onComplete) {
       onComplete(score, getLanguageLevel());
@@ -105,7 +105,7 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
     if (quizCompleted && showResults) {
       const timer = setTimeout(() => {
         setShowResults(false);
-      }, 6500);
+      }, 8000);
       return () => clearTimeout(timer);
     }
   }, [quizCompleted, showResults]);
@@ -237,7 +237,10 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
               component={motion.button}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setShowWelcome(false)}
+              onClick={() => {
+              uiClick.play();
+              setShowWelcome(false);
+              }}
             >
               Start Quiz
             </Button>
@@ -342,8 +345,8 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
                                 ? styles.correctOption
                                 : styles.incorrectOption
                               : showFeedback
-                                ? styles.unselectedOption
-                                : ""
+                              ? styles.unselectedOption
+                              : ""
                           }`}
                           component={motion.button}
                           whileHover={{ scale: 1.02 }}
@@ -356,7 +359,7 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
                           </span>
                         </Button>
                       );
-                    },
+                    }
                   )}
                 </div>
               </motion.div>

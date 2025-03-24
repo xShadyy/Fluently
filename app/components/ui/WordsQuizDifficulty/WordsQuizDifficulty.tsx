@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Skull, Flame, Zap, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import styles from "./WordsQuizDifficulty.module.css";
+import { uiClick } from "@/app/utils/sound";
 
 interface DifficultySelectorProps {
   onSelect?: (difficulty: "beginner" | "intermediate" | "advanced") => void;
@@ -56,6 +57,7 @@ export default function WordsQuiz({
             key={difficulty}
             className={`${styles.card} ${selectedDifficulty === difficulty ? styles.selected : ""}`}
             onClick={() =>
+              uiClick.play() &&
               handleSelect(
                 difficulty as "beginner" | "intermediate" | "advanced",
               )
@@ -117,11 +119,14 @@ export default function WordsQuiz({
               {selectedDifficulty === difficulty && (
                 <button
                   className={
-                    styles[
-                      `confirmButton${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`
-                    ]
+                  styles[
+                    `confirmButton${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`
+                  ]
                   }
-                  onClick={handleConfirm}
+                  onClick={() => {
+                  handleConfirm();
+                  uiClick.play();
+                  }}
                 >
                   Confirm
                 </button>
