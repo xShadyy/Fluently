@@ -1,0 +1,28 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+}
+
+.main {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 80px);
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background: linear-gradient(
+        -140deg, 
+        rgba(255, 255, 255, 0.1) 0%, 
+        rgba(200, 200, 200, 0.15) 25%, 
+        rgba(100, 100, 100, 0.25) 50%,  
+        rgba(50, 50, 50, 0.3) 75%,      
+        rgba(0, 0, 0, 0.4) 100%    
+    );
+}

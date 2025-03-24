@@ -1,9 +1,6 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { Group, Text, UnstyledButton } from "@mantine/core";
-import { motion } from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { Group, Text, UnstyledButton } from "@mantine/core";
 import {
   IconBook,
   IconHome,
@@ -88,14 +85,19 @@ const navItems = [
   },
 ];
 
-export function SideMenu({
-  disableAnimation = false,
-}: {
-  disableAnimation?: boolean;
-}) {
+export function SideMenu({ disableAnimation = false }: { disableAnimation?: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
   const Wrapper = disableAnimation ? "div" : motion.div;
+
+  const activeNav = navItems.reduce((prev, item) => {
+    if (pathname.startsWith(item.path)) {
+      if (!prev || item.path.length > prev.path.length) {
+        return item;
+      }
+    }
+    return prev;
+  }, null as typeof navItems[0] | null);
 
   return (
     <Wrapper
@@ -113,7 +115,7 @@ export function SideMenu({
                 key={item.label}
                 icon={item.icon}
                 label={item.label}
-                active={pathname === item.path}
+                active={activeNav?.path === item.path}
                 onClick={() => {
                   uiClick.play();
                   router.push(item.path);

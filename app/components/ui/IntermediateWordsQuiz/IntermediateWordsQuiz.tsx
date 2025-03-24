@@ -14,7 +14,7 @@ import {
 } from "@mantine/core";
 import { motion, AnimatePresence } from "framer-motion";
 import { correct, wrong, completed, uiClick } from "@/app/utils/sound";
-import styles from "./BeginnerWordsQuiz.module.css";
+import styles from "./IntermediateWordsQuiz.module.css";
 
 interface Option {
   id: string;
@@ -47,7 +47,7 @@ export default function BeginnerWordsQuiz() {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const res = await fetch("/api/wordsquiz/beginner");
+        const res = await fetch("/api/wordsquiz/intermediate");
         const data = await res.json();
         if (res.ok) {
           setQuestions(data.questions);
@@ -130,7 +130,7 @@ export default function BeginnerWordsQuiz() {
     setLoading(true);
     (async () => {
       try {
-        const res = await fetch("/api/wordsquiz/beginner");
+        const res = await fetch("/api/wordsquiz/intermediate");
         const data = await res.json();
         if (res.ok) {
           setQuestions(data.questions);
