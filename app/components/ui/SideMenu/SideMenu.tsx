@@ -65,8 +65,8 @@ const navItems = [
   },
   {
     icon: <IconBook size={20} stroke={1.5} />,
-    label: "Lessons",
-    path: "/dashboard/lessons",
+    label: "Materials",
+    path: "/dashboard/materials",
   },
   {
     icon: <IconLanguage size={20} stroke={1.5} />,
