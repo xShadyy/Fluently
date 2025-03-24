@@ -15,6 +15,7 @@ import {
 } from "@mantine/core";
 import { IconPencil } from "@tabler/icons-react";
 import styles from "./UserProfileData.module.css";
+import { uiClick } from "@/app/utils/sound";
 
 type User = {
   id: string;
@@ -129,8 +130,11 @@ export default function UserProfileData() {
             )}
 
             <Group justify="space-between" mt="sm">
-              <Button
-                onClick={handleUsernameUpdate}
+                <Button
+                onClick={() => {
+                  handleUsernameUpdate();
+                  uiClick.play();
+                }}
                 disabled={
                   loading ||
                   newUsername.trim() === "" ||
@@ -138,32 +142,35 @@ export default function UserProfileData() {
                 }
                 style={{
                   backgroundColor:
-                    loading ||
-                    newUsername.trim() === "" ||
-                    newUsername === user.username
-                      ? "gray"
-                      : "white",
+                  loading ||
+                  newUsername.trim() === "" ||
+                  newUsername === user.username
+                    ? "gray"
+                    : "white",
                   color:
-                    loading ||
-                    newUsername.trim() === "" ||
-                    newUsername === user.username
-                      ? "darkgray"
-                      : "black",
+                  loading ||
+                  newUsername.trim() === "" ||
+                  newUsername === user.username
+                    ? "darkgray"
+                    : "black",
                 }}
-              >
+                >
                 {loading ? "Saving..." : "Save"}
-              </Button>
+                </Button>
 
-              <Button
-                onClick={() => setIsEditing(false)}
+                <Button
+                onClick={() => {
+                  setIsEditing(false);
+                  uiClick.play();
+                }}
                 disabled={loading}
                 style={{
                   backgroundColor: "rgb(251, 207, 232)",
                   color: "black",
                 }}
-              >
+                >
                 Cancel
-              </Button>
+                </Button>
             </Group>
           </>
         ) : (
@@ -172,14 +179,17 @@ export default function UserProfileData() {
               <Text size="xl" fw={700} c="white">
                 Username: {user.username}
               </Text>
-              <ActionIcon
+                <ActionIcon
                 variant="default"
                 size="md"
-                onClick={() => setIsEditing(true)}
+                onClick={() => {
+                  setIsEditing(true);
+                  uiClick.play();
+                }}
                 aria-label="Edit Username"
-              >
+                >
                 <IconPencil size={23} />
-              </ActionIcon>
+                </ActionIcon>
             </Group>
 
             {(error || success) && (
@@ -188,6 +198,7 @@ export default function UserProfileData() {
                 onClose={() => {
                   setError(null);
                   setSuccess(null);
+                  uiClick.play();
                 }}
                 mt="sm"
               >
