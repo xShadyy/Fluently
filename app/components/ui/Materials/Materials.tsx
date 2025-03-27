@@ -1,161 +1,277 @@
-import React from 'react';
-import { IconCheck } from '@tabler/icons-react';
-import {
-  Button,
-  Container,
-  Group,
-  Image,
-  List,
-  Text,
-  ThemeIcon,
-  Title,
-  Paper,
-  useMantineTheme,
-} from '@mantine/core';
-import { Carousel } from '@mantine/carousel';
-import { useMediaQuery } from '@mantine/hooks';
-import image from '../../../../public/images/materials.svg';
-import classes from './Materials.module.css';
-import '@mantine/core/styles.css';
-import '@mantine/carousel/styles.css';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { IconChevronDown, IconExternalLink } from "@tabler/icons-react";
+import { Card, Text, Title, Group, Badge, Button, Tabs } from "@mantine/core";
+import styles from "./Materials.module.css";
+import { getIconForType } from "../../../utils/data/resourceUtils";
+import { resources, Resource } from "../../../utils/data/resources";
 
-interface CardProps {
-  image: string;
-  title: string;
-  category: string;
-}
+const ResourceCard = ({ resource }: { resource: Resource }) => {
+  const [expanded, setExpanded] = useState(false);
 
-function Card({ image, title, category }: CardProps) {
   return (
-    <Paper
-      shadow="md"
-      p="xl"
-      radius="md"
-      style={{ backgroundImage: `url(${image})` }}
-      className={classes.carouselCard}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      whileHover={{ scale: 1.02 }}
     >
-      <div>
-        <Text className={classes.carouselCategory} size="xs">
-          {category}
-        </Text>
-        <Title order={3} className={classes.carouselTitle}>
-          {title}
-        </Title>
-      </div>
-      <Button variant="white" color="dark">
-        Read Article
-      </Button>
-    </Paper>
+      <Card
+        shadow="sm"
+        padding="lg"
+        radius="md"
+        withBorder
+        className={styles.customCard}
+      >
+        <div className={styles.clickable} onClick={() => setExpanded((prev) => !prev)}>
+          <Group align="apart" mb="xs">
+            <Group>
+              <div className={styles.resourceIcon}>
+                {getIconForType(resource.type)}
+              </div>
+              <Title order={3}>{resource.title}</Title>
+            </Group>
+            <Button variant="subtle" size="md">
+              <motion.div
+                initial={{ rotate: 0 }}
+                animate={{ rotate: expanded ? 180 : 0 }}
+                transition={{ duration: 0.3 }}
+                className={styles.rotateWrapper}
+              >
+                <IconChevronDown size={18} />
+              </motion.div>
+            </Button>
+          </Group>
+          <Group gap="xs" mt="md">
+            <Badge
+              color={
+                resource.level === "beginner"
+                  ? "green"
+                  : resource.level === "intermediate"
+                  ? "blue"
+                  : resource.level === "advanced"
+                  ? "violet"
+                  : "orange"
+              }
+              variant="light"
+            >
+              {resource.level}
+            </Badge>
+            <Badge
+              color={
+                resource.type === "reading"
+                  ? "pink"
+                  : resource.type === "video"
+                  ? "red"
+                  : resource.type === "audio"
+                  ? "yellow"
+                  : "teal"
+              }
+              variant="light"
+            >
+              {resource.type}
+            </Badge>
+          </Group>
+        </div>
+
+        <AnimatePresence>
+          {expanded && (
+            <motion.div
+              key="description"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Text size="md" color="dimmed" mt="md">
+                {resource.description}
+              </Text>
+              <Group gap="xs" mt="md">
+                {resource.tags.map((tag) => (
+                  <Badge key={tag} size="md" color="gray" variant="outline">
+                    #{tag}
+                  </Badge>
+                ))}
+              </Group>
+              <Group align="right" mt="md">
+                <Button
+                  component="a"
+                  href={resource.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="md"
+                  leftSection={<IconExternalLink size={14} />}
+                >
+                  Visit Resource
+                </Button>
+              </Group>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Card>
+    </motion.div>
   );
+};
+
+interface ResourceListProps {
+  resources: Resource[];
+  noResultsText: string;
+  resetAction: () => void;
 }
 
-const carouselData = [
-  {
-    image:
-      'https://images.unsplash.com/photo-1508193638397-1c4234db14d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-    title: 'Master English Vocabulary',
-    category: 'Vocabulary',
-  },
-  {
-    image:
-      'https://images.unsplash.com/photo-1559494007-9f5847c49d94?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-    title: 'Essential Grammar Tips',
-    category: 'Grammar',
-  },
-  {
-    image:
-      'https://images.unsplash.com/photo-1608481337062-4093bf3ed404?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-    title: 'Pronunciation Practice',
-    category: 'Pronunciation',
-  },
-  {
-    image:
-      'https://images.unsplash.com/photo-1507272931001-fc06c17e4f43?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-    title: 'Effective Writing Skills',
-    category: 'Writing',
-  },
-  {
-    image:
-      'https://images.unsplash.com/photo-1510798831971-661eb04b3739?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-    title: 'Listening Comprehension Strategies',
-    category: 'Listening',
-  },
-  {
-    image:
-      'https://images.unsplash.com/photo-1582721478779-0ae163c05a60?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-    title: 'Speaking Confidence Tips',
-    category: 'Speaking',
-  },
-];
+const ResourceList = ({ resources, noResultsText, resetAction }: ResourceListProps) => (
+  <motion.div
+    className={styles.resourcesGrid}
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.5, delay: 0.2 }}
+  >
+    {resources.length > 0 ? (
+      resources.map((resource, index) => (
+        <motion.div
+          key={resource.id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: index * 0.05 }}
+        >
+          <ResourceCard resource={resource} />
+        </motion.div>
+      ))
+    ) : (
+      <div className={styles.noResults}>
+        <Text size="md">{noResultsText}</Text>
+        <Button mt="md" size="md" onClick={resetAction}>
+          {noResultsText.includes("filters") ? "Reset Filters" : "Reset Level Filter"}
+        </Button>
+      </div>
+    )}
+  </motion.div>
+);
 
-export function Materials() {
-  const theme = useMantineTheme();
-  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
-  const slides = carouselData.map((item) => (
-    <Carousel.Slide key={item.title}>
-      <Card {...item} />
-    </Carousel.Slide>
-  ));
+const Materials = () => {
+  const [activeTab, setActiveTab] = useState<string>("all");
+  const [levelFilter, setLevelFilter] = useState<"all" | "beginner" | "intermediate" | "advanced">("all");
+
+  const filteredResources = resources
+    .filter(
+      (r) =>
+        (activeTab === "all" || r.type === activeTab) &&
+        (levelFilter === "all" || r.level === levelFilter)
+    )
+    .slice(0, 8);
+
+  const tabsData = [
+    { value: "all", label: "All" },
+    { value: "reading", label: "Reading", icon: getIconForType("reading") },
+    { value: "video", label: "Video", icon: getIconForType("video") },
+    { value: "audio", label: "Audio", icon: getIconForType("audio") },
+    { value: "interactive", label: "Interactive", icon: getIconForType("interactive") },
+  ];
+
+  const getNoResultsText = (tab: string) =>
+    tab === "all"
+      ? "No resources found matching your filters."
+      : `No ${tab} resources found matching your level filter.`;
+
+  const resetAction = (tab: string) =>
+    tab === "all"
+      ? () => {
+          setActiveTab("all");
+          setLevelFilter("all");
+        }
+      : () => setLevelFilter("all");
 
   return (
-    <div>
-      {/* Hero Header Section */}
-      <Container size="md">
-        <div className={classes.inner}>
-          <div className={classes.content}>
-            <Title className={classes.title}>
-              Unlock Your <span className={classes.highlight}>English Potential</span>
+        <div className={styles.content}>
+          <motion.div
+            className={styles.header}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Title mb="sm" fw="700" size="3.5rem">
+              English Learning Materials
             </Title>
-            <Text color="dimmed" mt="md">
-              Discover a wealth of learning materials designed to enhance your English skills—from vocabulary and grammar to listening, speaking, and writing.
+            <Text size="1.3rem" m="auto">
+              Discover the best resources to improve your English skills
             </Text>
-            <List
-              mt={30}
-              spacing="sm"
-              size="sm"
-              icon={
-                <ThemeIcon size={20} radius="xl">
-                  <IconCheck size={12} stroke={1.5} />
-                </ThemeIcon>
-              }
-            >
-              <List.Item>
-                <b>Interactive Lessons</b> – engaging content to boost your learning.
-              </List.Item>
-              <List.Item>
-                <b>Expert Tips</b> – practical strategies from seasoned educators.
-              </List.Item>
-              <List.Item>
-                <b>Flexible Learning</b> – access high-quality materials anytime, anywhere.
-              </List.Item>
-            </List>
-            <Group mt={30}>
-              <Button radius="xl" size="md" className={classes.control}>
-                Start Learning
-              </Button>
-              <Button variant="default" radius="xl" size="md" className={classes.control}>
-                Explore More
-              </Button>
-            </Group>
-          </div>
-          <Image src={image.src} className={classes.image} />
-        </div>
-      </Container>
+          </motion.div>
 
-      {/* Carousel Section */}
-      <Container className={classes.carouselContainer}>
-        <Title order={2} ta="center" mb="md">
-          Featured English Learning Resources
-        </Title>
-        <Carousel
-          slideSize={{ base: '100%', sm: '50%' }}
-          slideGap={{ base: 2, sm: 'xl' }}
-          align="start"
-          slidesToScroll={mobile ? 1 : 2}
-        >
-          {slides}
-        </Carousel>
-      </Container>
-    </div>
+          <Tabs value={activeTab} onChange={(value) => setActiveTab(value ?? "all")}>
+            <Card
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+              shadow="sm"
+              p="lg"
+              radius="md"
+              mb="md"
+            >
+              <Group align="flex-start">
+                <div>
+                  <Text fw={500} size="md" mb="xs">
+                    Resource Type
+                  </Text>
+                  <Tabs.List>
+                    {tabsData.map((tab) => (
+                      <Tabs.Tab key={tab.value} value={tab.value} leftSection={tab.icon}>
+                        {tab.label}
+                      </Tabs.Tab>
+                    ))}
+                  </Tabs.List>
+                </div>
+
+                <div>
+                  <Text fw={500} size="md" mb="xs">
+                    Level
+                  </Text>
+                  <Group gap="sm">
+                    <Button
+                      variant={levelFilter === "all" ? "filled" : "outline"}
+                      size="sm"
+                      onClick={() => setLevelFilter("all")}
+                    >
+                      All Levels
+                    </Button>
+                    <Button
+                      variant={levelFilter === "beginner" ? "filled" : "outline"}
+                      size="sm"
+                      color="green"
+                      onClick={() => setLevelFilter("beginner")}
+                    >
+                      Beginner
+                    </Button>
+                    <Button
+                      variant={levelFilter === "intermediate" ? "filled" : "outline"}
+                      size="sm"
+                      color="blue"
+                      onClick={() => setLevelFilter("intermediate")}
+                    >
+                      Intermediate
+                    </Button>
+                    <Button
+                      variant={levelFilter === "advanced" ? "filled" : "outline"}
+                      size="sm"
+                      color="violet"
+                      onClick={() => setLevelFilter("advanced")}
+                    >
+                      Advanced
+                    </Button>
+                  </Group>
+                </div>
+              </Group>
+            </Card>
+
+            {tabsData.map((tab) => (
+              <Tabs.Panel key={tab.value} value={tab.value}>
+                <ResourceList
+                  resources={filteredResources}
+                  noResultsText={getNoResultsText(tab.value)}
+                  resetAction={resetAction(tab.value)}
+                />
+              </Tabs.Panel>
+            ))}
+          </Tabs>
+        </div>
   );
-}
+};
+
+export default Materials;
