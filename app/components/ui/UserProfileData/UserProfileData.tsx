@@ -97,7 +97,8 @@ export default function UserProfileData() {
         <div className={styles.inner}>
           <div className={styles.content}>
             <Title className={styles.title} ta="center">
-              Your <span className={styles.highlight}>fluently</span> user <br /> informations:
+              Your <span className={styles.highlight}>fluently</span> user{" "}
+              <br /> informations:
             </Title>
 
             <Group align="center" mt="md">
@@ -164,7 +165,8 @@ export default function UserProfileData() {
                   }
                 >
                   <Text size="xl" ta="center">
-                    Member since: {new Date(user.createdAt).toLocaleDateString()}
+                    Member since:{" "}
+                    {new Date(user.createdAt).toLocaleDateString()}
                   </Text>
                 </List.Item>
               </List>
@@ -182,7 +184,9 @@ export default function UserProfileData() {
                     radius="xl"
                     size="md"
                     style={{
-                      backgroundColor: isDisabled ? "#ccc" : "rgb(251, 207, 232)",
+                      backgroundColor: isDisabled
+                        ? "#ccc"
+                        : "rgb(251, 207, 232)",
                       color: isDisabled ? "#666" : "black",
                     }}
                   >
