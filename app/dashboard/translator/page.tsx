@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { LoadingOverlay, Button, Group, Box } from "@mantine/core";
-import Translator from "../../components/ui/Translator/Translator";
+import TranslatorGrouped from "../../components/ui/TranslatorGrouped/TranslatorGrouped";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -39,5 +39,5 @@ export default function Dashboard() {
     />
   </Box>;
 
-  return <Translator />;
+  return <TranslatorGrouped disableAnimation />;
 }

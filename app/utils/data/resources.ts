@@ -26,7 +26,7 @@ export const resources: Resource[] = [
     title: "Oxford Online English",
     description:
       "Free resources to learn English including videos, podcasts, and interactive exercises.",
-    url: "https://www.oxfordonlineenglish.com/why-is-english-so-hard-to-learn",
+    url: "https://www.bucksmore.com/bucksmore-summer-2025?gad_source=1&gclid=Cj0KCQjwtJ6_BhDWARIsAGanmKd7Ate0PKwOxQzJJkXfkNUulkzexTEhCkA0ZxIBR-O6J_l9GedbtZUaAkBPEALw_wcB",
     type: "interactive",
     level: "beginner",
     tags: ["multimedia", "free"],
