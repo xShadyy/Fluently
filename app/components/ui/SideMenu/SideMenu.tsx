@@ -80,8 +80,8 @@ const navItems = [
   },
   {
     icon: <IconSettings size={20} stroke={1.5} />,
-    label: "Settings",
-    path: "/dashboard/settings",
+    label: "Translator",
+    path: "/dashboard/translator",
   },
 ];
 
