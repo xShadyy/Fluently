@@ -26,7 +26,7 @@
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.input:focus {
+.input:hover, .input:focus {
   border-color: white;
   box-shadow: 0 0 8px rgba(255,255,255,1);
   outline: none;
@@ -82,6 +82,6 @@
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(50px); }
   to { opacity: 1; transform: translateY(0); }
 }
