@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { LoadingOverlay, Button, Group, Box } from "@mantine/core";
-import AdvancedWordsQuizGrouped from "../../../components/ui/AdvancedWordsQuizGrouped/AdvancedWordsQuizGrouped";
+import MaterialsGrouped from "../../components/ui/MaterialsGrouped/MaterialsGrouped";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -39,5 +39,5 @@ export default function Dashboard() {
     />
   </Box>;
 
-  return <AdvancedWordsQuizGrouped disableAnimation />;
+  return <MaterialsGrouped disableAnimation />;
 }

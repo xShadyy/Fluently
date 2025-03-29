@@ -1,21 +1,25 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { IconCalendar, IconUser } from "@tabler/icons-react";
 import {
-  Card,
-  Avatar,
-  Text,
-  Loader,
-  Stack,
-  TextInput,
   Button,
-  Notification,
+  Container,
   Group,
+  Image,
+  List,
+  Text,
+  ThemeIcon,
+  Title,
+  Loader,
+  TextInput,
   ActionIcon,
+  Avatar,
+  Center,
 } from "@mantine/core";
+import image from "../../../../public/images/image.svg";
 import { IconPencil } from "@tabler/icons-react";
 import styles from "./UserProfileData.module.css";
 import { uiClick } from "@/app/utils/sound";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 type User = {
   id: string;
@@ -80,145 +84,136 @@ export default function UserProfileData() {
 
   if (!user) return <Loader size="lg" className={styles.loader} />;
 
+  const isDisabled =
+    loading || newUsername.trim() === "" || newUsername === user.username;
+
   return (
-    <Card
-      className={styles.profile}
-      shadow="sm"
-      padding="lg"
-      radius="md"
-      withBorder
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
     >
-      <Stack align="center">
-        <Avatar
-          size="xl"
-          radius="xl"
-          src={
-            user.avatar ||
-            `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`
-          }
-          className={styles.avatar}
-        />
+      <Container size="md">
+        <div className={styles.inner}>
+          <div className={styles.content}>
+            <Title className={styles.title} ta="center">
+              Your <span className={styles.highlight}>fluently</span> user <br /> informations:
+            </Title>
 
-        {isEditing ? (
-          <>
-            <TextInput
-              size="sm"
-              value={newUsername}
-              onChange={(e) => setNewUsername(e.currentTarget.value)}
-              placeholder="Enter new username"
-              styles={{
-                input: {
-                  borderColor: "black",
-                  "&:focus": {
-                    borderColor: "black",
-                  },
-                },
-              }}
-            />
-
-            {(error || success) && (
-              <Notification
-                color={error ? "red" : "green"}
-                onClose={() => {
-                  setError(null);
-                  setSuccess(null);
-                }}
-                mt="sm"
-              >
-                {error || success}
-              </Notification>
-            )}
-
-            <Group justify="space-between" mt="sm">
-                <Button
-                onClick={() => {
-                  handleUsernameUpdate();
-                  uiClick.play();
-                }}
-                disabled={
-                  loading ||
-                  newUsername.trim() === "" ||
-                  newUsername === user.username
+            <Group align="center" mt="md">
+              <Avatar
+                size="xl"
+                radius="xl"
+                src={
+                  user.avatar ||
+                  `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`
                 }
-                style={{
-                  backgroundColor:
-                  loading ||
-                  newUsername.trim() === "" ||
-                  newUsername === user.username
-                    ? "gray"
-                    : "white",
-                  color:
-                  loading ||
-                  newUsername.trim() === "" ||
-                  newUsername === user.username
-                    ? "darkgray"
-                    : "black",
-                }}
-                >
-                {loading ? "Saving..." : "Save"}
-                </Button>
+                className={styles.avatar}
+              />
+            </Group>
 
-                <Button
-                onClick={() => {
-                  setIsEditing(false);
-                  uiClick.play();
-                }}
-                disabled={loading}
-                style={{
-                  backgroundColor: "rgb(251, 207, 232)",
-                  color: "black",
-                }}
+            <Center>
+              <List mt={30} spacing="sm" size="sm">
+                <List.Item
+                  icon={
+                    <ThemeIcon variant="filled" color="black">
+                      <IconUser size={16} style={{ color: "white" }} />
+                    </ThemeIcon>
+                  }
                 >
-                Cancel
-                </Button>
-            </Group>
-          </>
-        ) : (
-          <>
-            <Group justify="space-between" align="center">
-              <Text size="xl" fw={700} c="white">
-                Username: {user.username}
-              </Text>
-                <ActionIcon
-                variant="default"
-                size="md"
-                onClick={() => {
-                  setIsEditing(true);
-                  uiClick.play();
-                }}
-                aria-label="Edit Username"
+                  <Group align="center">
+                    {isEditing ? (
+                      <TextInput
+                        size="sm"
+                        value={newUsername}
+                        onChange={(e) => setNewUsername(e.currentTarget.value)}
+                        placeholder="Enter new username"
+                        styles={{
+                          input: {
+                            borderColor: "black",
+                            "&:focus": { borderColor: "black" },
+                          },
+                        }}
+                      />
+                    ) : (
+                      <Text size="xl" ta="center">
+                        Username: {user.username}
+                      </Text>
+                    )}
+                    {!isEditing && (
+                      <ActionIcon
+                        variant="default"
+                        size="md"
+                        onClick={() => {
+                          setIsEditing(true);
+                          uiClick.play();
+                        }}
+                        aria-label="Edit Username"
+                      >
+                        <IconPencil size={20} />
+                      </ActionIcon>
+                    )}
+                  </Group>
+                </List.Item>
+
+                <List.Item
+                  icon={
+                    <ThemeIcon variant="filled" color="black">
+                      <IconCalendar size={16} style={{ color: "white" }} />
+                    </ThemeIcon>
+                  }
                 >
-                <IconPencil size={23} />
-                </ActionIcon>
-            </Group>
+                  <Text size="xl" ta="center">
+                    Member since: {new Date(user.createdAt).toLocaleDateString()}
+                  </Text>
+                </List.Item>
+              </List>
+            </Center>
+
+            <Center>
+              {isEditing && (
+                <Group mt={30} align="center">
+                  <Button
+                    onClick={() => {
+                      handleUsernameUpdate();
+                      uiClick.play();
+                    }}
+                    disabled={isDisabled}
+                    radius="xl"
+                    size="md"
+                    style={{
+                      backgroundColor: isDisabled ? "#ccc" : "rgb(251, 207, 232)",
+                      color: isDisabled ? "#666" : "black",
+                    }}
+                  >
+                    Save
+                  </Button>
+
+                  <Button
+                    variant="default"
+                    onClick={() => {
+                      setIsEditing(false);
+                      uiClick.play();
+                    }}
+                    disabled={loading}
+                    radius="xl"
+                    size="md"
+                  >
+                    Cancel
+                  </Button>
+                </Group>
+              )}
+            </Center>
 
             {(error || success) && (
-              <Notification
-                color={error ? "red" : "green"}
-                onClose={() => {
-                  setError(null);
-                  setSuccess(null);
-                  uiClick.play();
-                }}
-                mt="sm"
-              >
-                {error || success}
-              </Notification>
+              <div style={{ marginTop: "16px", textAlign: "center" }}>
+                <Text color={error ? "red" : "green"}>{error || success}</Text>
+              </div>
             )}
-          </>
-        )}
-
-        <Text size="xl" color="dimmed" className={styles.email}>
-          E-mail: {user.email}
-        </Text>
-        <Text size="xl" c="rgb(248, 249, 250)" className={styles.description}>
-          {user.username} has been a{" "}
-          <span style={{ color: "rgb(251, 207, 232)", fontWeight: "500" }}>
-            Fluently
-          </span>{" "}
-          member since {new Date(user.createdAt).toLocaleDateString()}.
-        </Text>
-      </Stack>
-    </Card>
+          </div>
+          <Image src={image.src} className={styles.image} />
+        </div>
+      </Container>
+    </motion.div>
   );
 }

@@ -10,7 +10,7 @@ import {
   Progress,
   Container,
   Group,
-  Stack
+  Stack,
 } from "@mantine/core";
 import { motion, AnimatePresence } from "framer-motion";
 import { correct, wrong, completed, uiClick } from "@/app/utils/sound";
@@ -81,7 +81,7 @@ export default function BeginnerWordsQuiz() {
       wrong.play();
       const correctText =
         currentQ.options.find(
-          (opt) => opt.id === currentQ.correctAnswer?.wordsOptionId
+          (opt) => opt.id === currentQ.correctAnswer?.wordsOptionId,
         )?.text || "N/A";
       setFeedback(`Time expired! The correct answer is: ${correctText}`);
       setLives((prev) => prev - 1);
@@ -93,7 +93,7 @@ export default function BeginnerWordsQuiz() {
       wrong.play();
       const correctText =
         currentQ.options.find(
-          (opt) => opt.id === currentQ.correctAnswer?.wordsOptionId
+          (opt) => opt.id === currentQ.correctAnswer?.wordsOptionId,
         )?.text || "N/A";
       setFeedback(`Incorrect. The correct answer is: ${correctText}`);
       setLives((prev) => prev - 1);
@@ -187,9 +187,11 @@ export default function BeginnerWordsQuiz() {
             <Container
               className={styles.scoreCircle}
               component={motion.div}
-              style={{
-                "--percentage": `${Math.round((score / questions.length) * 100)}%`
-              } as React.CSSProperties}
+              style={
+                {
+                  "--percentage": `${Math.round((score / questions.length) * 100)}%`,
+                } as React.CSSProperties
+              }
               fluid
             >
               <Text className={styles.scoreValue}>
@@ -213,18 +215,18 @@ export default function BeginnerWordsQuiz() {
                 {getRating() === "Needs Improvement" &&
                   "Needs improvement, try again!"}
               </Text>
-                <Group mt="2rem" className={styles.resetButton}>
+              <Group mt="2rem" className={styles.resetButton}>
                 <Button
                   size="md"
                   onClick={() => {
-                  uiClick.play();
-                  resetQuiz();
+                    uiClick.play();
+                    resetQuiz();
                   }}
                   style={{ backgroundColor: "darkgray", color: "black" }}
                 >
                   Try Again
                 </Button>
-                </Group>
+              </Group>
             </Container>
           </Card>
         </motion.div>
@@ -256,7 +258,10 @@ export default function BeginnerWordsQuiz() {
                 }
                 return (
                   <Group key={index} className={styles.roadmapItem} gap={0}>
-                    <Container className={`${styles.circle} ${circleClass}`} fluid>
+                    <Container
+                      className={`${styles.circle} ${circleClass}`}
+                      fluid
+                    >
                       {index + 1}
                     </Container>
                     {index < questions.length - 1 && (
@@ -292,7 +297,13 @@ export default function BeginnerWordsQuiz() {
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.3 }}
               >
-                <Title ta="center" mt="xl" mb="xl" order={3} className={styles.questionText}>
+                <Title
+                  ta="center"
+                  mt="xl"
+                  mb="xl"
+                  order={3}
+                  className={styles.questionText}
+                >
                   {questions[currentQuestion].text}
                 </Title>
                 <Container
@@ -312,12 +323,14 @@ export default function BeginnerWordsQuiz() {
                         key={option.id}
                         className={`${styles.optionButton} ${
                           selectedAnswer === option.id
-                            ? option.id === questions[currentQuestion].correctAnswer?.wordsOptionId
+                            ? option.id ===
+                              questions[currentQuestion].correctAnswer
+                                ?.wordsOptionId
                               ? styles.correctOption
                               : styles.incorrectOption
                             : showFeedback
-                            ? styles.unselectedOption
-                            : ""
+                              ? styles.unselectedOption
+                              : ""
                         }`}
                         component={motion.button}
                         whileHover={{ scale: 1.02 }}
@@ -338,7 +351,8 @@ export default function BeginnerWordsQuiz() {
               {showFeedback && feedback && (
                 <motion.div
                   className={`${styles.feedback} ${
-                    selectedAnswer === questions[currentQuestion].correctAnswer?.wordsOptionId
+                    selectedAnswer ===
+                    questions[currentQuestion].correctAnswer?.wordsOptionId
                       ? styles.correctFeedback
                       : styles.incorrectFeedback
                   }`}
