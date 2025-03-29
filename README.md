@@ -80,5 +80,174 @@ localhost:3000/register
 - `seed` – inserts fixtures to DB
 - `prettier:write` – formats all files with Prettier
 
+***
 
-   
+## Database structure
+
+![prisma-erd](prisma-erd.svg)
+
+   # Fluently Application Schema Documentation
+
+The schema is designed for a PostgreSQL database and utilizes the Prisma Client. It defines the core entities, enumerations, and relationships necessary to model users, sessions, games, and various types of questions.
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Datasource](#datasource)
+- [Enumerations](#enumerations)
+- [Models](#models)
+  - [User](#user)
+  - [Session](#session)
+  - [Game](#game)
+  - [Question](#question)
+  - [Option](#option)
+  - [CorrectAnswer](#correctanswer)
+  - [WordsQuestion](#wordsquestion)
+  - [WordsOption](#wordsoption)
+  - [WordsCorrectAnswer](#wordscorrectanswer)
+
+---
+
+## Overview
+
+This Prisma schema represents a relational database structure for a Fluently application. It defines several entities and their relationships, enabling functionalities such as user management, game sessions, and handling different types of questions (generic and word-based). The schema emphasizes data integrity with unique constraints and cascading delete operations where necessary.
+
+---
+
+## Datasource
+
+- **Datasource:**
+  - **Provider:** `postgresql`
+  - **URL:** Configured using an environment variable (`DATABASE_URL`)
+
+---
+
+## Enumerations
+
+- **Difficulty:**  
+  Represents the difficulty levels for word-based questions.
+  - `BEGINNER`
+  - `INTERMEDIATE`
+  - `ADVANCED`
+
+- **GameType:**  
+  Specifies the types of games available in the application.
+  - `WORDS`
+  - `ENGLISH_GRAMMAR_TEST`
+
+---
+
+## Models
+
+### User
+
+- **Fields:**
+  - `id`: UUID, primary key, auto-generated.
+  - `username`: Unique string identifier.
+  - `email`: Unique email address.
+  - `password`: User's password.
+  - `createdAt`: Date and time when the account was created (defaults to current time).
+- **Relationships:**
+  - Optional one-to-one relationship with the `Session` model.
+
+---
+
+### Session
+
+- **Fields:**
+  - `id`: UUID, primary key, auto-generated.
+  - `userId`: Unique reference to a `User`.
+  - `createdAt`: Timestamp of session creation (defaults to current time).
+  - `expiresAt`: Timestamp when the session expires.
+- **Relationships:**
+  - One-to-one relation with the `User` model (with cascade on delete).
+
+---
+
+### Game
+
+- **Fields:**
+  - `id`: UUID, primary key, auto-generated.
+  - `name`: Name of the game.
+  - `type`: Game type, using the `GameType` enum (defaults to `WORDS`).
+- **Relationships:**
+  - One-to-many relationship with the `Question` model.
+  - One-to-many relationship with the `WordsQuestion` model.
+
+---
+
+### Question
+
+- **Fields:**
+  - `id`: UUID, primary key, auto-generated.
+  - `text`: Content of the question.
+  - `gameId`: Foreign key reference to the associated `Game`.
+- **Relationships:**
+  - Belongs to a `Game`.
+  - One-to-many relationship with the `Option` model.
+  - Optional one-to-one relationship with the `CorrectAnswer` model.
+
+---
+
+### Option
+
+- **Fields:**
+  - `id`: UUID, primary key, auto-generated.
+  - `text`: Text for the option.
+  - `questionId`: Foreign key reference to the associated `Question`.
+- **Relationships:**
+  - Belongs to a `Question`.
+  - Optional one-to-one relationship with the `CorrectAnswer` model.
+
+---
+
+### CorrectAnswer
+
+- **Fields:**
+  - `id`: UUID, primary key, auto-generated.
+  - `questionId`: Unique foreign key reference to the associated `Question`.
+  - `optionId`: Unique foreign key reference to the associated `Option`.
+- **Relationships:**
+  - Establishes a one-to-one mapping back to a `Question` and an `Option`.
+
+---
+
+### WordsQuestion
+
+- **Fields:**
+  - `id`: UUID, primary key, auto-generated.
+  - `text`: Content of the word-based question.
+  - `difficulty`: Difficulty level, using the `Difficulty` enum.
+  - `gameId`: Foreign key reference to the associated `Game`.
+- **Relationships:**
+  - Belongs to a `Game`.
+  - One-to-many relationship with the `WordsOption` model.
+  - Optional one-to-one relationship with the `WordsCorrectAnswer` model.
+
+---
+
+### WordsOption
+
+- **Fields:**
+  - `id`: UUID, primary key, auto-generated.
+  - `text`: Text for the word option.
+  - `wordsQuestionId`: Foreign key reference to the associated `WordsQuestion`.
+- **Relationships:**
+  - Belongs to a `WordsQuestion`.
+  - Optional one-to-one relationship with the `WordsCorrectAnswer` model.
+
+---
+
+### WordsCorrectAnswer
+
+- **Fields:**
+  - `id`: UUID, primary key, auto-generated.
+  - `wordsQuestionId`: Unique foreign key reference to the associated `WordsQuestion`.
+  - `wordsOptionId`: Unique foreign key reference to the associated `WordsOption`.
+- **Relationships:**
+  - Establishes a one-to-one mapping back to a `WordsQuestion` and a `WordsOption`.
+
+---
+
