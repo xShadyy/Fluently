@@ -3,6 +3,7 @@ import UserHeader from "../UserHeader/UserHeader";
 import Materials from "../Materials/Materials";
 import styles from "./MaterialsGrouped.module.css";
 
+
 interface DashRootProps {
   disableAnimation?: boolean;
 }
@@ -15,7 +16,7 @@ export default function DashRoot({ disableAnimation = false }: DashRootProps) {
         <Sidemenu disableAnimation={disableAnimation} />
         <div className={styles.content}>
           <Materials/>
-        </div>
+        </div>    
       </div>
     </div>
   );
