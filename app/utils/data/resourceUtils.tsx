@@ -1,5 +1,10 @@
 import { JSX } from "react";
-import { IconBook, IconVideo, IconHeadphones, IconWorld } from "@tabler/icons-react";
+import {
+  IconBook,
+  IconVideo,
+  IconHeadphones,
+  IconWorld,
+} from "@tabler/icons-react";
 import { ResourceType } from "./resources";
 
 export const typeIcons: Record<ResourceType, JSX.Element> = {

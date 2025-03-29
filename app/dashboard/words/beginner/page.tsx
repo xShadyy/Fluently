@@ -39,5 +39,5 @@ export default function Dashboard() {
     />
   </Box>;
 
-  return <BeginnerWordsQuizGrouped disableAnimation/>;
+  return <BeginnerWordsQuizGrouped disableAnimation />;
 }

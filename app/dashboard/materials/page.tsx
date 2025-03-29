@@ -5,7 +5,6 @@ import { useDisclosure } from "@mantine/hooks";
 import { LoadingOverlay, Button, Group, Box } from "@mantine/core";
 import MaterialsGrouped from "../../components/ui/MaterialsGrouped/MaterialsGrouped";
 
-
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
@@ -40,5 +39,5 @@ export default function Dashboard() {
     />
   </Box>;
 
-  return <MaterialsGrouped disableAnimation/>;
+  return <MaterialsGrouped disableAnimation />;
 }

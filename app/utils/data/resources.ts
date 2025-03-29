@@ -14,7 +14,8 @@ export const resources: Resource[] = [
   {
     id: "1",
     title: "British Council",
-    description: "A self-study reference and practice book for intermediate learners of English.",
+    description:
+      "A self-study reference and practice book for intermediate learners of English.",
     url: "https://learnenglish.britishcouncil.org",
     type: "reading",
     level: "intermediate",
@@ -23,7 +24,8 @@ export const resources: Resource[] = [
   {
     id: "2",
     title: "Oxford Online English",
-    description: "Free resources to learn English including videos, podcasts, and interactive exercises.",
+    description:
+      "Free resources to learn English including videos, podcasts, and interactive exercises.",
     url: "https://www.oxfordonlineenglish.com/why-is-english-so-hard-to-learn",
     type: "interactive",
     level: "beginner",
@@ -32,7 +34,8 @@ export const resources: Resource[] = [
   {
     id: "3",
     title: "TED Talks",
-    description: "Watch engaging talks on various topics with subtitles to improve listening and vocabulary.",
+    description:
+      "Watch engaging talks on various topics with subtitles to improve listening and vocabulary.",
     url: "https://www.ted.com/",
     type: "video",
     level: "advanced",
@@ -41,7 +44,8 @@ export const resources: Resource[] = [
   {
     id: "4",
     title: "6 Minute English",
-    description: "Short audio programs from BBC discussing current topics with transcripts.",
+    description:
+      "Short audio programs from BBC discussing current topics with transcripts.",
     url: "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english",
     type: "audio",
     level: "intermediate",
@@ -50,7 +54,8 @@ export const resources: Resource[] = [
   {
     id: "5",
     title: "EngVid – English Tips",
-    description: "Interactive language learning platform with gamified lessons.",
+    description:
+      "Interactive language learning platform with gamified lessons.",
     url: "https://www.engvid.com/english-tips/",
     type: "interactive",
     level: "beginner",
@@ -59,7 +64,8 @@ export const resources: Resource[] = [
   {
     id: "6",
     title: "Cambridge Dictionary",
-    description: "Comprehensive English dictionary with pronunciations and examples.",
+    description:
+      "Comprehensive English dictionary with pronunciations and examples.",
     url: "https://dictionary.cambridge.org/",
     type: "reading",
     level: "all",

@@ -52,7 +52,7 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
                 q.correctAnswer && q.correctAnswer.option
                   ? q.correctAnswer.option.id.toString()
                   : "",
-            })
+            }),
           );
           setQuestions(formattedQuestions);
         } else {
@@ -238,8 +238,8 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
-              uiClick.play();
-              setShowWelcome(false);
+                uiClick.play();
+                setShowWelcome(false);
               }}
             >
               Start Quiz
@@ -345,8 +345,8 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
                                 ? styles.correctOption
                                 : styles.incorrectOption
                               : showFeedback
-                              ? styles.unselectedOption
-                              : ""
+                                ? styles.unselectedOption
+                                : ""
                           }`}
                           component={motion.button}
                           whileHover={{ scale: 1.02 }}
@@ -359,7 +359,7 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
                           </span>
                         </Button>
                       );
-                    }
+                    },
                   )}
                 </div>
               </motion.div>

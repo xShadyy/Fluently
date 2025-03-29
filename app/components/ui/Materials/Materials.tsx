@@ -23,7 +23,10 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
         withBorder
         className={styles.customCard}
       >
-        <div className={styles.clickable} onClick={() => setExpanded((prev) => !prev)}>
+        <div
+          className={styles.clickable}
+          onClick={() => setExpanded((prev) => !prev)}
+        >
           <Group align="apart" mb="xs">
             <Group>
               <div className={styles.resourceIcon}>
@@ -48,10 +51,10 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
                 resource.level === "beginner"
                   ? "green"
                   : resource.level === "intermediate"
-                  ? "blue"
-                  : resource.level === "advanced"
-                  ? "violet"
-                  : "orange"
+                    ? "blue"
+                    : resource.level === "advanced"
+                      ? "violet"
+                      : "orange"
               }
               variant="light"
             >
@@ -62,10 +65,10 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
                 resource.type === "reading"
                   ? "pink"
                   : resource.type === "video"
-                  ? "red"
-                  : resource.type === "audio"
-                  ? "yellow"
-                  : "teal"
+                    ? "red"
+                    : resource.type === "audio"
+                      ? "yellow"
+                      : "teal"
               }
               variant="light"
             >
@@ -119,7 +122,11 @@ interface ResourceListProps {
   resetAction: () => void;
 }
 
-const ResourceList = ({ resources, noResultsText, resetAction }: ResourceListProps) => (
+const ResourceList = ({
+  resources,
+  noResultsText,
+  resetAction,
+}: ResourceListProps) => (
   <motion.div
     className={styles.resourcesGrid}
     initial={{ opacity: 0 }}
@@ -141,7 +148,9 @@ const ResourceList = ({ resources, noResultsText, resetAction }: ResourceListPro
       <div className={styles.noResults}>
         <Text size="md">{noResultsText}</Text>
         <Button mt="md" size="md" onClick={resetAction}>
-          {noResultsText.includes("filters") ? "Reset Filters" : "Reset Level Filter"}
+          {noResultsText.includes("filters")
+            ? "Reset Filters"
+            : "Reset Level Filter"}
         </Button>
       </div>
     )}
@@ -150,13 +159,15 @@ const ResourceList = ({ resources, noResultsText, resetAction }: ResourceListPro
 
 const Materials = () => {
   const [activeTab, setActiveTab] = useState<string>("all");
-  const [levelFilter, setLevelFilter] = useState<"all" | "beginner" | "intermediate" | "advanced">("all");
+  const [levelFilter, setLevelFilter] = useState<
+    "all" | "beginner" | "intermediate" | "advanced"
+  >("all");
 
   const filteredResources = resources
     .filter(
       (r) =>
         (activeTab === "all" || r.type === activeTab) &&
-        (levelFilter === "all" || r.level === levelFilter)
+        (levelFilter === "all" || r.level === levelFilter),
     )
     .slice(0, 8);
 
@@ -165,7 +176,11 @@ const Materials = () => {
     { value: "reading", label: "Reading", icon: getIconForType("reading") },
     { value: "video", label: "Video", icon: getIconForType("video") },
     { value: "audio", label: "Audio", icon: getIconForType("audio") },
-    { value: "interactive", label: "Interactive", icon: getIconForType("interactive") },
+    {
+      value: "interactive",
+      label: "Interactive",
+      icon: getIconForType("interactive"),
+    },
   ];
 
   const getNoResultsText = (tab: string) =>
@@ -182,95 +197,104 @@ const Materials = () => {
       : () => setLevelFilter("all");
 
   return (
-        <div className={styles.content}>
-          <motion.div
-            className={styles.header}
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Title mb="sm" fw="700" size="3.5rem">
-              English Learning Materials
-            </Title>
-            <Text size="1.3rem" m="auto">
-              Discover the best resources to improve your English skills
-            </Text>
-          </motion.div>
+    <div className={styles.content}>
+      <motion.div
+        className={styles.header}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Title mb="sm" fw="700" size="3.5rem">
+          English Learning Materials
+        </Title>
+        <Text size="1.3rem" m="auto">
+          Discover the best resources to improve your English skills
+        </Text>
+      </motion.div>
 
-          <Tabs value={activeTab} onChange={(value) => setActiveTab(value ?? "all")}>
-            <Card
-              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-              shadow="sm"
-              p="lg"
-              radius="md"
-              mb="md"
-            >
-              <Group align="flex-start">
-                <div>
-                  <Text fw={500} size="md" mb="xs">
-                    Resource Type
-                  </Text>
-                  <Tabs.List>
-                    {tabsData.map((tab) => (
-                      <Tabs.Tab key={tab.value} value={tab.value} leftSection={tab.icon}>
-                        {tab.label}
-                      </Tabs.Tab>
-                    ))}
-                  </Tabs.List>
-                </div>
+      <Tabs
+        value={activeTab}
+        onChange={(value) => setActiveTab(value ?? "all")}
+      >
+        <Card
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+          shadow="sm"
+          p="lg"
+          radius="md"
+          mb="md"
+        >
+          <Group align="flex-start">
+            <div>
+              <Text fw={500} size="md" mb="xs">
+                Resource Type
+              </Text>
+              <Tabs.List>
+                {tabsData.map((tab) => (
+                  <Tabs.Tab
+                    key={tab.value}
+                    value={tab.value}
+                    leftSection={tab.icon}
+                  >
+                    {tab.label}
+                  </Tabs.Tab>
+                ))}
+              </Tabs.List>
+            </div>
 
-                <div>
-                  <Text fw={500} size="md" mb="xs">
-                    Level
-                  </Text>
-                  <Group gap="sm">
-                    <Button
-                      variant={levelFilter === "all" ? "filled" : "outline"}
-                      size="sm"
-                      onClick={() => setLevelFilter("all")}
-                    >
-                      All Levels
-                    </Button>
-                    <Button
-                      variant={levelFilter === "beginner" ? "filled" : "outline"}
-                      size="sm"
-                      color="green"
-                      onClick={() => setLevelFilter("beginner")}
-                    >
-                      Beginner
-                    </Button>
-                    <Button
-                      variant={levelFilter === "intermediate" ? "filled" : "outline"}
-                      size="sm"
-                      color="blue"
-                      onClick={() => setLevelFilter("intermediate")}
-                    >
-                      Intermediate
-                    </Button>
-                    <Button
-                      variant={levelFilter === "advanced" ? "filled" : "outline"}
-                      size="sm"
-                      color="violet"
-                      onClick={() => setLevelFilter("advanced")}
-                    >
-                      Advanced
-                    </Button>
-                  </Group>
-                </div>
+            <div>
+              <Text fw={500} size="md" mb="xs">
+                Level
+              </Text>
+              <Group gap="sm">
+                <Button
+                  variant={levelFilter === "all" ? "filled" : "outline"}
+                  size="sm"
+                  onClick={() => setLevelFilter("all")}
+                >
+                  All Levels
+                </Button>
+                <Button
+                  variant={levelFilter === "beginner" ? "filled" : "outline"}
+                  size="sm"
+                  color="green"
+                  onClick={() => setLevelFilter("beginner")}
+                >
+                  Beginner
+                </Button>
+                <Button
+                  variant={
+                    levelFilter === "intermediate" ? "filled" : "outline"
+                  }
+                  size="sm"
+                  color="blue"
+                  onClick={() => setLevelFilter("intermediate")}
+                >
+                  Intermediate
+                </Button>
+                <Button
+                  variant={levelFilter === "advanced" ? "filled" : "outline"}
+                  size="sm"
+                  color="violet"
+                  onClick={() => setLevelFilter("advanced")}
+                >
+                  Advanced
+                </Button>
               </Group>
-            </Card>
+            </div>
+          </Group>
+        </Card>
 
-            {tabsData.map((tab) => (
-              <Tabs.Panel key={tab.value} value={tab.value}>
-                <ResourceList
-                  resources={filteredResources}
-                  noResultsText={getNoResultsText(tab.value)}
-                  resetAction={resetAction(tab.value)}
-                />
-              </Tabs.Panel>
-            ))}
-          </Tabs>
-        </div>
+        {tabsData.map((tab) => (
+          <Tabs.Panel key={tab.value} value={tab.value}>
+            <ResourceList
+              resources={filteredResources}
+              noResultsText={getNoResultsText(tab.value)}
+              resetAction={resetAction(tab.value)}
+            />
+          </Tabs.Panel>
+        ))}
+      </Tabs>
+    </div>
   );
 };
 

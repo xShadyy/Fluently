@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client"; 
+import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
@@ -19,7 +19,7 @@ export async function GET() {
         },
       },
     });
-    
+
     return NextResponse.json({ questions });
   } catch (error) {
     console.error("API error:", error);

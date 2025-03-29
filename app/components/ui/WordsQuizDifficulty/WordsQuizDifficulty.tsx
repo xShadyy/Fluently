@@ -119,13 +119,13 @@ export default function WordsQuiz({
               {selectedDifficulty === difficulty && (
                 <button
                   className={
-                  styles[
-                    `confirmButton${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`
-                  ]
+                    styles[
+                      `confirmButton${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`
+                    ]
                   }
                   onClick={() => {
-                  handleConfirm();
-                  uiClick.play();
+                    handleConfirm();
+                    uiClick.play();
                   }}
                 >
                   Confirm

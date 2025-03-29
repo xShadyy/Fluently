@@ -85,19 +85,26 @@ const navItems = [
   },
 ];
 
-export function SideMenu({ disableAnimation = false }: { disableAnimation?: boolean }) {
+export function SideMenu({
+  disableAnimation = false,
+}: {
+  disableAnimation?: boolean;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const Wrapper = disableAnimation ? "div" : motion.div;
 
-  const activeNav = navItems.reduce((prev, item) => {
-    if (pathname.startsWith(item.path)) {
-      if (!prev || item.path.length > prev.path.length) {
-        return item;
+  const activeNav = navItems.reduce(
+    (prev, item) => {
+      if (pathname.startsWith(item.path)) {
+        if (!prev || item.path.length > prev.path.length) {
+          return item;
+        }
       }
-    }
-    return prev;
-  }, null as typeof navItems[0] | null);
+      return prev;
+    },
+    null as (typeof navItems)[0] | null,
+  );
 
   return (
     <Wrapper
