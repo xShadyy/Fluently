@@ -17,7 +17,7 @@ import {
 import image from "../../../../public/images/image.svg";
 import { IconPencil } from "@tabler/icons-react";
 import styles from "./UserProfileData.module.css";
-import { uiClick } from "@/app/utils/sound";
+import { uiClick } from "@/utils/sound";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 

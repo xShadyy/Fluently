@@ -2,22 +2,20 @@
   "name": "mantine-next-template",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "analyze": "ANALYZE=true next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "lint": "npm run eslint && npm run stylelint",
-    "eslint": "next lint",
-    "stylelint": "stylelint \"**/*.css\" --cache",
     "jest": "jest",
     "jest:watch": "jest --watch",
     "prettier:check": "prettier --check \"**/*.{ts,tsx}\"",
     "prettier:write": "prettier --write \"**/*.{ts,tsx}\"",
     "test": "npm run prettier:check && npm run lint && npm run typecheck && npm run jest",
-    "start:backend": "ts-node backend/server.ts",
-    "start:all": "concurrently \"npm run start:backend\" \"npm run dev\""
+    "seed": "node --loader ts-node/esm backend/prisma/seed.ts"
+
   },
   "dependencies": {
     "@mantine/carousel": "^7.17.2",
@@ -61,8 +59,8 @@
     "@types/howler": "^2.2.12",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.8",
-    "@types/node": "^22.13.5",
-    "@types/react": "19.0.7",
+    "@types/node": "^22.13.14",
+    "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.4",
     "@typescript-eslint/eslint-plugin": "^8.25.0",
     "@typescript-eslint/parser": "^8.25.0",
@@ -86,7 +84,7 @@
     "storybook-dark-mode": "^4.0.2",
     "stylelint": "^16.13.2",
     "stylelint-config-standard-scss": "^14.0.0",
-    "ts-jest": "^29.2.5",
+    "ts-jest": "^29.3.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.24.0"

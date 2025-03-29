@@ -1,19 +1,19 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { completed, correct, uiClick, wrong } from "@/utils/sound";
 import {
-  Card,
   Button,
-  Loader,
-  Text,
-  Title,
-  Progress,
+  Card,
   Container,
   Group,
+  Loader,
+  Progress,
   Stack,
+  Text,
+  Title,
 } from "@mantine/core";
-import { motion, AnimatePresence } from "framer-motion";
-import { correct, wrong, completed, uiClick } from "@/app/utils/sound";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
 import styles from "./BeginnerWordsQuiz.module.css";
 
 interface Option {
