@@ -65,8 +65,8 @@ const navItems = [
   },
   {
     icon: <IconBook size={20} stroke={1.5} />,
-    label: "Lessons",
-    path: "/dashboard/lessons",
+    label: "Materials",
+    path: "/dashboard/materials",
   },
   {
     icon: <IconLanguage size={20} stroke={1.5} />,
@@ -80,24 +80,31 @@ const navItems = [
   },
   {
     icon: <IconSettings size={20} stroke={1.5} />,
-    label: "Settings",
-    path: "/dashboard/settings",
+    label: "Translator",
+    path: "/dashboard/translator",
   },
 ];
 
-export function SideMenu({ disableAnimation = false }: { disableAnimation?: boolean }) {
+export function SideMenu({
+  disableAnimation = false,
+}: {
+  disableAnimation?: boolean;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const Wrapper = disableAnimation ? "div" : motion.div;
 
-  const activeNav = navItems.reduce((prev, item) => {
-    if (pathname.startsWith(item.path)) {
-      if (!prev || item.path.length > prev.path.length) {
-        return item;
+  const activeNav = navItems.reduce(
+    (prev, item) => {
+      if (pathname.startsWith(item.path)) {
+        if (!prev || item.path.length > prev.path.length) {
+          return item;
+        }
       }
-    }
-    return prev;
-  }, null as typeof navItems[0] | null);
+      return prev;
+    },
+    null as (typeof navItems)[0] | null,
+  );
 
   return (
     <Wrapper
