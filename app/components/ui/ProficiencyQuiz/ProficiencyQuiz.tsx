@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { correct, wrong, completed, uiClick } from "@/app/utils/sound";
+import { correct, wrong, completed, uiClick } from "@/utils/sound";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import styles from "./ProficiencyQuiz.module.css";

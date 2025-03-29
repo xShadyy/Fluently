@@ -13,7 +13,7 @@ import {
   Stack,
 } from "@mantine/core";
 import { motion, AnimatePresence } from "framer-motion";
-import { correct, wrong, completed, uiClick } from "@/app/utils/sound";
+import { correct, wrong, completed, uiClick } from "@/utils/sound";
 import styles from "./AdvancedWordsQuiz.module.css";
 
 interface Option {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styles from "./Translator.module.css";
-import { uiClick } from "@/app/utils/sound";
+import { uiClick } from "@/utils/sound";
 
 const Translator: React.FC = () => {
   const [polishText, setPolishText] = useState("");

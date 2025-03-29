@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Skull, Flame, Zap, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import styles from "./WordsQuizDifficulty.module.css";
-import { uiClick } from "@/app/utils/sound";
+import { uiClick } from "@/utils/sound";
 
 interface DifficultySelectorProps {
   onSelect?: (difficulty: "beginner" | "intermediate" | "advanced") => void;

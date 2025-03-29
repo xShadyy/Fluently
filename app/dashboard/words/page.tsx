@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import { LoadingOverlay, Button, Group, Box } from "@mantine/core";
-import WordsQuizGrouped from "@/app/components/ui/WordsQuizDifficultyGrouped/WordsQuizDifficultyGrouped";
+import WordsQuizGrouped from "@/components/ui/WordsQuizDifficultyGrouped/WordsQuizDifficultyGrouped";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
