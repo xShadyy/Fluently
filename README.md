@@ -31,9 +31,34 @@ Embrace power of learning and broaden your horizons
 
 ## Quick Start
 ```shell
-npm i -y
+npm install
 npm run dev
 ```
+## Setting up backend
+1. Make sure you have PostgreSQL installed - [Downloads page](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads))
+   
+2. Create server and database called:
+```shell 
+fluently 
+```
+
+3. Inside the **backend** folder run: 
+```shell
+npx prisma migrate dev --name init
+```
+
+4. Create .env file inside the **backend** folder - look inside **.env.example** for exact instructions
+
+5. From the **root** of the project run:
+```shell
+npm run seed
+```
+ 
+6. You should be good to go, although it's highly recommended to create new user for best experience:
+```shell
+localhost:3000/register
+```
+
 ## npm scripts
 
 ### Build and dev scripts
@@ -45,16 +70,15 @@ npm run dev
 ### Testing scripts
 
 - `typecheck` – checks TypeScript types
-- `lint` – runs ESLint
 - `prettier:check` – checks files with Prettier
+- `prettier:write` – formats files
 - `jest` – runs jest tests
 - `jest:watch` – starts jest watch
-- `test` – runs `jest`, `prettier:check`, `lint` and `typecheck` scripts
+- `test` – runs `jest`, `prettier:check` and `typecheck` scripts
 
 ### Other scripts
-- `start:all` – starts frontend and backend using [concurrently](https://www.npmjs.com/package/concurrently)
+- `seed` – inserts fixtures to DB
 - `prettier:write` – formats all files with Prettier
-
 
 
    
