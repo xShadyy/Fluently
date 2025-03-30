@@ -1,4 +1,8 @@
 require('@testing-library/jest-dom');
+require('whatwg-fetch');
+
+global.Request = Request;
+global.Response = Response;
 
 const { getComputedStyle } = window;
 window.getComputedStyle = (elt) => getComputedStyle(elt);
@@ -18,10 +22,16 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-class ResizeObserver {
+window.ResizeObserver = class {
   observe() {}
   unobserve() {}
   disconnect() {}
-}
+};
 
-window.ResizeObserver = ResizeObserver;
+// Polyfill Response.json if it's not available
+if (typeof Response.prototype.json !== 'function') {
+  Response.prototype.json = async function () {
+    const text = await this.text();
+    return JSON.parse(text);
+  };
+}
