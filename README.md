@@ -35,7 +35,7 @@ npm install
 npm run dev
 ```
 ## Setting up backend
-1. Make sure you have PostgreSQL installed - [Downloads page](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads))
+1. Make sure you have PostgreSQL installed - [Downloads page](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
    
 2. Create server and database called:
 ```shell 
@@ -78,7 +78,6 @@ localhost:3000/register
 
 ### Other scripts
 - `seed` – inserts fixtures to DB
-- `prettier:write` – formats all files with Prettier
 
 ***
 
