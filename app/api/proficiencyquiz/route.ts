@@ -1,9 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
+
 
 export async function GET() {
+  const prisma = new PrismaClient();
   try {
     const questions = await prisma.question.findMany({
       where: { gameId: "game-proficiency" },
@@ -17,6 +18,10 @@ export async function GET() {
 
     return NextResponse.json({ questions });
   } catch (error) {
-    return NextResponse.error();
+    console.error("Database error:", error);
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }

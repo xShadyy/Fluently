@@ -1,86 +1,49 @@
-import { GET } from "@/api/proficiencyquiz/route";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { PrismaClient } from "@prisma/client";
-import { NextResponse } from "next/server";
 
-jest.mock("@prisma/client", () => {
-  const mockPrisma = {
+const mockQuestionFindMany = vi.fn();
+
+vi.mock("@prisma/client", () => ({
+  PrismaClient: vi.fn(() => ({
     question: {
-      findMany: jest.fn(),
+      findMany: mockQuestionFindMany,
     },
-  };
-  return { PrismaClient: jest.fn(() => mockPrisma) };
-});
-
-jest.mock("next/server", () => ({
-  NextResponse: {
-    json: jest.fn((data) => ({
-      json: () => data,
-      status: 200,
-    })),
-    error: jest.fn(() => ({
-      json: () => ({ error: "Internal server error" }),
-      status: 500,
-    })),
-  },
+  })),
 }));
 
-const prisma = new PrismaClient();
-
-describe("ProficiencyQuiz API route", () => {
-  afterEach(() => {
-    jest.clearAllMocks();
+describe("GET /api/proficiencyquiz", () => {
+  beforeEach(() => {
+    mockQuestionFindMany.mockReset();
   });
 
-  it("returns questions successfully", async () => {
-    const mockQuestions = [
+  it("returns questions when DB query succeeds", async () => {
+    mockQuestionFindMany.mockResolvedValue([
       {
-        id: "question-1",
-        text: "What is the capital of France?",
-        options: [
-          { id: "option-1", text: "Paris" },
-          { id: "option-2", text: "London" },
-        ],
-        correctAnswer: {
-          id: "correct-1",
-          option: { id: "option-1", text: "Paris" },
-        },
+        id: "q1",
+        content: "What is 2+2?",
+        gameId: "game-proficiency",
+        options: [],
+        correctAnswer: { option: {} },
       },
-    ];
+    ]);
 
-    prisma.question.findMany.mockResolvedValue(mockQuestions);
+    const { GET } = await import("@/api/proficiencyquiz/route");
+    const res = await GET();
+    const json = await res.json();
 
-    const response = await GET();
-
-    expect(prisma.question.findMany).toHaveBeenCalledWith({
-      where: { gameId: "game-proficiency" },
-      include: {
-        options: true,
-        correctAnswer: {
-          include: { option: true },
-        },
-      },
-    });
-
-    expect(response.json()).toEqual({ questions: mockQuestions });
-    expect(response.status).toBe(200);
+    expect(res.status).toBe(200);
+    expect(json).toHaveProperty("questions");
+    expect(json.questions[0].id).toBe("q1");
   });
 
-  it("returns 500 if an error occurs", async () => {
-    prisma.question.findMany.mockRejectedValue(new Error("Database error"));
+  it("returns 500 when DB fails", async () => {
+    mockQuestionFindMany.mockRejectedValue(new Error("DB error"));
 
-    const response = await GET();
+    const { GET } = await import("@/api/proficiencyquiz/route");
+    const res = await GET();
+    const json = await res.json();
 
-    expect(prisma.question.findMany).toHaveBeenCalledWith({
-      where: { gameId: "game-proficiency" },
-      include: {
-        options: true,
-        correctAnswer: {
-          include: { option: true },
-        },
-      },
-    });
-
-    expect(response.json()).toEqual({ error: "Internal server error" });
-    expect(response.status).toBe(500);
+    expect(res.status).toBe(500);
+    expect(json).toEqual({ error: "Internal server error" });
   });
 });

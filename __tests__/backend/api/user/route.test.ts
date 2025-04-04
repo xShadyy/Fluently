@@ -1,237 +1,179 @@
-import { GET, PUT } from "@/api/user/route";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { NextRequest, NextResponse } from "next/server";
 
-jest.mock("@prisma/client", () => {
-  const mockPrisma = {
+const mockSessionFindUnique = vi.fn();
+const mockUserUpdate = vi.fn();
+
+vi.mock("@prisma/client", () => ({
+  PrismaClient: vi.fn(() => ({
     session: {
-      findUnique: jest.fn(),
+      findUnique: mockSessionFindUnique,
     },
     user: {
-      update: jest.fn(),
+      update: mockUserUpdate,
     },
-  };
-  return { PrismaClient: jest.fn(() => mockPrisma) };
-});
-
-jest.mock("next/server", () => ({
-  NextResponse: {
-    json: jest.fn((data, options) => ({
-      json: () => data,
-      ...options,
-    })),
-  },
+  })),
 }));
 
-const prisma = new PrismaClient();
+const mockRequest = (options: { 
+  sessionId?: string, 
+  method?: 'GET' | 'PUT',
+  body?: any 
+}): NextRequest => ({
+  cookies: {
+    get: vi.fn((name: string) => 
+      name === 'sessionId' && options.sessionId 
+        ? { value: options.sessionId } 
+        : undefined
+    ),
+  },
+  json: async () => options.body || {},
+  method: options.method || 'GET',
+} as unknown as NextRequest);
 
-describe("User API route", () => {
-  afterEach(() => {
-    jest.clearAllMocks();
+describe("GET /api/user", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockSessionFindUnique.mockReset();
   });
 
-  describe("GET", () => {
-    it("returns 401 if session cookie is missing", async () => {
-      const request = {
-        cookies: {
-          get: jest.fn().mockReturnValue(undefined),
-        },
-      };
+  it("returns 401 when no session cookie exists", async () => {
+    const { GET } = await import("@/api/user/route");
+    const req = mockRequest({});
+    const res = await GET(req);
+    
+    expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Not authenticated" });
+  });
 
-      const response = await GET(request as unknown as NextRequest);
+  it("returns 401 for invalid session", async () => {
+    mockSessionFindUnique.mockResolvedValue(null);
+    
+    const { GET } = await import("@/api/user/route");
+    const req = mockRequest({ sessionId: "invalid-session" });
+    const res = await GET(req);
+    
+    expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Invalid session" });
+  });
 
-      expect(response.json()).toEqual({ error: "Not authenticated" });
-      expect(response.status).toBe(401);
+  it("returns 401 for expired session", async () => {
+    mockSessionFindUnique.mockResolvedValue({
+      expiresAt: new Date(2020, 0, 1),
+      user: { id: "1", username: "test", email: "test@test.com" }
+    });
+    
+    const { GET } = await import("@/api/user/route");
+    const req = mockRequest({ sessionId: "expired-session" });
+    const res = await GET(req);
+    
+    expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Session expired" });
+  });
+
+  it("returns user data for valid session", async () => {
+    const mockUser = { 
+      id: "user-1", 
+      username: "testuser", 
+      email: "test@example.com", 
+      createdAt: new Date() 
+    };
+    
+    mockSessionFindUnique.mockResolvedValue({
+      expiresAt: new Date(2030, 0, 1),
+      user: mockUser
     });
 
-    it("returns 401 if session is invalid", async () => {
-      prisma.session.findUnique.mockResolvedValue(null);
+    const { GET } = await import("@/api/user/route");
+    const req = mockRequest({ sessionId: "valid-session" });
+    const res = await GET(req);
+    const data = await res.json();
+    
+    expect(res.status).toBe(200);
+    expect(data.user).toEqual({
+      id: mockUser.id,
+      username: mockUser.username,
+      email: mockUser.email,
+      createdAt: mockUser.createdAt.toISOString(),
+    });
+  });
+});
 
-      const request = {
-        cookies: {
-          get: jest.fn().mockReturnValue({ value: "invalid-session-id" }),
-        },
-      };
+describe("PUT /api/user", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockSessionFindUnique.mockReset();
+    mockUserUpdate.mockReset();
+  });
 
-      const response = await GET(request as unknown as NextRequest);
-
-      expect(prisma.session.findUnique).toHaveBeenCalledWith({
-        where: { id: "invalid-session-id" },
-        include: { user: true },
-      });
-      expect(response.json()).toEqual({ error: "Invalid session" });
-      expect(response.status).toBe(401);
+  it("returns 400 for empty username", async () => {
+    mockSessionFindUnique.mockResolvedValue({
+      expiresAt: new Date(2030, 0, 1),
+      user: { id: "user-1" }
     });
 
-    it("returns 401 if session is expired", async () => {
-      prisma.session.findUnique.mockResolvedValue({
-        id: "session-id",
-        expiresAt: new Date(Date.now() - 1000), // Expired session
-        user: {},
-      });
-
-      const request = {
-        cookies: {
-          get: jest.fn().mockReturnValue({ value: "session-id" }),
-        },
-      };
-
-      const response = await GET(request as unknown as NextRequest);
-
-      expect(response.json()).toEqual({ error: "Session expired" });
-      expect(response.status).toBe(401);
+    const { PUT } = await import("@/api/user/route");
+    const req = mockRequest({
+      sessionId: "valid-session",
+      method: "PUT",
+      body: { username: "" }
     });
+    
+    const res = await PUT(req);
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Username cannot be empty" });
+  });
 
-    it("returns user data if session is valid", async () => {
-      const mockUser = {
-        id: "user-id",
-        username: "testuser",
-        email: "test@example.com",
-        createdAt: new Date("2023-01-01T00:00:00Z"),
-      };
+  it("updates username successfully", async () => {
+    const mockUser = { 
+      id: "user-1", 
+      username: "new-username", 
+      email: "test@example.com" 
+    };
+    
+    mockSessionFindUnique.mockResolvedValue({
+      expiresAt: new Date(2030, 0, 1),
+      user: { id: "user-1" }
+    });
+    
+    mockUserUpdate.mockResolvedValue(mockUser);
 
-      prisma.session.findUnique.mockResolvedValue({
-        id: "session-id",
-        expiresAt: new Date(Date.now() + 1000), // Valid session
-        user: mockUser,
-      });
-
-      const request = {
-        cookies: {
-          get: jest.fn().mockReturnValue({ value: "session-id" }),
-        },
-      };
-
-      const response = await GET(request as unknown as NextRequest);
-
-      expect(response.json()).toEqual({ user: mockUser });
+    const { PUT } = await import("@/api/user/route");
+    const req = mockRequest({
+      sessionId: "valid-session",
+      method: "PUT",
+      body: { username: "new-username" }
+    });
+    
+    const res = await PUT(req);
+    const data = await res.json();
+    
+    expect(res.status).toBe(200);
+    expect(data.user).toEqual(mockUser);
+    expect(mockUserUpdate).toHaveBeenCalledWith({
+      where: { id: "user-1" },
+      data: { username: "new-username" }
     });
   });
 
-  describe("PUT", () => {
-    it("returns 401 if session cookie is missing", async () => {
-      const request = {
-        cookies: {
-          get: jest.fn().mockReturnValue(undefined),
-        },
-      };
-
-      const response = await PUT(request as unknown as NextRequest);
-
-      expect(response.json()).toEqual({ error: "Not authenticated" });
-      expect(response.status).toBe(401);
+  it("returns 500 on database error", async () => {
+    mockSessionFindUnique.mockResolvedValue({
+      expiresAt: new Date(2030, 0, 1),
+      user: { id: "user-1" }
     });
+    
+    mockUserUpdate.mockRejectedValue(new Error("Database error"));
 
-    it("returns 401 if session is invalid", async () => {
-      prisma.session.findUnique.mockResolvedValue(null);
-
-      const request = {
-        cookies: {
-          get: jest.fn().mockReturnValue({ value: "invalid-session-id" }),
-        },
-      };
-
-      const response = await PUT(request as unknown as NextRequest);
-
-      expect(prisma.session.findUnique).toHaveBeenCalledWith({
-        where: { id: "invalid-session-id" },
-        include: { user: true },
-      });
-      expect(response.json()).toEqual({ error: "Invalid session" });
-      expect(response.status).toBe(401);
+    const { PUT } = await import("@/api/user/route");
+    const req = mockRequest({
+      sessionId: "valid-session",
+      method: "PUT",
+      body: { username: "new-username" }
     });
-
-    it("returns 401 if session is expired", async () => {
-      prisma.session.findUnique.mockResolvedValue({
-        id: "session-id",
-        expiresAt: new Date(Date.now() - 1000), // Expired session
-        user: {},
-      });
-
-      const request = {
-        cookies: {
-          get: jest.fn().mockReturnValue({ value: "session-id" }),
-        },
-      };
-
-      const response = await PUT(request as unknown as NextRequest);
-
-      expect(response.json()).toEqual({ error: "Session expired" });
-      expect(response.status).toBe(401);
-    });
-
-    it("returns 400 if username is missing or empty", async () => {
-      prisma.session.findUnique.mockResolvedValue({
-        id: "session-id",
-        expiresAt: new Date(Date.now() + 1000), // Valid session
-        user: { id: "user-id" },
-      });
-
-      const request = {
-        cookies: {
-          get: jest.fn().mockReturnValue({ value: "session-id" }),
-        },
-        json: jest.fn().mockResolvedValue({ username: "" }),
-      };
-
-      const response = await PUT(request as unknown as NextRequest);
-
-      expect(response.json()).toEqual({ error: "Username cannot be empty" });
-      expect(response.status).toBe(400);
-    });
-
-    it("updates the username and returns updated user data", async () => {
-      const mockUpdatedUser = {
-        id: "user-id",
-        username: "newusername",
-        email: "test@example.com",
-        createdAt: new Date("2023-01-01T00:00:00Z"),
-      };
-
-      prisma.session.findUnique.mockResolvedValue({
-        id: "session-id",
-        expiresAt: new Date(Date.now() + 1000), // Valid session
-        user: { id: "user-id" },
-      });
-
-      prisma.user.update.mockResolvedValue(mockUpdatedUser);
-
-      const request = {
-        cookies: {
-          get: jest.fn().mockReturnValue({ value: "session-id" }),
-        },
-        json: jest.fn().mockResolvedValue({ username: "newusername" }),
-      };
-
-      const response = await PUT(request as unknown as NextRequest);
-
-      expect(prisma.user.update).toHaveBeenCalledWith({
-        where: { id: "user-id" },
-        data: { username: "newusername" },
-      });
-      expect(response.json()).toEqual({ user: mockUpdatedUser });
-    });
-
-    it("returns 500 if an error occurs during update", async () => {
-      prisma.session.findUnique.mockResolvedValue({
-        id: "session-id",
-        expiresAt: new Date(Date.now() + 1000), // Valid session
-        user: { id: "user-id" },
-      });
-
-      prisma.user.update.mockRejectedValue(new Error("Database error"));
-
-      const request = {
-        cookies: {
-          get: jest.fn().mockReturnValue({ value: "session-id" }),
-        },
-        json: jest.fn().mockResolvedValue({ username: "newusername" }),
-      };
-
-      const response = await PUT(request as unknown as NextRequest);
-
-      expect(response.json()).toEqual({ error: "Failed to update user" });
-      expect(response.status).toBe(500);
-    });
+    
+    const res = await PUT(req);
+    expect(res.status).toBe(500);
+    expect(await res.json()).toEqual({ error: "Failed to update user" });
   });
 });

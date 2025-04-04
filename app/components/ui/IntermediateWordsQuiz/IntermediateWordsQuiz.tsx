@@ -32,7 +32,7 @@ interface Question {
   correctAnswer: CorrectAnswer | null;
 }
 
-export default function BeginnerWordsQuiz() {
+export default function IntermediateWordsQuiz() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
