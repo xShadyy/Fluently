@@ -15,7 +15,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import styles from "./BeginnerWordsQuiz.module.css";
-
+import React from "react";
 interface Option {
   id: string;
   text: string;

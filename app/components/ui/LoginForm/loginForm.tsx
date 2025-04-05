@@ -23,6 +23,7 @@ import {
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import classes from "./loginForm.module.css";
+import React from "react";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");

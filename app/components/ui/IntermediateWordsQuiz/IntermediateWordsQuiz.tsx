@@ -15,6 +15,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { correct, wrong, completed, uiClick } from "@/utils/sound";
 import styles from "./IntermediateWordsQuiz.module.css";
+import React from "react";
 
 interface Option {
   id: string;

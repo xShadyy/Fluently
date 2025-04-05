@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MantineProvider } from '@mantine/core';
-import AdvancedWordsQuiz from '@/components/ui/AdvancedWordsQuiz/AdvancedWordsQuiz';
+import BeginnerWordsQuiz from '@/components/ui/BeginnerWordsQuiz/BeginnerWordsQuiz';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
@@ -59,18 +59,18 @@ const renderWithMantine = (ui: React.ReactElement) =>
 
 describe('AdvancedWordsQuiz component', () => {
   it('renders loading state initially', () => {
-    renderWithMantine(<AdvancedWordsQuiz />);
+    renderWithMantine(<BeginnerWordsQuiz />);
     expect(screen.getByText(/loading quiz questions/i)).toBeInTheDocument();
   });
 
   it('renders first question after loading', async () => {
-    renderWithMantine(<AdvancedWordsQuiz />);
+    renderWithMantine(<BeginnerWordsQuiz />);
     await screen.findByText(/what is the capital of france/i);
     expect(screen.getByText(/question 1 out of 1/i)).toBeInTheDocument();
   });
 
   it('shows correct feedback when correct answer is selected', async () => {
-    renderWithMantine(<AdvancedWordsQuiz />);
+    renderWithMantine(<BeginnerWordsQuiz />);
     await screen.findByText(/what is the capital of france/i);
     const correctBtn = screen.getByRole('button', { name: /paris/i });
     fireEvent.click(correctBtn);
@@ -78,7 +78,7 @@ describe('AdvancedWordsQuiz component', () => {
   });
 
   it('shows incorrect feedback when wrong answer is selected', async () => {
-    renderWithMantine(<AdvancedWordsQuiz />);
+    renderWithMantine(<BeginnerWordsQuiz />);
     await screen.findByText(/what is the capital of france/i);
     const wrongBtn = screen.getByRole('button', { name: /london/i });
     fireEvent.click(wrongBtn);
