@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IconChevronDown, IconExternalLink } from "@tabler/icons-react";
@@ -5,6 +6,7 @@ import { Card, Text, Title, Group, Badge, Button, Tabs } from "@mantine/core";
 import styles from "./Materials.module.css";
 import { getIconForType } from "../../../utils/data/resourceUtils";
 import { resources, Resource } from "../../../utils/data/resources";
+
 
 const ResourceCard = ({ resource }: { resource: Resource }) => {
   const [expanded, setExpanded] = useState(false);
