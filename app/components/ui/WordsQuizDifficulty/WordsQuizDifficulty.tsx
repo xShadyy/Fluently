@@ -4,6 +4,7 @@ import { Skull, Flame, Zap, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import styles from "./WordsQuizDifficulty.module.css";
 import { uiClick } from "@/utils/sound";
+import React from "react";
 
 interface DifficultySelectorProps {
   onSelect?: (difficulty: "beginner" | "intermediate" | "advanced") => void;

@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import UserCard from "../UserCard/UserCard";
 import { Button, Container, Group, Image, Text } from "@mantine/core";
 import classes from "./UserHeader.module.css";
+import React from "react";
 
 export default function UserHeader({
   disableAnimation = false,

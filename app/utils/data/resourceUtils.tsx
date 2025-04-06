@@ -6,6 +6,7 @@ import {
   IconWorld,
 } from "@tabler/icons-react";
 import { ResourceType } from "./resources";
+import React from "react";
 
 export const typeIcons: Record<ResourceType, JSX.Element> = {
   reading: <IconBook className="h-5 w-5" />,

@@ -12,6 +12,7 @@ import {
 } from "@tabler/icons-react";
 import classes from "./SideMenu.module.css";
 import { uiClick } from "../../../utils/sound";
+import React from "react";
 
 interface NavbarLinkProps {
   icon: React.ReactNode;

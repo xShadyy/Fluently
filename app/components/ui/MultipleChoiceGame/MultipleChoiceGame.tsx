@@ -2,6 +2,7 @@
 
 import { Card, Text, Button, Group } from "@mantine/core";
 import { useState } from "react";
+import React from "react";
 
 interface Option {
   id: string;

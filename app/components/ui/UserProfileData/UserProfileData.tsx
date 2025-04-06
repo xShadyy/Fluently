@@ -20,6 +20,7 @@ import styles from "./UserProfileData.module.css";
 import { uiClick } from "@/utils/sound";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import React from "react";
 
 type User = {
   id: string;

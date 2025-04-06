@@ -2,6 +2,7 @@ import Sidemenu from "../SideMenu/SideMenu";
 import UserHeader from "../UserHeader/UserHeader";
 import IntermediateWordsQuiz from "../IntermediateWordsQuiz/IntermediateWordsQuiz";
 import styles from "./IntermediateWordsQuizGrouped.module.css";
+import React from "react";
 
 interface DashRootProps {
   disableAnimation?: boolean;

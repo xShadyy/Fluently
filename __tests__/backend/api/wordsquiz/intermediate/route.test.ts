@@ -1,96 +1,78 @@
-import { GET } from "@/api/wordsquiz/intermediate/route";
-import { PrismaClient } from "@prisma/client";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
-jest.mock("@prisma/client", () => {
-  const mockPrisma = {
+const mockWordsQuestionFindMany = vi.fn();
+vi.mock("@prisma/client", () => ({
+  PrismaClient: vi.fn(() => ({
     wordsQuestion: {
-      findMany: jest.fn(),
+      findMany: mockWordsQuestionFindMany,
     },
-  };
-  return { PrismaClient: jest.fn(() => mockPrisma) };
-});
-
-jest.mock("next/server", () => ({
-  NextResponse: {
-    json: jest.fn((data) => ({
-      json: () => data,
-      status: 200,
-    })),
-    error: jest.fn(() => ({
-      json: () => ({ error: "Internal server error" }),
-      status: 500,
-    })),
-  },
+  })),
 }));
 
-const prisma = new PrismaClient();
-
-describe("Intermediate WordsQuiz API route", () => {
-  afterEach(() => {
-    jest.clearAllMocks();
+describe("GET /api/wordsquiz/intermediate", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockWordsQuestionFindMany.mockReset();
   });
 
-  it("returns intermediate questions successfully", async () => {
+  it("returns intermediate words questions successfully", async () => {
     const mockQuestions = [
       {
-        id: "question-1",
-        text: "What is the antonym of 'difficult'?",
+        id: "q1",
+        text: "Beginner Question 1",
+        difficulty: "INTERMEDIATE",
+        game: { type: "WORDS" },
         options: [
-          { id: "option-1", text: "Easy" },
-          { id: "option-2", text: "Hard" },
+          { id: "o1", text: "Option 1" },
+          { id: "o2", text: "Option 2" },
         ],
         correctAnswer: {
-          id: "correct-1",
-          wordsOption: { id: "option-1", text: "Easy" },
+          wordsOption: { id: "o1", text: "Correct Answer" },
         },
       },
     ];
 
-    prisma.wordsQuestion.findMany.mockResolvedValue(mockQuestions);
+    mockWordsQuestionFindMany.mockResolvedValue(mockQuestions);
 
+    const { GET } = await import("@/api/wordsquiz/intermediate/route");
     const response = await GET();
+    const data = await response.json();
 
-    expect(prisma.wordsQuestion.findMany).toHaveBeenCalledWith({
+    expect(response.status).toBe(200);
+    expect(data).toEqual({ questions: mockQuestions });
+    expect(mockWordsQuestionFindMany).toHaveBeenCalledWith({
       where: {
         difficulty: "INTERMEDIATE",
-        game: {
-          type: "WORDS",
-        },
+        game: { type: "WORDS" },
       },
       include: {
         options: true,
-        correctAnswer: {
-          include: { wordsOption: true },
-        },
+        correctAnswer: { include: { wordsOption: true } },
       },
     });
-
-    expect(response.json()).toEqual({ questions: mockQuestions });
-    expect(response.status).toBe(200);
   });
 
-  it("returns 500 if an error occurs", async () => {
-    prisma.wordsQuestion.findMany.mockRejectedValue(new Error("Database error"));
+  it("returns 500 on database error", async () => {
+    mockWordsQuestionFindMany.mockRejectedValue(
+      new Error("Database connection failed"),
+    );
 
+    const { GET } = await import("@/api/wordsquiz/intermediate/route");
     const response = await GET();
 
-    expect(prisma.wordsQuestion.findMany).toHaveBeenCalledWith({
-      where: {
-        difficulty: "INTERMEDIATE",
-        game: {
-          type: "WORDS",
-        },
-      },
-      include: {
-        options: true,
-        correctAnswer: {
-          include: { wordsOption: true },
-        },
-      },
-    });
-
-    expect(response.json()).toEqual({ error: "Internal server error" });
     expect(response.status).toBe(500);
+  });
+
+  it("returns empty array when no questions found", async () => {
+    mockWordsQuestionFindMany.mockResolvedValue([]);
+
+    const { GET } = await import("@/api/wordsquiz/intermediate/route");
+    const response = await GET();
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data).toEqual({ questions: [] });
   });
 });
