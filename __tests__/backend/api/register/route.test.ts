@@ -20,10 +20,11 @@ vi.mock("bcrypt", () => ({
   },
 }));
 
-const makeRequest = (body: any): NextRequest => ({
-  json: async () => body,
-  cookies: { get: vi.fn() },
-} as unknown as NextRequest);
+const makeRequest = (body: any): NextRequest =>
+  ({
+    json: async () => body,
+    cookies: { get: vi.fn() },
+  }) as unknown as NextRequest;
 
 describe("POST /api/register", () => {
   beforeEach(() => {
@@ -52,7 +53,7 @@ describe("POST /api/register", () => {
   it("returns 409 if user exists by username", async () => {
     mockUserFindUnique
       .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce({ id: "u2" }); 
+      .mockResolvedValueOnce({ id: "u2" });
 
     const { POST } = await import("@/api/register/route");
     const req = makeRequest({

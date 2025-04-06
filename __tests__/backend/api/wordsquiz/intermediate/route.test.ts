@@ -56,12 +56,12 @@ describe("GET /api/wordsquiz/intermediate", () => {
 
   it("returns 500 on database error", async () => {
     mockWordsQuestionFindMany.mockRejectedValue(
-      new Error("Database connection failed")
+      new Error("Database connection failed"),
     );
 
     const { GET } = await import("@/api/wordsquiz/intermediate/route");
     const response = await GET();
-    
+
     expect(response.status).toBe(500);
   });
 

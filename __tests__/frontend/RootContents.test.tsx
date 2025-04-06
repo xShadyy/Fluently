@@ -27,18 +27,22 @@ describe("Root component", () => {
     render(
       <MantineProvider>
         <Root />
-      </MantineProvider>
+      </MantineProvider>,
     );
     expect(screen.getByText(/Expand your knowledge/i)).toBeInTheDocument();
-    expect(screen.getByText(/Fluently is an app to help your education/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Get Started/i })).toBeInTheDocument();
+    expect(
+      screen.getByText(/Fluently is an app to help your education/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Get Started/i }),
+    ).toBeInTheDocument();
   });
 
   test("clicking Get Started button navigates to /login", () => {
     render(
       <MantineProvider>
         <Root />
-      </MantineProvider>
+      </MantineProvider>,
     );
     const button = screen.getByRole("button", { name: /Get Started/i });
     fireEvent.click(button);

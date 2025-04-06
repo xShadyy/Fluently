@@ -8,7 +8,6 @@ import styles from "./Materials.module.css";
 import { getIconForType } from "../../../utils/data/resourceUtils";
 import { resources, Resource } from "../../../utils/data/resources";
 
-
 const ResourceCard = ({ resource }: { resource: Resource }) => {
   const [expanded, setExpanded] = useState(false);
 

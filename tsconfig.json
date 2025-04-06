@@ -19,7 +19,7 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "CommonJS",
+    "module": "esnext",  // <-- Changed from "CommonJS" to "esnext"
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -41,8 +41,9 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
-, "vitest.setup.mjs"  ],
+    ".next/types/**/*.ts",
+    "vitest.setup.mjs"
+  ],
   "exclude": [
     "node_modules"
   ]

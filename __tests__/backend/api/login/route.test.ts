@@ -6,15 +6,15 @@ import bcrypt from "bcrypt";
 vi.mock("@prisma/client", () => {
   const mockPrisma = {
     user: { findUnique: vi.fn() },
-    session: { upsert: vi.fn() }
+    session: { upsert: vi.fn() },
   };
   return { PrismaClient: vi.fn(() => mockPrisma) };
 });
 
 vi.mock("bcrypt", () => ({
   default: {
-    compare: vi.fn()
-  }
+    compare: vi.fn(),
+  },
 }));
 
 const mockedBcrypt = bcrypt as unknown as {
@@ -41,7 +41,10 @@ describe("POST /api/login", () => {
 
     const request = new Request("http://localhost/api/login", {
       method: "POST",
-      body: JSON.stringify({ email: "test@example.com", password: "wrongpassword" }),
+      body: JSON.stringify({
+        email: "test@example.com",
+        password: "wrongpassword",
+      }),
     });
 
     const response = await POST(request);
