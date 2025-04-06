@@ -41,3 +41,22 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
 }
+
+@media screen and (max-width: 768px) {
+  .content {
+    padding: 1rem;
+  }
+
+  .resourcesGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .header {
+    font-size: 1.2rem;
+  }
+
+  .noResults {
+    font-size: 1rem;
+  }
+}
