@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import styles from "./ProficiencyQuiz.module.css";
 import { Button, Loader, Card, Text, Title } from "@mantine/core";
+import React from "react";
 
 interface Option {
   id: string;

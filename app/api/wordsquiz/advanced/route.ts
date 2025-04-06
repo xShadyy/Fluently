@@ -6,23 +6,18 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const questions = await prisma.wordsQuestion.findMany({
-      where: {
-        difficulty: "ADVANCED",
-        game: {
-          type: "WORDS",
-        },
-      },
+      where: { difficulty: "ADVANCED", game: { type: "WORDS" } },
       include: {
         options: true,
-        correctAnswer: {
-          include: { wordsOption: true },
-        },
+        correctAnswer: { include: { wordsOption: true } },
       },
     });
-
     return NextResponse.json({ questions });
   } catch (error) {
     console.error("API error:", error);
-    return NextResponse.error();
+    return new NextResponse(
+      JSON.stringify({ error: "Internal server error" }),
+      { status: 500, headers: { "Content-Type": "application/json" } },
+    );
   }
 }

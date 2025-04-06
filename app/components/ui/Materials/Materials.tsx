@@ -1,3 +1,5 @@
+"use client";
+import React from "react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IconChevronDown, IconExternalLink } from "@tabler/icons-react";

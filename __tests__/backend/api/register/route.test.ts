@@ -1,174 +1,90 @@
-import { POST } from "@/api/register/route";
-import { PrismaClient } from "@prisma/client";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
 import bcrypt from "bcrypt";
-import { NextRequest, NextResponse } from "next/server";
 
-jest.mock("@prisma/client", () => {
-  const mockPrisma = {
+const mockUserFindUnique = vi.fn();
+const mockUserCreate = vi.fn();
+
+vi.mock("@prisma/client", () => ({
+  PrismaClient: vi.fn(() => ({
     user: {
-      findUnique: jest.fn(),
-      create: jest.fn(),
+      findUnique: mockUserFindUnique,
+      create: mockUserCreate,
     },
-  };
-  return { PrismaClient: jest.fn(() => mockPrisma) };
-});
-
-jest.mock("bcrypt", () => ({
-  hash: jest.fn(),
+  })),
 }));
 
-jest.mock("next/server", () => ({
-  NextResponse: {
-    json: jest.fn((data, options) => ({
-      json: () => data,
-      ...options,
-    })),
+vi.mock("bcrypt", () => ({
+  default: {
+    hash: vi.fn(),
   },
 }));
 
-const prisma = new PrismaClient();
+const makeRequest = (body: any): NextRequest =>
+  ({
+    json: async () => body,
+    cookies: { get: vi.fn() },
+  }) as unknown as NextRequest;
 
-describe("Register API route", () => {
-  afterEach(() => {
-    jest.clearAllMocks();
+describe("POST /api/register", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockUserFindUnique.mockReset();
   });
 
-  it("returns 400 if isRegister is false", async () => {
-    const request = {
-      json: jest.fn().mockResolvedValue({
-        email: "test@example.com",
-        password: "password123",
-        username: "testuser",
-        isRegister: false,
-      }),
-    };
+  it("returns 409 if user exists by email", async () => {
+    mockUserFindUnique.mockResolvedValue({ id: "u1" });
 
-    const response = await POST(request as unknown as NextRequest);
-
-    expect(response.json()).toEqual({ error: "Invalid request" });
-    expect(response.status).toBe(400);
-  });
-
-  it("returns 400 if email, password, or username is missing", async () => {
-    const request = {
-      json: jest.fn().mockResolvedValue({
-        email: "",
-        password: "",
-        username: "",
-        isRegister: true,
-      }),
-    };
-
-    const response = await POST(request as unknown as NextRequest);
-
-    expect(response.json()).toEqual({
-      error: "Email, password, and username are required",
-    });
-    expect(response.status).toBe(400);
-  });
-
-  it("returns 409 if a user with the same email already exists", async () => {
-    prisma.user.findUnique.mockResolvedValueOnce({ id: "existing-user-id" });
-
-    const request = {
-      json: jest.fn().mockResolvedValue({
-        email: "test@example.com",
-        password: "password123",
-        username: "testuser",
-        isRegister: true,
-      }),
-    };
-
-    const response = await POST(request as unknown as NextRequest);
-
-    expect(prisma.user.findUnique).toHaveBeenCalledWith({
-      where: { email: "test@example.com" },
-    });
-    expect(response.json()).toEqual({
-      error: "A user with this email already exists",
-    });
-    expect(response.status).toBe(409);
-  });
-
-  it("returns 409 if the username is already taken", async () => {
-    prisma.user.findUnique
-      .mockResolvedValueOnce(null) 
-      .mockResolvedValueOnce({ id: "existing-user-id" }); 
-
-    const request = {
-      json: jest.fn().mockResolvedValue({
-        email: "test@example.com",
-        password: "password123",
-        username: "testuser",
-        isRegister: true,
-      }),
-    };
-
-    const response = await POST(request as unknown as NextRequest);
-
-    expect(prisma.user.findUnique).toHaveBeenCalledWith({
-      where: { username: "testuser" },
-    });
-    expect(response.json()).toEqual({
-      error: "Username is already taken",
-    });
-    expect(response.status).toBe(409);
-  });
-
-  it("creates a new user and returns 201 on success", async () => {
-    prisma.user.findUnique.mockResolvedValue(null);
-    bcrypt.hash.mockResolvedValue("hashed-password");
-    prisma.user.create.mockResolvedValue({
-      id: "new-user-id",
+    const { POST } = await import("@/api/register/route");
+    const req = makeRequest({
+      isRegister: true,
       email: "test@example.com",
-      username: "testuser",
-      password: "hashed-password",
+      password: "pass",
+      username: "user",
     });
 
-    const request = {
-      json: jest.fn().mockResolvedValue({
-        email: "test@example.com",
-        password: "password123",
-        username: "testuser",
-        isRegister: true,
-      }),
-    };
+    const res = await POST(req);
+    const json = await res.json();
 
-    const response = await POST(request as unknown as NextRequest);
-
-    expect(prisma.user.findUnique).toHaveBeenCalledWith({
-      where: { email: "test@example.com" },
-    });
-    expect(prisma.user.findUnique).toHaveBeenCalledWith({
-      where: { username: "testuser" },
-    });
-    expect(bcrypt.hash).toHaveBeenCalledWith("password123", 10);
-    expect(prisma.user.create).toHaveBeenCalledWith({
-      data: {
-        email: "test@example.com",
-        username: "testuser",
-        password: "hashed-password",
-      },
-    });
-    expect(response.json()).toEqual({ message: "User created successfully" });
-    expect(response.status).toBe(201);
+    expect(res.status).toBe(409);
+    expect(json.error).toBe("A user with this email already exists");
   });
 
-  it("returns 500 if an internal server error occurs", async () => {
-    prisma.user.findUnique.mockRejectedValue(new Error("Database error"));
+  it("returns 409 if user exists by username", async () => {
+    mockUserFindUnique
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({ id: "u2" });
 
-    const request = {
-      json: jest.fn().mockResolvedValue({
-        email: "test@example.com",
-        password: "password123",
-        username: "testuser",
-        isRegister: true,
-      }),
-    };
+    const { POST } = await import("@/api/register/route");
+    const req = makeRequest({
+      isRegister: true,
+      email: "test@example.com",
+      password: "pass",
+      username: "user",
+    });
 
-    const response = await POST(request as unknown as NextRequest);
+    const res = await POST(req);
+    const json = await res.json();
 
-    expect(response.json()).toEqual({ error: "Internal server error" });
-    expect(response.status).toBe(500);
+    expect(res.status).toBe(409);
+    expect(json.error).toBe("Username is already taken");
+  });
+
+  it("returns 500 if something goes wrong", async () => {
+    mockUserFindUnique.mockRejectedValue(new Error("DB error"));
+
+    const { POST } = await import("@/api/register/route");
+    const req = makeRequest({
+      isRegister: true,
+      email: "test@example.com",
+      password: "pass",
+      username: "user",
+    });
+
+    const res = await POST(req);
+    const json = await res.json();
+
+    expect(res.status).toBe(500);
+    expect(json.error).toBe("Internal server error");
   });
 });

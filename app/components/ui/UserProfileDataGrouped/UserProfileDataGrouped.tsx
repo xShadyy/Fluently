@@ -2,6 +2,7 @@ import Sidemenu from "../SideMenu/SideMenu";
 import UserHeader from "../UserHeader/UserHeader";
 import UserProfileData from "../UserProfileData/UserProfileData";
 import styles from "./UserProfileDataGrouped.module.css";
+import React from "react";
 
 interface DashRootProps {
   disableAnimation?: boolean;
