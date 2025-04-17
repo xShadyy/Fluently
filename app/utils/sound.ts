@@ -19,3 +19,8 @@ export const completed = new Howl({
   src: ["/sounds/completed.mp3"],
   volume: 1,
 });
+
+export const error = new Howl({
+  src: ["/sounds/error.mp3"],
+  volume: 1,
+});

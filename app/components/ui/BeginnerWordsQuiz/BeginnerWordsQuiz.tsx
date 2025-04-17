@@ -6,16 +6,20 @@ import {
   Card,
   Container,
   Group,
-  Loader,
   Progress,
   Stack,
   Text,
   Title,
 } from "@mantine/core";
+import { IconTrophy } from '@tabler/icons-react';
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import styles from "./BeginnerWordsQuiz.module.css";
 import React from "react";
+import { useSession } from "next-auth/react";
+import confetti from "canvas-confetti";
+import { useRouter } from "next/navigation";
+
 interface Option {
   id: string;
   text: string;
@@ -32,7 +36,13 @@ interface Question {
   correctAnswer: CorrectAnswer | null;
 }
 
-export default function BeginnerWordsQuiz() {
+interface LanguageQuizProps {
+  onComplete?: (score: number, level: string) => void;
+}
+
+export default function BeginnerWordsQuiz({ onComplete }: LanguageQuizProps) {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
@@ -41,12 +51,15 @@ export default function BeginnerWordsQuiz() {
   const [quizOver, setQuizOver] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<boolean[]>([]);
+  const [showResults, setShowResults] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
+        setIsLoading(true);
         const res = await fetch("/api/wordsquiz/beginner");
         const data = await res.json();
         if (res.ok) {
@@ -57,7 +70,7 @@ export default function BeginnerWordsQuiz() {
       } catch (error) {
         console.error("Failed to load questions:", error);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
     fetchQuestions();
@@ -127,7 +140,6 @@ export default function BeginnerWordsQuiz() {
     setShowFeedback(false);
     setFeedback(null);
     setResults([]);
-    setLoading(true);
     (async () => {
       try {
         const res = await fetch("/api/wordsquiz/beginner");
@@ -139,8 +151,6 @@ export default function BeginnerWordsQuiz() {
         }
       } catch (error) {
         console.error("Failed to load questions:", error);
-      } finally {
-        setLoading(false);
       }
     })();
   };
@@ -154,11 +164,85 @@ export default function BeginnerWordsQuiz() {
     return "Needs Improvement";
   };
 
-  if (loading) {
+  const handleCloseResults = () => {
+    router.push("/dashboard/words");
+  };
+
+  const completeQuiz = async () => {
+    setShowResults(true);
+    completed.play();
+    triggerConfetti();
+
+    // Calculate percentage score
+    const percentage = Math.round((score / questions.length) * 100);
+
+    // Call the API to update quiz achievement
+    try {
+      const response = await fetch('/api/quiz/achievements/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          level: 'BEGINNER',
+          score: percentage
+        }),
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        console.error('Failed to update quiz achievement');
+      }
+    } catch (error) {
+      console.error('Error updating quiz achievement:', error);
+    }
+
+    // Call onComplete callback if provided
+    if (onComplete) {
+      onComplete(percentage, getLanguageLevel());
+    }
+  };
+
+  const triggerConfetti = useCallback(() => {
+    const duration = 3000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+    const randomInRange = (min: number, max: number) => {
+      return Math.random() * (max - min) + min;
+    };
+    const interval = setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+      if (timeLeft <= 0) {
+        clearInterval(interval);
+        return;
+      }
+      const particleCount = 50 * (timeLeft / duration);
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+      });
+    }, 250);
+  }, []);
+
+  const getLanguageLevel = useCallback(() => {
+    const percentage = Math.round((score / questions.length) * 100);
+    if (percentage >= 90) return "C1";
+    if (percentage >= 75) return "B2";
+    if (percentage >= 60) return "B1";
+    if (percentage >= 40) return "A2";
+    return "A1";
+  }, [score, questions.length]);
+
+  if (isLoading) {
     return (
-      <Container className={styles.loadingContainer}>
-        <Loader size="xl" />
-        <Text>Loading quiz questions...</Text>
+      <Container className={styles.errorContainer}>
+        <Text size="xl" ta="center" fw={700}>Loading...</Text>
       </Container>
     );
   }
@@ -176,59 +260,151 @@ export default function BeginnerWordsQuiz() {
       {quizOver ? (
         <motion.div
           key="result"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          className={styles.resultsContainer}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1000,
+          }}
         >
-          <Card className={styles.resultContainer} shadow="sm">
-            <Title c="black" mb="lg">
-              Challenge completed! 🎉
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            style={{
+              width: "90%",
+              maxWidth: "600px",
+              background: "white",
+              borderRadius: "20px",
+              padding: "2rem",
+              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "4px",
+                background: `linear-gradient(90deg, #4CAF50 ${Math.round((score / questions.length) * 100)}%, #f0f0f0 ${Math.round((score / questions.length) * 100)}%)`,
+              }}
+            />
+
+            <Title
+              order={2}
+              ta="center"
+              mb="xl"
+              style={{
+                fontSize: "2rem",
+                fontWeight: 700,
+                color: "#2c3e50",
+                marginBottom: "2rem",
+              }}
+            >
+              Quiz Results
             </Title>
-            <Container
-              className={styles.scoreCircle}
-              component={motion.div}
+
+            <div
               style={
                 {
+                  width: "200px",
+                  height: "200px",
+                  margin: "0 auto 2rem",
+                  position: "relative",
+                  background:
+                    "conic-gradient(#4CAF50 0% var(--percentage), #f0f0f0 var(--percentage) 100%)",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   "--percentage": `${Math.round((score / questions.length) * 100)}%`,
                 } as React.CSSProperties
               }
-              fluid
             >
-              <Text className={styles.scoreValue}>
+              <div
+                style={{
+                  position: "absolute",
+                  width: "180px",
+                  height: "180px",
+                  background: "white",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "2.5rem",
+                  fontWeight: "bold",
+                  color: "#4CAF50",
+                  boxShadow: "0 0 20px rgba(0, 0, 0, 0.1)",
+                }}
+              >
                 {Math.round((score / questions.length) * 100)}%
+              </div>
+            </div>
+
+            <div
+              style={{
+                textAlign: "center",
+                marginBottom: "2rem",
+              }}
+            >
+              <Text
+                size="xl"
+                style={{
+                  fontSize: "1.5rem",
+                  fontWeight: 600,
+                  color: "#2c3e50",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                Your performance level is:
               </Text>
-            </Container>
-            <Container className={styles.resultDetails} fluid>
-              <Text>
-                You scored <strong>{score}</strong> out of{" "}
-                <strong>{questions.length}</strong> points
-              </Text>
-              <Title order={3}>Your performance:</Title>
-              <Container className={styles.levelBadge} fluid>
+              <Text
+                size="xl"
+                style={{
+                  fontSize: "2rem",
+                  fontWeight: 700,
+                  color: "#4CAF50",
+                  textTransform: "uppercase",
+                }}
+              >
                 {getRating()}
-              </Container>
-              <Text className={styles.levelDescription}>
-                {getRating() === "Excellent" && "Excellent performance!"}
-                {getRating() === "Great" && "Great job!"}
-                {getRating() === "Good" && "Good effort!"}
-                {getRating() === "Fair" && "Keep practicing!"}
-                {getRating() === "Needs Improvement" &&
-                  "Needs improvement, try again!"}
               </Text>
-              <Group mt="2rem" className={styles.resetButton}>
-                <Button
-                  size="md"
-                  onClick={() => {
-                    uiClick.play();
-                    resetQuiz();
-                  }}
-                  style={{ backgroundColor: "darkgray", color: "black" }}
-                >
-                  Try Again
-                </Button>
-              </Group>
-            </Container>
-          </Card>
+            </div>
+
+            <Text
+              ta="center"
+              style={{
+                fontSize: "1.1rem",
+                color: "#666",
+                marginBottom: "2rem",
+              }}
+            >
+              You answered {score} out of {questions.length} questions correctly.
+            </Text>
+
+            <Group mt="2rem" className={styles.resetButton}>
+              <Button
+                size="md"
+                onClick={handleCloseResults}
+                style={{ backgroundColor: "#4CAF50", color: "white" }}
+              >
+                Go Back
+              </Button>
+            </Group>
+          </motion.div>
         </motion.div>
       ) : (
         <motion.div
@@ -239,6 +415,20 @@ export default function BeginnerWordsQuiz() {
           transition={{ duration: 0.3 }}
         >
           <Card className={styles.quizContainer} shadow="sm" p="lg">
+            <Group justify="flex-end" mb="md">
+              <Button 
+                size="xs" 
+                variant="outline" 
+                color="gray"
+                onClick={() => {
+                  setQuizOver(true);
+                  completed.play();
+                }}
+              >
+                Skip to End (Testing)
+              </Button>
+            </Group>
+            
             <Progress
               value={(currentQuestion / questions.length) * 100}
               size="xl"

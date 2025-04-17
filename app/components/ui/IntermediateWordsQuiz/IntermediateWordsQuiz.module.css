@@ -200,24 +200,19 @@
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
   }
   .loadingContainer {
+    display: none;
+  }
+  .loadingText {
+    display: none;
+  }
+  .errorContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 300px;
-    background-color: var(--card-background);
-    border-radius: 12px;
-    margin: 2rem auto;
-    max-width: 800px;
-  }
-  .errorContainer {
+    min-height: 400px;
+    gap: 1rem;
     text-align: center;
-    color: var(--error-color);
-    background-color: var(--card-background);
-    border-radius: 12px;
-    border: 1px solid var(--error-color);
-    margin: 2rem auto;
-    max-width: 800px;
   }
   .optionText {
     font-size: 1rem;
@@ -238,4 +233,54 @@
   }
   .resetButton {
     justify-content: center;
+  }
+  .optionButton {
+    width: 100%;
+    margin: 0.5rem 0;
+    transition: all 0.3s ease;
+  }
+  .optionButton:hover {
+    transform: translateY(-2px);
+  }
+  .correctOption {
+    background-color: rgba(0, 255, 0, 0.2) !important;
+    border-color: #00ff00 !important;
+  }
+  .incorrectOption {
+    background-color: rgba(255, 0, 0, 0.2) !important;
+    border-color: #ff0000 !important;
+  }
+  .unselectedOption {
+    opacity: 0.5;
+  }
+  .feedback {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    text-align: center;
+    z-index: 10;
+  }
+  .correctFeedback {
+    background-color: rgba(0, 255, 0, 0.2);
+    border: 1px solid #00ff00;
+    color: #00ff00;
+  }
+  .incorrectFeedback {
+    background-color: rgba(255, 0, 0, 0.2);
+    border: 1px solid #ff0000;
+    color: #ff0000;
+  }
+  @keyframes pulse {
+    0% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.6;
+    }
   }

@@ -24,6 +24,7 @@ import {
 import { motion } from "framer-motion";
 import classes from "./loginForm.module.css";
 import React from "react";
+import { signIn } from "next-auth/react";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -43,23 +44,16 @@ export default function LoginForm() {
     }
 
     try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          password,
-          keepLoggedIn,
-          isRegister: false,
-        }),
-        credentials: "include",
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
       });
 
-      const data = await response.json();
-      if (response.ok) {
-        router.push("/dashboard");
+      if (result?.error) {
+        setError(result.error || "Invalid email or password");
       } else {
-        setError(data.error || "Invalid email or password");
+        router.push("/dashboard");
       }
     } catch (error) {
       setError("An error occurred during login");

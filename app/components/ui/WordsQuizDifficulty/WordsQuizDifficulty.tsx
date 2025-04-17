@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Skull, Flame, Zap, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import styles from "./WordsQuizDifficulty.module.css";
@@ -17,6 +17,7 @@ export default function WordsQuiz({
   const [selectedDifficulty, setSelectedDifficulty] = useState<
     "beginner" | "intermediate" | "advanced" | null
   >(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSelect = (
     difficulty: "beginner" | "intermediate" | "advanced",
@@ -27,6 +28,7 @@ export default function WordsQuiz({
 
   const handleConfirm = () => {
     if (selectedDifficulty) {
+      setIsLoading(true);
       onSelect(selectedDifficulty);
       router.push(`/dashboard/words/${selectedDifficulty}`);
     }
@@ -37,88 +39,118 @@ export default function WordsQuiz({
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.background}>
-        <div
-          className={`${styles.bgGradient} ${
-            selectedDifficulty
-              ? styles[
-                  `bg${selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1)}`
-                ]
-              : ""
-          }`}
-        ></div>
-      </div>
+    <motion.div
+      className={styles.container}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    >
+      <motion.h2
+        className={styles.title}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      >
+        Select Your Difficulty
+      </motion.h2>
 
-      <h2 className={styles.title}>Select Your Difficulty</h2>
-
-      <div className={styles.cardsContainer}>
-        {["beginner", "intermediate", "advanced"].map((difficulty) => (
+      <motion.div
+        className={styles.cardsContainer}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
+      >
+        {["beginner", "intermediate", "advanced"].map((difficulty, index) => (
           <motion.div
             key={difficulty}
             className={`${styles.card} ${selectedDifficulty === difficulty ? styles.selected : ""}`}
+            data-difficulty={difficulty}
             onClick={() =>
               uiClick.play() &&
               handleSelect(
                 difficulty as "beginner" | "intermediate" | "advanced",
               )
             }
-            whileHover={{
-              scale: 1.05,
-              boxShadow:
-                difficulty === "beginner"
-                  ? "0 0 25px rgba(0, 255, 255, 0.5)"
-                  : difficulty === "intermediate"
-                    ? "0 0 25px rgba(255, 100, 100, 0.6)"
-                    : "0 0 25px rgba(255, 0, 0, 0.7)",
-            }}
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
             animate={{
-              y: [0, -10, 0],
+              opacity: 1,
+              y: 0,
+              scale: 1,
               transition: {
-                duration:
-                  difficulty === "beginner"
-                    ? 4
-                    : difficulty === "intermediate"
-                      ? 5
-                      : 6,
-                repeat: Infinity,
-                repeatType: "reverse",
-                ease: "easeInOut",
-                delay:
-                  difficulty === "beginner"
-                    ? 0
-                    : difficulty === "intermediate"
-                      ? 0.5
-                      : 1,
+                duration: 0.7,
+                delay: 0.6 + index * 0.15,
+                ease: [0.16, 1, 0.3, 1],
+              },
+            }}
+            whileHover={{
+              scale: 1.02,
+              y: -5,
+              transition: {
+                duration: 0.3,
+                ease: "easeOut",
+              },
+            }}
+            whileTap={{
+              scale: 0.98,
+              transition: {
+                duration: 0.2,
+                ease: "easeOut",
               },
             }}
           >
-            <div className={styles.cardContent}>
+            <motion.div
+              className={styles.cardContent}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{
+                duration: 0.5,
+                delay: 0.8 + index * 0.15,
+                ease: "easeOut",
+              }}
+            >
               <motion.div
                 className={styles.iconContainer}
-                whileHover={{ rotate: 360, scale: 1.2 }}
-                transition={{ duration: 0.5 }}
+                whileHover={{
+                  rotate: 360,
+                  scale: 1.1,
+                  transition: {
+                    duration: 0.6,
+                    ease: [0.16, 1, 0.3, 1],
+                  },
+                }}
               >
-                {difficulty === "beginner" ? (
-                  <Zap className={styles.beginnerIcon} size={48} />
-                ) : difficulty === "intermediate" ? (
-                  <Flame className={styles.intermediateIcon} size={48} />
-                ) : (
-                  <Skull className={styles.advancedIcon} size={48} />
-                )}
+                {difficulty === "beginner" && <Zap size={40} />}
+                {difficulty === "intermediate" && <Flame size={40} />}
+                {difficulty === "advanced" && <Skull size={40} />}
               </motion.div>
-              <h3>
+              <motion.h3
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.5,
+                  delay: 0.9 + index * 0.15,
+                  ease: "easeOut",
+                }}
+              >
                 {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
-              </h3>
-              <p>
+              </motion.h3>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  duration: 0.5,
+                  delay: 1 + index * 0.15,
+                  ease: "easeOut",
+                }}
+              >
                 {difficulty === "beginner"
                   ? "Start your journey with basic challenges"
                   : difficulty === "intermediate"
                     ? "Face greater challenges with increased difficulty"
                     : "Only for the brave. Ultimate challenge"}
-              </p>
+              </motion.p>
               {selectedDifficulty === difficulty && (
-                <button
+                <motion.button
                   className={
                     styles[
                       `confirmButton${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`
@@ -128,15 +160,63 @@ export default function WordsQuiz({
                     handleConfirm();
                     uiClick.play();
                   }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.4,
+                    ease: "easeOut",
+                  }}
+                  whileHover={{
+                    scale: 1.05,
+                    transition: {
+                      duration: 0.2,
+                      ease: "easeOut",
+                    },
+                  }}
+                  whileTap={{
+                    scale: 0.95,
+                    transition: {
+                      duration: 0.1,
+                      ease: "easeOut",
+                    },
+                  }}
                 >
                   Confirm
-                </button>
+                </motion.button>
               )}
-            </div>
-            <div className={styles.cardOverlay}></div>
+            </motion.div>
           </motion.div>
         ))}
-      </div>
-    </div>
+      </motion.div>
+
+      <motion.button
+        className={styles.backButton}
+        onClick={handleGoBack}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{
+          duration: 0.5,
+          delay: 1.2,
+          ease: "easeOut",
+        }}
+        whileHover={{
+          scale: 1.05,
+          transition: {
+            duration: 0.2,
+            ease: "easeOut",
+          },
+        }}
+        whileTap={{
+          scale: 0.95,
+          transition: {
+            duration: 0.1,
+            ease: "easeOut",
+          },
+        }}
+      >
+        <ArrowLeft size={20} />
+        Back to Dashboard
+      </motion.button>
+    </motion.div>
   );
 }

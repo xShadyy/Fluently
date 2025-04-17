@@ -1,43 +1,75 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useDisclosure } from "@mantine/hooks";
-import { LoadingOverlay, Button, Group, Box } from "@mantine/core";
-import DashRoot from "../components/ui/DashboardGrouped/DashboardGrouped";
+import { useState, useEffect } from "react";
+import { AnimatePresence } from "framer-motion";
+import ProficiencyQuiz from "@/components/ui/ProficiencyQuiz/ProficiencyQuiz";
+import LanguageDashboard from "@/components/ui/Dashboard/LanguageDashboard";
 
 export default function Dashboard() {
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState("");
-  const [visible, { toggle }] = useDisclosure(false);
+  const [quizCompleted, setQuizCompleted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showQuiz, setShowQuiz] = useState(false);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const res = await fetch("/api/user", {
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setUser(data.user);
-      } else {
-        setError(data.error || "Failed to fetch user data");
+    const checkQuizStatus = async () => {
+      try {
+        // First check localStorage for immediate UI response
+        const hasCompletedQuiz = localStorage.getItem("quizCompleted") === "true";
+        
+        // Then check the API for the actual status
+        const response = await fetch('/api/quiz/status', {
+          credentials: 'include',
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const apiQuizCompleted = data.hasCompleted;
+          
+          // Update state based on API response
+          setQuizCompleted(apiQuizCompleted);
+          setShowQuiz(!apiQuizCompleted);
+          
+          // Update localStorage to match API
+          if (apiQuizCompleted) {
+            localStorage.setItem("quizCompleted", "true");
+          }
+        } else {
+          // Fallback to localStorage if API fails
+          setQuizCompleted(hasCompletedQuiz);
+          setShowQuiz(!hasCompletedQuiz);
+        }
+      } catch (error) {
+        console.error("Error checking quiz status:", error);
+        // Fallback to localStorage if API fails
+        const hasCompletedQuiz = localStorage.getItem("quizCompleted") === "true";
+        setQuizCompleted(hasCompletedQuiz);
+        setShowQuiz(!hasCompletedQuiz);
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchUser();
+    
+    checkQuizStatus();
   }, []);
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-  if (!user) {
-    return;
-  }
-  <Box pos="relative">
-    <LoadingOverlay
-      visible={visible}
-      zIndex={1000}
-      overlayProps={{ radius: "sm", blur: 2 }}
-    />
-  </Box>;
+  const handleQuizComplete = (score: number, level: string) => {
+    // Store quiz completion in localStorage
+    localStorage.setItem("quizCompleted", "true");
+    setQuizCompleted(true);
+    setShowQuiz(false);
+  };
 
-  return <DashRoot />;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <AnimatePresence mode="wait">
+      {showQuiz ? (
+        <ProficiencyQuiz onComplete={handleQuizComplete} />
+      ) : (
+        <LanguageDashboard />
+      )}
+    </AnimatePresence>
+  );
 }

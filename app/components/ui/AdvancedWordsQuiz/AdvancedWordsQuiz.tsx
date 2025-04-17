@@ -12,10 +12,12 @@ import {
   Group,
   Stack,
 } from "@mantine/core";
+import { IconTrophy } from '@tabler/icons-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { correct, wrong, completed, uiClick } from "@/utils/sound";
 import styles from "./AdvancedWordsQuiz.module.css";
 import React from "react";
+import { useSession } from "next-auth/react";
 
 interface Option {
   id: string;
@@ -34,6 +36,7 @@ interface Question {
 }
 
 export default function AdvancedWordsQuiz() {
+  const { data: session, status } = useSession();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
@@ -42,12 +45,17 @@ export default function AdvancedWordsQuiz() {
   const [quizOver, setQuizOver] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const [results, setResults] = useState<boolean[]>([]);
+  const [showResults, setShowResults] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
+
 
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
+        setIsLoading(true);
         const res = await fetch("/api/wordsquiz/advanced");
         const data = await res.json();
         if (res.ok) {
@@ -58,7 +66,7 @@ export default function AdvancedWordsQuiz() {
       } catch (error) {
         console.error("Failed to load questions:", error);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
     fetchQuestions();
@@ -128,7 +136,6 @@ export default function AdvancedWordsQuiz() {
     setShowFeedback(false);
     setFeedback(null);
     setResults([]);
-    setLoading(true);
     (async () => {
       try {
         const res = await fetch("/api/wordsquiz/advanced");
@@ -140,8 +147,6 @@ export default function AdvancedWordsQuiz() {
         }
       } catch (error) {
         console.error("Failed to load questions:", error);
-      } finally {
-        setLoading(false);
       }
     })();
   };
@@ -155,12 +160,25 @@ export default function AdvancedWordsQuiz() {
     return "Needs Improvement";
   };
 
-  if (loading) {
+  const handleCloseResults = () => {
+    setQuizOver(false);
+    setShowResults(false);
+  };
+
+  if (isLoading) {
     return (
-      <Container className={styles.loadingContainer}>
-        <Loader size="xl" />
-        <Text>Loading quiz questions...</Text>
+      <Container className={styles.errorContainer}>
+        <Text size="xl" ta="center" fw={700}>Loading...</Text>
       </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.errorContainer}>
+        <h2>Error</h2>
+        <p>{error}</p>
+      </div>
     );
   }
 
@@ -177,59 +195,151 @@ export default function AdvancedWordsQuiz() {
       {quizOver ? (
         <motion.div
           key="result"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          className={styles.resultsContainer}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(0, 0, 0, 0.5)",
+            zIndex: 1000,
+          }}
         >
-          <Card className={styles.resultContainer} shadow="sm">
-            <Title c="black" mb="lg">
-              Challenge completed! 🎉
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            style={{
+              width: "90%",
+              maxWidth: "600px",
+              background: "white",
+              borderRadius: "20px",
+              padding: "2rem",
+              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "4px",
+                background: `linear-gradient(90deg, #4CAF50 ${Math.round((score / questions.length) * 100)}%, #f0f0f0 ${Math.round((score / questions.length) * 100)}%)`,
+              }}
+            />
+
+            <Title
+              order={2}
+              ta="center"
+              mb="xl"
+              style={{
+                fontSize: "2rem",
+                fontWeight: 700,
+                color: "#2c3e50",
+                marginBottom: "2rem",
+              }}
+            >
+              Quiz Results
             </Title>
-            <Container
-              className={styles.scoreCircle}
-              component={motion.div}
+
+            <div
               style={
                 {
+                  width: "200px",
+                  height: "200px",
+                  margin: "0 auto 2rem",
+                  position: "relative",
+                  background:
+                    "conic-gradient(#4CAF50 0% var(--percentage), #f0f0f0 var(--percentage) 100%)",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   "--percentage": `${Math.round((score / questions.length) * 100)}%`,
                 } as React.CSSProperties
               }
-              fluid
             >
-              <Text className={styles.scoreValue}>
+              <div
+                style={{
+                  position: "absolute",
+                  width: "180px",
+                  height: "180px",
+                  background: "white",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "2.5rem",
+                  fontWeight: "bold",
+                  color: "#4CAF50",
+                  boxShadow: "0 0 20px rgba(0, 0, 0, 0.1)",
+                }}
+              >
                 {Math.round((score / questions.length) * 100)}%
+              </div>
+            </div>
+
+            <div
+              style={{
+                textAlign: "center",
+                marginBottom: "2rem",
+              }}
+            >
+              <Text
+                size="xl"
+                style={{
+                  fontSize: "1.5rem",
+                  fontWeight: 600,
+                  color: "#2c3e50",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                Your performance level is:
               </Text>
-            </Container>
-            <Container className={styles.resultDetails} fluid>
-              <Text>
-                You scored <strong>{score}</strong> out of{" "}
-                <strong>{questions.length}</strong> points
-              </Text>
-              <Title order={3}>Your performance:</Title>
-              <Container className={styles.levelBadge} fluid>
+              <Text
+                size="xl"
+                style={{
+                  fontSize: "2rem",
+                  fontWeight: 700,
+                  color: "#4CAF50",
+                  textTransform: "uppercase",
+                }}
+              >
                 {getRating()}
-              </Container>
-              <Text className={styles.levelDescription}>
-                {getRating() === "Excellent" && "Excellent performance!"}
-                {getRating() === "Great" && "Great job!"}
-                {getRating() === "Good" && "Good effort!"}
-                {getRating() === "Fair" && "Keep practicing!"}
-                {getRating() === "Needs Improvement" &&
-                  "Needs improvement, try again!"}
               </Text>
-              <Group mt="2rem" className={styles.resetButton}>
-                <Button
-                  size="md"
-                  onClick={() => {
-                    uiClick.play();
-                    resetQuiz();
-                  }}
-                  style={{ backgroundColor: "darkgray", color: "black" }}
-                >
-                  Try Again
-                </Button>
-              </Group>
-            </Container>
-          </Card>
+            </div>
+
+            <Text
+              ta="center"
+              style={{
+                fontSize: "1.1rem",
+                color: "#666",
+                marginBottom: "2rem",
+              }}
+            >
+              You answered {score} out of {questions.length} questions correctly.
+            </Text>
+
+            <Group mt="2rem" className={styles.resetButton}>
+              <Button
+                size="md"
+                onClick={handleCloseResults}
+                style={{ backgroundColor: "#4CAF50", color: "white" }}
+              >
+                Go Back
+              </Button>
+            </Group>
+          </motion.div>
         </motion.div>
       ) : (
         <motion.div
@@ -240,6 +350,20 @@ export default function AdvancedWordsQuiz() {
           transition={{ duration: 0.3 }}
         >
           <Card className={styles.quizContainer} shadow="sm" p="lg">
+            <Group justify="flex-end" mb="md">
+              <Button 
+                size="xs" 
+                variant="outline" 
+                color="gray"
+                onClick={() => {
+                  setQuizOver(true);
+                  completed.play();
+                }}
+              >
+                Skip to End (Testing)
+              </Button>
+            </Group>
+            
             <Progress
               value={(currentQuestion / questions.length) * 100}
               size="xl"
