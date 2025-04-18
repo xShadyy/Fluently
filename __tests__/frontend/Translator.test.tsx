@@ -5,18 +5,13 @@ import Translator from "@/components/ui/Translator/Translator";
 import { uiClick } from "@/utils/sound";
 import "@testing-library/jest-dom";
 
-// ——— Mocks ———
-
-// sound utility
 vi.mock("@/utils/sound", () => ({
   uiClick: { play: vi.fn() },
 }));
 
-// fetch
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
-// SpeechSynthesisUtterance
 global.SpeechSynthesisUtterance = class {
   text: string;
   lang: string;
@@ -26,13 +21,11 @@ global.SpeechSynthesisUtterance = class {
   }
 };
 
-// speechSynthesis
 const mockSpeak = vi.fn();
 Object.defineProperty(global, "speechSynthesis", {
   value: { speak: mockSpeak },
 });
 
-// clipboard
 Object.defineProperty(navigator, "clipboard", {
   value: { writeText: vi.fn() },
 });
@@ -49,19 +42,17 @@ describe("Translator Component", () => {
   it("renders correctly with initial states", () => {
     render(<Translator />);
 
-    // we expect at least one "Polish" option (source &/or target)
     const polishOptions = screen.getAllByRole("option", { name: "Polish" });
     expect(polishOptions.length).toBeGreaterThan(0);
 
-    // likewise for English (UK)
     const ukOptions = screen.getAllByRole("option", { name: "English (UK)" });
     expect(ukOptions.length).toBeGreaterThan(0);
 
-    // textareas
-    expect(screen.getByPlaceholderText("Enter text in Polish")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Enter text in Polish"),
+    ).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Translation")).toBeInTheDocument();
 
-    // initial char count
     expect(screen.getByText("0/500")).toBeInTheDocument();
   });
 
@@ -103,7 +94,9 @@ describe("Translator Component", () => {
     fireEvent.change(input, { target: { value: "Test text" } });
 
     await waitFor(() => {
-      expect(screen.getByPlaceholderText("Translation")).toHaveValue("Hello world");
+      expect(screen.getByPlaceholderText("Translation")).toHaveValue(
+        "Hello world",
+      );
     });
   });
 
@@ -119,22 +112,25 @@ describe("Translator Component", () => {
     fireEvent.change(input, { target: { value: "Test text" } });
 
     await waitFor(() => {
-      expect(screen.getByText("Translation failed. Please try again.")).toBeInTheDocument();
+      expect(
+        screen.getByText("Translation failed. Please try again."),
+      ).toBeInTheDocument();
     });
   });
 
   it("swaps languages when swap button is clicked", () => {
     render(<Translator />);
 
-    // initial placeholder is Polish
-    expect(screen.getByPlaceholderText("Enter text in Polish")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Enter text in Polish"),
+    ).toBeInTheDocument();
 
-    // the first <button> is the swap button
     const [swapButton] = screen.getAllByRole("button");
     fireEvent.click(swapButton);
 
-    // now placeholder should be English (UK)
-    expect(screen.getByPlaceholderText("Enter text in English (UK)")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Enter text in English (UK)"),
+    ).toBeInTheDocument();
     expect(uiClick.play).toHaveBeenCalled();
   });
 
@@ -175,7 +171,9 @@ describe("Translator Component", () => {
     const sourceSelect = selects[0];
     fireEvent.change(sourceSelect, { target: { value: "es" } });
 
-    expect(screen.getByPlaceholderText("Enter text in Spanish")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Enter text in Spanish"),
+    ).toBeInTheDocument();
 
     const input = screen.getByPlaceholderText("Enter text in Spanish");
     fireEvent.change(input, { target: { value: "Hola" } });
@@ -183,7 +181,7 @@ describe("Translator Component", () => {
     await waitFor(() => {
       expect(mockFetch).toHaveBeenCalledWith(
         expect.any(String),
-        expect.objectContaining({ body: expect.stringContaining("ES") })
+        expect.objectContaining({ body: expect.stringContaining("ES") }),
       );
     });
   });
@@ -201,7 +199,7 @@ describe("Translator Component", () => {
     await waitFor(() => {
       expect(mockFetch).toHaveBeenCalledWith(
         expect.any(String),
-        expect.objectContaining({ body: expect.stringContaining("DE") })
+        expect.objectContaining({ body: expect.stringContaining("DE") }),
       );
     });
   });
@@ -213,9 +211,8 @@ describe("Translator Component", () => {
     const longText = "a".repeat(600);
     fireEvent.change(input, { target: { value: longText } });
 
-    // input should never exceed 500 chars
     expect(input.value.length).toBeLessThanOrEqual(500);
-    // and char count remains at initial 0/500
+
     expect(screen.getByText("0/500")).toBeInTheDocument();
   });
 });

@@ -1,37 +1,32 @@
-// __tests__/route.test.ts
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { NextRequest } from "next/server";
 
 let GET: (req: NextRequest) => Promise<import("next/server").NextResponse>;
 const mockFindUnique = vi.fn();
 
-// Helper to build a fake NextRequest with an optional sessionId cookie
 function makeRequest(sessionId?: string): NextRequest {
   return {
     cookies: {
-      get: vi.fn().mockImplementation((name: string) =>
-        name === "sessionId" && sessionId
-          ? { value: sessionId }
-          : undefined
-      ),
+      get: vi
+        .fn()
+        .mockImplementation((name: string) =>
+          name === "sessionId" && sessionId ? { value: sessionId } : undefined,
+        ),
     },
   } as unknown as NextRequest;
 }
 
 describe("GET /route", () => {
   beforeEach(async () => {
-    // Reset module registry so our prisma mock is applied fresh
     vi.resetModules();
     mockFindUnique.mockReset();
 
-    // Mock PrismaClient to use our findUnique spy
     vi.mock("@prisma/client", () => ({
       PrismaClient: vi.fn().mockImplementation(() => ({
         session: { findUnique: mockFindUnique },
       })),
     }));
 
-    // Dynamically import AFTER mocking
     const mod = await import("@/api/quiz/status/route");
     GET = mod.GET;
   });

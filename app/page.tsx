@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import Header from "./components/ui/RootHeader/UserHeader";
+import Header from "./components/ui/RootHeader/RootHeader";
 import Root from "./components/ui/RootContents/RootContents";
 import styles from "./page.module.css";
 import Spline from "@splinetool/react-spline";

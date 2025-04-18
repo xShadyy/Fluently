@@ -5,7 +5,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { MantineProvider } from "@mantine/core";
 import LoginForm from "@/components/ui/LoginForm/loginForm";
 
-// Mocking dependencies with factory functions to prevent hoisting issues
 const mockPush = vi.fn();
 
 vi.mock("next/navigation", () => ({
@@ -13,7 +12,6 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
-// Using a factory function that returns the mock implementation
 vi.mock("next-auth/react", () => {
   return {
     __esModule: true,
@@ -21,7 +19,6 @@ vi.mock("next-auth/react", () => {
   };
 });
 
-// Import the mocked module after mocking
 import { signIn } from "next-auth/react";
 const mockSignIn = signIn as ReturnType<typeof vi.fn>;
 
@@ -79,7 +76,7 @@ describe("LoginForm", () => {
     await userEvent.click(screen.getByRole("button", { name: /login/i }));
 
     expect(
-      await screen.findByText("Email and password are required")
+      await screen.findByText("Email and password are required"),
     ).toBeInTheDocument();
     expect(mockSignIn).not.toHaveBeenCalled();
     expect(mockPush).not.toHaveBeenCalled();
@@ -94,7 +91,7 @@ describe("LoginForm", () => {
     await userEvent.click(screen.getByRole("button", { name: /login/i }));
 
     expect(
-      await screen.findByText("An error occurred during login")
+      await screen.findByText("An error occurred during login"),
     ).toBeInTheDocument();
     expect(mockPush).not.toHaveBeenCalled();
   });
@@ -112,21 +109,22 @@ describe("LoginForm", () => {
 
   it("renders social media links", () => {
     renderWithMantine(<LoginForm />);
-    
-    // Get all links in the document
+
     const links = screen.getAllByRole("link");
-    
-    // Find links by their href attributes
-    const instagramLink = links.find(link => 
-      link.getAttribute('href') === "https://www.instagram.com/g80.shadyy/"
+
+    const instagramLink = links.find(
+      (link) =>
+        link.getAttribute("href") === "https://www.instagram.com/g80.shadyy/",
     );
-    const linkedinLink = links.find(link => 
-      link.getAttribute('href') === "https://www.linkedin.com/in/tymoteusz-netter/"
+    const linkedinLink = links.find(
+      (link) =>
+        link.getAttribute("href") ===
+        "https://www.linkedin.com/in/tymoteusz-netter/",
     );
-    const githubLink = links.find(link => 
-      link.getAttribute('href') === "https://github.com/xShadyy"
+    const githubLink = links.find(
+      (link) => link.getAttribute("href") === "https://github.com/xShadyy",
     );
-    
+
     expect(instagramLink).toBeInTheDocument();
     expect(linkedinLink).toBeInTheDocument();
     expect(githubLink).toBeInTheDocument();

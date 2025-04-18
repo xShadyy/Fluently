@@ -4,7 +4,6 @@ import { describe, it, expect, vi } from "vitest";
 import UserCard from "app/components/ui/UserCard/UserCard";
 import "@testing-library/jest-dom";
 
-// Mock Mantine components
 vi.mock("@mantine/core", () => {
   const Group = ({ children, gap, mb }) => (
     <div data-testid="mantine-group" data-gap={gap} data-mb={mb}>
@@ -37,7 +36,7 @@ vi.mock("@mantine/core", () => {
       {children}
     </div>
   );
-  // Menu must be a component, not a plain object:
+
   function Menu({ children }) {
     return <div data-testid="menu-root">{children}</div>;
   }
@@ -47,12 +46,8 @@ vi.mock("@mantine/core", () => {
   Menu.Dropdown = ({ children }) => (
     <div data-testid="menu-dropdown">{children}</div>
   );
-  Menu.Item = ({ children }) => (
-    <div data-testid="menu-item">{children}</div>
-  );
-  Menu.Label = ({ children }) => (
-    <div data-testid="menu-label">{children}</div>
-  );
+  Menu.Item = ({ children }) => <div data-testid="menu-item">{children}</div>;
+  Menu.Label = ({ children }) => <div data-testid="menu-label">{children}</div>;
   Menu.Divider = () => <div data-testid="menu-divider" />;
   return { Group, Stack, Text, Avatar, Menu };
 });
@@ -67,16 +62,15 @@ describe("UserCard Component", () => {
   it("renders correctly with user data", () => {
     render(<UserCard user={mockUser} />);
 
-    // Welcome text
     expect(screen.getByText(/Welcome back John Doe/i)).toBeInTheDocument();
-    // Email
+
     expect(screen.getByText(mockUser.email)).toBeInTheDocument();
-    // Avatar src
+
     const avatar = screen.getByTestId("mantine-avatar");
     expect(avatar).toBeInTheDocument();
     expect(avatar).toHaveAttribute(
       "data-src",
-      `https://api.dicebear.com/7.x/avataaars/svg?seed=${mockUser.username}`
+      `https://api.dicebear.com/7.x/avataaars/svg?seed=${mockUser.username}`,
     );
   });
 
@@ -110,16 +104,16 @@ describe("UserCard Component", () => {
 
   it("renders with proper Mantine components and styling", () => {
     render(<UserCard user={mockUser} />);
-    // Structure
+
     expect(screen.getByTestId("mantine-group")).toBeInTheDocument();
     expect(screen.getByTestId("mantine-stack")).toBeInTheDocument();
-    // Text styling
+
     const texts = screen.getAllByTestId("mantine-text");
-    // Welcome text
+
     expect(texts[0]).toHaveAttribute("data-size", "lg");
     expect(texts[0]).toHaveAttribute("data-color", "whitesmoke");
     expect(texts[0]).toHaveAttribute("data-fontweight", "500");
-    // Email text
+
     expect(texts[1]).toHaveAttribute("data-size", "md");
     expect(texts[1]).toHaveAttribute("data-color", "rgb(251, 207, 232)");
   });

@@ -12,7 +12,7 @@
     "prettier:check": "prettier --check \"**/*.{ts,tsx}\"",
     "prettier:write": "prettier --write \"**/*.{ts,tsx}\"",
     "test": "npm run prettier:check && npm run typecheck && npm run vitest",
-    "seed": "node --loader ts-node/esm backend/prisma/seed.ts",
+    "seed": "prisma db seed",
     "vitest": "vitest"
   },
   "dependencies": {

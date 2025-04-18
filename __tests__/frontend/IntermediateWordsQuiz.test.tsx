@@ -7,7 +7,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { MantineProvider } from "@mantine/core";
 
-// Mock the dependencies
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
     push: vi.fn(),
@@ -18,7 +17,6 @@ vi.mock("next-auth/react", () => ({
   useSession: vi.fn(),
 }));
 
-// Mock the sound utilities
 vi.mock("@/utils/sound", () => ({
   completed: { play: vi.fn() },
   correct: { play: vi.fn() },
@@ -26,25 +24,17 @@ vi.mock("@/utils/sound", () => ({
   wrong: { play: vi.fn() },
 }));
 
-// Mock the confetti library
 vi.mock("canvas-confetti", () => ({
   default: vi.fn(),
 }));
 
-// Mock fetch API
 global.fetch = vi.fn();
 
-// Create a wrapper function to provide MantineProvider
 const renderWithMantine = (ui: React.ReactElement) => {
-  return render(
-    <MantineProvider>
-      {ui}
-    </MantineProvider>
-  );
+  return render(<MantineProvider>{ui}</MantineProvider>);
 };
 
 describe("IntermediateWordsQuiz Component", () => {
-  // Common mock data for tests
   const mockQuestions = [
     {
       id: "1",
@@ -72,14 +62,12 @@ describe("IntermediateWordsQuiz Component", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
-    // Mock useSession
+
     (useSession as Mock).mockReturnValue({
       data: { user: { id: "user1" } },
       status: "authenticated",
     });
-    
-    // Mock fetch for successful questions retrieval
+
     (global.fetch as Mock).mockResolvedValue({
       ok: true,
       json: async () => ({ questions: mockQuestions }),
@@ -93,15 +81,18 @@ describe("IntermediateWordsQuiz Component", () => {
 
   it("renders quiz questions after loading", async () => {
     renderWithMantine(<IntermediateWordsQuiz />);
-    
+
     await waitFor(() => {
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     });
-    
+
     expect(screen.getByText("Question 1 out of 2")).toBeInTheDocument();
-    expect(screen.getByText("What is 'procrastinate' in this sentence: 'I always procrastinate my assignments until the last minute.'?")).toBeInTheDocument();
-    
-    // Use a more flexible approach to find content that might be split across elements
+    expect(
+      screen.getByText(
+        "What is 'procrastinate' in this sentence: 'I always procrastinate my assignments until the last minute.'?",
+      ),
+    ).toBeInTheDocument();
+
     const delayOption = screen.getByText((content) => {
       return content.includes("To delay doing something");
     });
@@ -111,17 +102,16 @@ describe("IntermediateWordsQuiz Component", () => {
   it("handles correct answer selection", async () => {
     const user = userEvent.setup();
     renderWithMantine(<IntermediateWordsQuiz />);
-    
-    // Wait for questions to load
+
     await waitFor(() => {
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     });
-    
-    // Find the correct option and click it, using a more flexible approach
-    const correctOption = screen.getByText((content) => content.includes("To delay doing something"));
+
+    const correctOption = screen.getByText((content) =>
+      content.includes("To delay doing something"),
+    );
     await user.click(correctOption);
-    
-    // Check that feedback is shown
+
     await waitFor(() => {
       expect(screen.getByText("Correct, good job!")).toBeInTheDocument();
     });
@@ -130,17 +120,16 @@ describe("IntermediateWordsQuiz Component", () => {
   it("handles incorrect answer selection", async () => {
     const user = userEvent.setup();
     renderWithMantine(<IntermediateWordsQuiz />);
-    
-    // Wait for questions to load
+
     await waitFor(() => {
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     });
-    
-    // Find an incorrect option and click it, using a more flexible approach
-    const incorrectOption = screen.getByText((content) => content.includes("To finish quickly"));
+
+    const incorrectOption = screen.getByText((content) =>
+      content.includes("To finish quickly"),
+    );
     await user.click(incorrectOption);
-    
-    // Check that feedback is shown and lives are decreased
+
     await waitFor(() => {
       expect(screen.getByText(/Incorrect/)).toBeInTheDocument();
     });
@@ -149,81 +138,73 @@ describe("IntermediateWordsQuiz Component", () => {
   it("completes the quiz when all questions are answered", async () => {
     const user = userEvent.setup();
     renderWithMantine(<IntermediateWordsQuiz />);
-    
-    // Wait for questions to load
+
     await waitFor(() => {
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     });
-    
-    // Click the "Skip to End" button to complete the quiz
+
     const skipButton = screen.getByText("Skip to End (Testing)");
     await user.click(skipButton);
-    
-    // Check that results are shown
+
     await waitFor(() => {
       expect(screen.getByText("Quiz Results")).toBeInTheDocument();
     });
   });
 
   it("handles API error when fetching questions", async () => {
-    // Mock fetch to return an error
     (global.fetch as Mock).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: "Failed to fetch questions" }),
     });
-    
+
     renderWithMantine(<IntermediateWordsQuiz />);
-    
-    // Wait for loading to finish
+
     await waitFor(() => {
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     });
-    
-    // Check that error message is shown
-    expect(screen.getByText("No questions available. Please try again later.")).toBeInTheDocument();
+
+    expect(
+      screen.getByText("No questions available. Please try again later."),
+    ).toBeInTheDocument();
   });
 
   it("sends achievement update when quiz is completed", async () => {
     const user = userEvent.setup();
     renderWithMantine(<IntermediateWordsQuiz />);
-    
-    // Wait for questions to load
+
     await waitFor(() => {
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     });
-    
-    // Click the "Skip to End" button to complete the quiz
+
     const skipButton = screen.getByText("Skip to End (Testing)");
     await user.click(skipButton);
-    
-    // Check that the API was called to update achievements
+
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith("/api/quiz/achievements/update", expect.objectContaining({
-        method: "POST",
-        headers: expect.objectContaining({
-          "Content-Type": "application/json",
+      expect(global.fetch).toHaveBeenCalledWith(
+        "/api/quiz/achievements/update",
+        expect.objectContaining({
+          method: "POST",
+          headers: expect.objectContaining({
+            "Content-Type": "application/json",
+          }),
+          body: expect.stringContaining("INTERMEDIATE"),
         }),
-        body: expect.stringContaining("INTERMEDIATE"),
-      }));
+      );
     });
   });
 
   it("shows the correct performance level based on score", async () => {
     const user = userEvent.setup();
     renderWithMantine(<IntermediateWordsQuiz />);
-    
-    // Wait for questions to load
+
     await waitFor(() => {
       expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     });
-    
-    // Skip to end to see results
+
     const skipButton = screen.getByText("Skip to End (Testing)");
     await user.click(skipButton);
-    
-    // Check that performance level is shown
+
     await waitFor(() => {
-      // Since our mock has 0 correct answers by default when skipping
       expect(screen.getByText("Needs Improvement")).toBeInTheDocument();
     });
   });

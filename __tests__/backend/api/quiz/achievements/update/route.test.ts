@@ -1,4 +1,3 @@
-// __tests__/backend/api/quiz/achievements/update/route.test.ts
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { NextRequest } from "next/server";
 
@@ -7,18 +6,17 @@ let POST: (req: NextRequest) => Promise<import("next/server").NextResponse>;
 const mockFindUnique = vi.fn();
 const mockUpsert = vi.fn();
 
-// Helper to fake a NextRequest with optional sessionId cookie and JSON body
 function makeRequest(
   sessionId?: string,
-  body?: Record<string, any>
+  body?: Record<string, any>,
 ): NextRequest {
   return {
     cookies: {
-      get: vi.fn().mockImplementation((name: string) =>
-        name === "sessionId" && sessionId
-          ? { value: sessionId }
-          : undefined
-      ),
+      get: vi
+        .fn()
+        .mockImplementation((name: string) =>
+          name === "sessionId" && sessionId ? { value: sessionId } : undefined,
+        ),
     },
     json: vi.fn().mockResolvedValue(body || {}),
   } as unknown as NextRequest;
@@ -26,12 +24,10 @@ function makeRequest(
 
 describe("POST /route", () => {
   beforeEach(async () => {
-    // Reset module registry & mocks
     vi.resetModules();
     mockFindUnique.mockReset();
     mockUpsert.mockReset();
 
-    // Mock PrismaClient
     vi.mock("@prisma/client", () => ({
       PrismaClient: vi.fn().mockImplementation(() => ({
         session: { findUnique: mockFindUnique },
@@ -39,7 +35,6 @@ describe("POST /route", () => {
       })),
     }));
 
-    // Import handler after mocking
     const mod = await import("@/api/quiz/achievements/update/route");
     POST = mod.POST;
   });
@@ -94,7 +89,7 @@ describe("POST /route", () => {
     });
 
     const body = { level: "BEGINNER", score: 85 };
-    // Mock returns a Date instance for completedAt
+
     const returnedQC = {
       id: "qc1",
       userId: "user2",
@@ -127,7 +122,6 @@ describe("POST /route", () => {
 
     expect(res.status).toBe(200);
 
-    // Parse JSON and compare ISO string for completedAt
     const json = await res.json();
     const expectedQC = {
       ...returnedQC,

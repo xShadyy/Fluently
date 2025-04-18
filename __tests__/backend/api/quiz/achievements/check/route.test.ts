@@ -1,4 +1,3 @@
-// __tests__/backend/api/quiz/completions/route.test.ts
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { NextRequest } from "next/server";
 
@@ -6,27 +5,24 @@ let GET: (req: NextRequest) => Promise<import("next/server").NextResponse>;
 const mockFindUnique = vi.fn();
 const mockFindMany = vi.fn();
 
-// Helper to fake a NextRequest with optional sessionId cookie
 function makeRequest(sessionId?: string): NextRequest {
   return {
     cookies: {
-      get: vi.fn().mockImplementation((name: string) =>
-        name === "sessionId" && sessionId
-          ? { value: sessionId }
-          : undefined
-      ),
+      get: vi
+        .fn()
+        .mockImplementation((name: string) =>
+          name === "sessionId" && sessionId ? { value: sessionId } : undefined,
+        ),
     },
   } as unknown as NextRequest;
 }
 
 describe("GET /route", () => {
   beforeEach(async () => {
-    // Reset modules and mocks
     vi.resetModules();
     mockFindUnique.mockReset();
     mockFindMany.mockReset();
 
-    // Mock PrismaClient
     vi.mock("@prisma/client", () => ({
       PrismaClient: vi.fn().mockImplementation(() => ({
         session: { findUnique: mockFindUnique },
@@ -34,7 +30,6 @@ describe("GET /route", () => {
       })),
     }));
 
-    // Import the GET handler after mocking
     const mod = await import("@/api/quiz/achievements/check/route");
     GET = mod.GET;
   });
@@ -139,6 +134,8 @@ describe("GET /route", () => {
     const res = await GET(req);
 
     expect(res.status).toBe(500);
-    expect(await res.json()).toEqual({ error: "Failed to fetch quiz completions" });
+    expect(await res.json()).toEqual({
+      error: "Failed to fetch quiz completions",
+    });
   });
 });
