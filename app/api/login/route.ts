@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     const response = NextResponse.json({
       user: {
         id: user.id,
-        username: user.username,
+        username: user.username, // Updated from user.name to user.username
         email: user.email,
         createdAt: user.createdAt,
       },
