@@ -7,7 +7,8 @@ import {
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { Container, Group, Image, rem, Text, Anchor } from "@mantine/core";
-import classes from "./UserHeader.module.css";
+import classes from "./RootHeader.module.css";
+import React from "react";
 
 export default function Header() {
   return (

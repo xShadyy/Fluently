@@ -23,6 +23,7 @@ import {
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import classes from "./signupForm.module.css";
+import React from "react";
 
 export default function SignupForm() {
   const [email, setEmail] = useState("");
