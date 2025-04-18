@@ -1,43 +1,104 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useDisclosure } from "@mantine/hooks";
-import { LoadingOverlay, Button, Group, Box } from "@mantine/core";
-import DashRoot from "../components/ui/DashboardGrouped/DashboardGrouped";
+import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import ProficiencyQuiz from "@/components/ui/ProficiencyQuiz/ProficiencyQuiz";
+import LanguageDashboard from "@/components/ui/Dashboard/LanguageDashboard";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState("");
-  const [visible, { toggle }] = useDisclosure(false);
+  const [quizCompleted, setQuizCompleted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const res = await fetch("/api/user", {
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setUser(data.user);
-      } else {
-        setError(data.error || "Failed to fetch user data");
+    const checkQuizStatus = async () => {
+      try {
+        const hasCompletedQuiz =
+          localStorage.getItem("quizCompleted") === "true";
+
+        const response = await fetch("/api/quiz/status", {
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const apiQuizCompleted = data.hasCompleted;
+
+          setQuizCompleted(apiQuizCompleted);
+          setShowQuiz(!apiQuizCompleted);
+
+          if (apiQuizCompleted) {
+            localStorage.setItem("quizCompleted", "true");
+          } else {
+            localStorage.removeItem("quizCompleted");
+          }
+        } else {
+          setQuizCompleted(hasCompletedQuiz);
+          setShowQuiz(!hasCompletedQuiz);
+        }
+      } catch (error) {
+        console.error("Error checking quiz status:", error);
+
+        const hasCompletedQuiz =
+          localStorage.getItem("quizCompleted") === "true";
+        setQuizCompleted(hasCompletedQuiz);
+        setShowQuiz(!hasCompletedQuiz);
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchUser();
+
+    checkQuizStatus();
   }, []);
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-  if (!user) {
-    return;
-  }
-  <Box pos="relative">
-    <LoadingOverlay
-      visible={visible}
-      zIndex={1000}
-      overlayProps={{ radius: "sm", blur: 2 }}
-    />
-  </Box>;
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const hasCompletedQuiz = localStorage.getItem("quizCompleted") === "true";
+      setQuizCompleted(hasCompletedQuiz);
+      setShowQuiz(!hasCompletedQuiz);
+    };
 
-  return <DashRoot />;
+    const handleQuizCompleted = () => {
+      setQuizCompleted(true);
+      setShowQuiz(false);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("quizCompleted", handleQuizCompleted);
+
+    window.addEventListener("focus", () => {
+      const hasCompletedQuiz = localStorage.getItem("quizCompleted") === "true";
+      setQuizCompleted(hasCompletedQuiz);
+      setShowQuiz(!hasCompletedQuiz);
+    });
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("quizCompleted", handleQuizCompleted);
+      window.removeEventListener("focus", () => {});
+    };
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <AnimatePresence mode="wait">
+      {showQuiz ? (
+        <ProficiencyQuiz />
+      ) : (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <LanguageDashboard />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 }

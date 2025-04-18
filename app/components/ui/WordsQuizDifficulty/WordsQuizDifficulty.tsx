@@ -1,142 +1,215 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Skull, Flame, Zap, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import styles from "./WordsQuizDifficulty.module.css";
-import { uiClick } from "@/utils/sound";
-import React from "react";
+import { FaArrowLeft, FaLock } from "react-icons/fa";
+import { MdSchool } from "react-icons/md";
+import { toast } from "react-hot-toast";
+import { uiClick, unlocked } from "@/utils/sound";
 
-interface DifficultySelectorProps {
-  onSelect?: (difficulty: "beginner" | "intermediate" | "advanced") => void;
-}
+type Difficulty = "beginner" | "intermediate" | "advanced";
 
-export default function WordsQuiz({
-  onSelect = () => {},
-}: DifficultySelectorProps) {
+export default function WordsQuizDifficulty() {
   const router = useRouter();
-  const [selectedDifficulty, setSelectedDifficulty] = useState<
-    "beginner" | "intermediate" | "advanced" | null
-  >(null);
+  const [selectedDifficulty, setSelectedDifficulty] =
+    useState<Difficulty | null>(null);
+  const [quizCompletions, setQuizCompletions] = useState<any[]>([]);
+  const [unlockedQuizzes, setUnlockedQuizzes] = useState<Set<Difficulty>>(
+    new Set<Difficulty>(["beginner"]),
+  );
+  const [isUnlocking, setIsUnlocking] = useState<Difficulty | null>(null);
 
-  const handleSelect = (
-    difficulty: "beginner" | "intermediate" | "advanced",
-  ) => {
-    if (selectedDifficulty === difficulty) return;
-    setSelectedDifficulty(difficulty);
+  useEffect(() => {
+    const loadState = async () => {
+      try {
+        const [completionRes, achievementsRes] = await Promise.all([
+          fetch("/api/quiz/completion", { credentials: "include" }),
+          fetch("/api/quiz/achievements/check", { credentials: "include" }),
+        ]);
+        const completion = await completionRes.json();
+        const achievements = await achievementsRes.json();
+
+        const raw =
+          sessionStorage.getItem("unlockedQuizzes") ||
+          JSON.stringify(["beginner"]);
+        const sessionUnlocked = JSON.parse(raw) as Difficulty[];
+        const unlockedSet = new Set<Difficulty>(sessionUnlocked);
+
+        if (!completion.beginner && !completion.intermediate) {
+          sessionStorage.removeItem("unlockedQuizzes");
+          unlockedSet.clear();
+          unlockedSet.add("beginner");
+        } else {
+          sessionStorage.setItem(
+            "unlockedQuizzes",
+            JSON.stringify(Array.from(unlockedSet)),
+          );
+        }
+
+        setUnlockedQuizzes(unlockedSet);
+        setQuizCompletions(achievements.completions || []);
+      } catch (err) {
+        console.error("Error loading quiz state:", err);
+      }
+    };
+    loadState();
+  }, []);
+
+  const hasCompletedBeginner = quizCompletions.some(
+    (c) => c.difficulty === "BEGINNER",
+  );
+  const hasCompletedIntermediate = quizCompletions.some(
+    (c) => c.difficulty === "INTERMEDIATE",
+  );
+
+  const isQuizLocked = (d: Difficulty) => !unlockedQuizzes.has(d);
+  const isQuizUnlockable = (d: Difficulty) => {
+    if (d === "intermediate")
+      return hasCompletedBeginner && !unlockedQuizzes.has("intermediate");
+    if (d === "advanced")
+      return hasCompletedIntermediate && !unlockedQuizzes.has("advanced");
+    return false;
+  };
+
+  const handleUnlock = (d: Difficulty) => {
+    if (!isQuizUnlockable(d)) return;
+    unlocked.play();
+    setIsUnlocking(d);
+    setTimeout(() => {
+      setUnlockedQuizzes((prev) => {
+        const next = new Set(prev).add(d);
+        sessionStorage.setItem(
+          "unlockedQuizzes",
+          JSON.stringify(Array.from(next)),
+        );
+        return next;
+      });
+      setIsUnlocking(null);
+    }, 1000);
+  };
+
+  const handleCardClick = (d: Difficulty) => {
+    if (isQuizUnlockable(d)) {
+      handleUnlock(d);
+    } else if (!isQuizLocked(d)) {
+      uiClick.play();
+      setSelectedDifficulty(d);
+    } else {
+      toast.error("Complete the previous quiz first!");
+    }
   };
 
   const handleConfirm = () => {
     if (selectedDifficulty) {
-      onSelect(selectedDifficulty);
       router.push(`/dashboard/words/${selectedDifficulty}`);
     }
   };
 
-  const handleGoBack = () => {
-    router.push("/dashboard");
-  };
-
   return (
-    <div className={styles.container}>
-      <div className={styles.background}>
-        <div
-          className={`${styles.bgGradient} ${
-            selectedDifficulty
-              ? styles[
-                  `bg${selectedDifficulty.charAt(0).toUpperCase() + selectedDifficulty.slice(1)}`
-                ]
-              : ""
-          }`}
-        ></div>
-      </div>
+    <motion.div
+      className={styles.container}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    >
+      <motion.h2
+        className={styles.title}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      >
+        Select Your Difficulty
+      </motion.h2>
 
-      <h2 className={styles.title}>Select Your Difficulty</h2>
+      <motion.div
+        className={styles.cardsContainer}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
+      >
+        {(["beginner", "intermediate", "advanced"] as Difficulty[]).map(
+          (d, i) => {
+            const locked = isQuizLocked(d);
+            const unlockable = isQuizUnlockable(d);
+            const unlocking = isUnlocking === d;
+            const selected = selectedDifficulty === d;
 
-      <div className={styles.cardsContainer}>
-        {["beginner", "intermediate", "advanced"].map((difficulty) => (
-          <motion.div
-            key={difficulty}
-            className={`${styles.card} ${selectedDifficulty === difficulty ? styles.selected : ""}`}
-            onClick={() =>
-              uiClick.play() &&
-              handleSelect(
-                difficulty as "beginner" | "intermediate" | "advanced",
-              )
-            }
-            whileHover={{
-              scale: 1.05,
-              boxShadow:
-                difficulty === "beginner"
-                  ? "0 0 25px rgba(0, 255, 255, 0.5)"
-                  : difficulty === "intermediate"
-                    ? "0 0 25px rgba(255, 100, 100, 0.6)"
-                    : "0 0 25px rgba(255, 0, 0, 0.7)",
-            }}
-            animate={{
-              y: [0, -10, 0],
-              transition: {
-                duration:
-                  difficulty === "beginner"
-                    ? 4
-                    : difficulty === "intermediate"
-                      ? 5
-                      : 6,
-                repeat: Infinity,
-                repeatType: "reverse",
-                ease: "easeInOut",
-                delay:
-                  difficulty === "beginner"
-                    ? 0
-                    : difficulty === "intermediate"
-                      ? 0.5
-                      : 1,
-              },
-            }}
-          >
-            <div className={styles.cardContent}>
+            return (
               <motion.div
-                className={styles.iconContainer}
-                whileHover={{ rotate: 360, scale: 1.2 }}
-                transition={{ duration: 0.5 }}
+                key={d}
+                data-difficulty={d}
+                className={[
+                  styles.card,
+                  locked ? styles.locked : "",
+                  unlockable ? styles.unlockable : "",
+                  unlocking ? styles.unlocking : "",
+                  selected ? styles.selected : "",
+                ].join(" ")}
+                onClick={() => handleCardClick(d)}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: i * 0.1 }}
               >
-                {difficulty === "beginner" ? (
-                  <Zap className={styles.beginnerIcon} size={48} />
-                ) : difficulty === "intermediate" ? (
-                  <Flame className={styles.intermediateIcon} size={48} />
-                ) : (
-                  <Skull className={styles.advancedIcon} size={48} />
+                <div className={styles.cardContent}>
+                  <div className={styles.iconContainer}>
+                    <MdSchool size={40} />
+                  </div>
+                  <h3>{d.charAt(0).toUpperCase() + d.slice(1)}</h3>
+                  <p>
+                    {d === "beginner"
+                      ? "Start your journey"
+                      : d === "intermediate"
+                        ? "Challenge yourself"
+                        : "Master your skills"}
+                  </p>
+                  {selected && !locked && (
+                    <motion.button
+                      className={
+                        d === "beginner"
+                          ? styles.confirmButtonBeginner
+                          : d === "intermediate"
+                            ? styles.confirmButtonIntermediate
+                            : styles.confirmButtonAdvanced
+                      }
+                      onClick={handleConfirm}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      Start Quiz
+                    </motion.button>
+                  )}
+                </div>
+
+                {(locked || unlockable || unlocking) && (
+                  <div className={styles.lockOverlay}>
+                    <FaLock size={30} />
+                    {(locked || unlockable) && !unlocking && (
+                      <p className={styles.lockText}>
+                        {d === "intermediate"
+                          ? "Complete Beginner first"
+                          : d === "advanced"
+                            ? "Complete Intermediate first"
+                            : ""}
+                      </p>
+                    )}
+                  </div>
                 )}
               </motion.div>
-              <h3>
-                {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
-              </h3>
-              <p>
-                {difficulty === "beginner"
-                  ? "Start your journey with basic challenges"
-                  : difficulty === "intermediate"
-                    ? "Face greater challenges with increased difficulty"
-                    : "Only for the brave. Ultimate challenge"}
-              </p>
-              {selectedDifficulty === difficulty && (
-                <button
-                  className={
-                    styles[
-                      `confirmButton${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`
-                    ]
-                  }
-                  onClick={() => {
-                    handleConfirm();
-                    uiClick.play();
-                  }}
-                >
-                  Confirm
-                </button>
-              )}
-            </div>
-            <div className={styles.cardOverlay}></div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
+            );
+          },
+        )}
+      </motion.div>
+
+      <motion.button
+        className={styles.backButton}
+        onClick={() => router.push("/dashboard/words")}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 1.2, ease: "easeOut" }}
+      >
+        <FaArrowLeft /> Back to Dashboard
+      </motion.button>
+    </motion.div>
   );
 }

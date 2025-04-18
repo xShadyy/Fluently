@@ -12,7 +12,7 @@ import {
 } from "@tabler/icons-react";
 import classes from "./SideMenu.module.css";
 import { uiClick } from "../../../utils/sound";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface NavbarLinkProps {
   icon: React.ReactNode;
@@ -29,32 +29,23 @@ function NavbarLink({
   onClick,
   disableAnimation,
 }: NavbarLinkProps) {
-  const Wrapper = disableAnimation ? "div" : motion.div;
-
   return (
-    <Wrapper
-      {...(!disableAnimation && {
-        whileHover: { scale: 1.03 },
-        whileTap: { scale: 0.97 },
-      })}
+    <UnstyledButton
+      onClick={onClick}
+      className={`${classes.link} ${active ? classes.active : ""}`}
     >
-      <UnstyledButton
-        onClick={onClick}
-        className={`${classes.link} ${active ? classes.active : ""}`}
-      >
-        <Group gap="md">
-          <div
-            className={`${classes.iconWrapper} ${active ? classes.activeIcon : ""}`}
-          >
-            {icon}
-          </div>
-          <Text size="sm" fw={500} className={classes.linkLabel}>
-            {label}
-          </Text>
-        </Group>
-        <IconChevronRight size={16} className={classes.chevron} />
-      </UnstyledButton>
-    </Wrapper>
+      <Group gap="md">
+        <div
+          className={`${classes.iconWrapper} ${active ? classes.activeIcon : ""}`}
+        >
+          {icon}
+        </div>
+        <Text size="sm" fw={500} className={classes.linkLabel}>
+          {label}
+        </Text>
+      </Group>
+      <IconChevronRight size={16} className={classes.chevron} />
+    </UnstyledButton>
   );
 }
 
@@ -93,7 +84,7 @@ export function SideMenu({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const Wrapper = disableAnimation ? "div" : motion.div;
+  const [shouldAnimate, setShouldAnimate] = useState(true);
 
   const activeNav = navItems.reduce(
     (prev, item) => {
@@ -107,46 +98,61 @@ export function SideMenu({
     null as (typeof navItems)[0] | null,
   );
 
-  return (
-    <Wrapper
-      {...(!disableAnimation && {
-        initial: { x: -300 },
-        animate: { x: 0 },
-        transition: { type: "spring", stiffness: 100 },
-      })}
-    >
-      <div className={classes.navbar} style={{ width: 250, padding: "16px" }}>
-        <div className={classes.sidebarContent}>
-          <div className={classes.linksContainer}>
-            {navItems.map((item) => (
-              <NavbarLink
-                key={item.label}
-                icon={item.icon}
-                label={item.label}
-                active={activeNav?.path === item.path}
-                onClick={() => {
-                  uiClick.play();
-                  router.push(item.path);
-                }}
-                disableAnimation={disableAnimation}
-              />
-            ))}
-          </div>
-        </div>
+  useEffect(() => {
+    if (!disableAnimation) {
+      const timer = setTimeout(() => {
+        setShouldAnimate(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [disableAnimation]);
 
-        <div className={classes.footer}>
-          <NavbarLink
-            icon={<IconLogout size={20} stroke={1.5} />}
-            label="Logout"
-            onClick={() => {
-              uiClick.play();
-              router.push("/login");
-            }}
-            disableAnimation={disableAnimation}
-          />
+  const MenuContent = () => (
+    <div className={classes.navbar} style={{ width: 250, padding: "16px" }}>
+      <div className={classes.sidebarContent}>
+        <div className={classes.linksContainer}>
+          {navItems.map((item) => (
+            <NavbarLink
+              key={item.label}
+              icon={item.icon}
+              label={item.label}
+              active={activeNav?.path === item.path}
+              onClick={() => {
+                uiClick.play();
+                router.push(item.path);
+              }}
+              disableAnimation={disableAnimation}
+            />
+          ))}
         </div>
       </div>
-    </Wrapper>
+
+      <div className={classes.footer}>
+        <NavbarLink
+          icon={<IconLogout size={20} stroke={1.5} />}
+          label="Logout"
+          onClick={() => {
+            uiClick.play();
+            router.push("/login");
+          }}
+          disableAnimation={disableAnimation}
+        />
+      </div>
+    </div>
+  );
+
+  if (disableAnimation || !shouldAnimate) {
+    return <MenuContent />;
+  }
+
+  return (
+    <motion.div
+      initial={{ x: -300 }}
+      animate={{ x: 0 }}
+      transition={{ type: "spring", stiffness: 100 }}
+    >
+      <MenuContent />
+    </motion.div>
   );
 }
 

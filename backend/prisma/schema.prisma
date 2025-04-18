@@ -7,6 +7,95 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id                          String            @id @default(uuid())
+  username                    String            @unique
+  email                       String            @unique
+  password                    String
+  createdAt                   DateTime          @default(now())
+  hasCompletedProficiencyQuiz Boolean           @default(false)
+  Session                     Session?
+  quizCompletions            QuizCompletion[]
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Game {
+  id             String          @id @default(uuid())
+  name           String
+  type           GameType        @default(WORDS)
+  questions      Question[]
+  wordsQuestions WordsQuestion[]
+}
+
+model Question {
+  id            String         @id @default(uuid())
+  text          String
+  gameId        String
+  correctAnswer CorrectAnswer?
+  options       Option[]
+  game          Game           @relation(fields: [gameId], references: [id], onDelete: Cascade)
+}
+
+model Option {
+  id            String         @id @default(uuid())
+  text          String
+  questionId    String
+  correctAnswer CorrectAnswer?
+  question      Question       @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model CorrectAnswer {
+  id         String   @id @default(uuid())
+  questionId String   @unique
+  optionId   String   @unique
+  option     Option   @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model WordsQuestion {
+  id            String              @id @default(uuid())
+  text          String
+  difficulty    Difficulty
+  gameId        String
+  correctAnswer WordsCorrectAnswer?
+  options       WordsOption[]
+  game          Game                @relation(fields: [gameId], references: [id], onDelete: Cascade)
+}
+
+model WordsOption {
+  id              String              @id @default(uuid())
+  text            String
+  wordsQuestionId String
+  correctAnswer   WordsCorrectAnswer?
+  wordsQuestion   WordsQuestion       @relation(fields: [wordsQuestionId], references: [id], onDelete: Cascade)
+}
+
+model WordsCorrectAnswer {
+  id              String        @id @default(uuid())
+  wordsQuestionId String        @unique
+  wordsOptionId   String        @unique
+  wordsOption     WordsOption   @relation(fields: [wordsOptionId], references: [id], onDelete: Cascade)
+  wordsQuestion   WordsQuestion @relation(fields: [wordsQuestionId], references: [id], onDelete: Cascade)
+}
+
+model QuizCompletion {
+  id        String     @id @default(uuid())
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  difficulty Difficulty
+  completedAt DateTime  @default(now())
+  score     Int?       
+
+  @@unique([userId, difficulty], name: "userId_difficulty")
+}
+
 enum Difficulty {
   BEGINNER
   INTERMEDIATE
@@ -16,80 +105,4 @@ enum Difficulty {
 enum GameType {
   WORDS
   ENGLISH_GRAMMAR_TEST
-}
-
-model User {
-  id        String   @id @default(uuid())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  Session   Session?
-}
-
-model Session {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String   @unique
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-}
-
-model Game {
-  id              String            @id @default(uuid())
-  name            String
-  type            GameType          @default(WORDS)
-  questions       Question[]
-  wordsQuestions  WordsQuestion[]
-}
-
-model Question {
-  id            String         @id @default(uuid())
-  text          String
-  gameId        String
-  game          Game           @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  options       Option[]
-  correctAnswer CorrectAnswer?
-}
-
-model Option {
-  id            String       @id @default(uuid())
-  text          String
-  questionId    String
-  question      Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  correctAnswer CorrectAnswer?
-}
-
-model CorrectAnswer {
-  id         String   @id @default(uuid())
-  questionId String   @unique
-  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  optionId   String   @unique
-  option     Option   @relation(fields: [optionId], references: [id], onDelete: Cascade)
-}
-
-model WordsQuestion {
-  id            String         @id @default(uuid())
-  text          String
-  difficulty    Difficulty   
-  gameId        String
-  game          Game           @relation(fields: [gameId], references: [id], onDelete: Cascade)
-  options       WordsOption[]
-  correctAnswer WordsCorrectAnswer?
-}
-
-model WordsOption {
-  id                String         @id @default(uuid())
-  text              String
-  wordsQuestionId   String
-  wordsQuestion     WordsQuestion  @relation(fields: [wordsQuestionId], references: [id], onDelete: Cascade)
-  correctAnswer     WordsCorrectAnswer?
-}
-
-model WordsCorrectAnswer {
-  id                String         @id @default(uuid())
-  wordsQuestionId   String         @unique
-  wordsQuestion     WordsQuestion  @relation(fields: [wordsQuestionId], references: [id], onDelete: Cascade)
-  wordsOptionId     String         @unique
-  wordsOption       WordsOption    @relation(fields: [wordsOptionId], references: [id], onDelete: Cascade)
 }

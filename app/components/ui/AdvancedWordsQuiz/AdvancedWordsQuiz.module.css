@@ -142,12 +142,14 @@
     flex-direction: column;
     gap: 2rem;
     margin-bottom: 1rem;
+    width: 100%;
   }
   .optionsGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     margin-bottom: 2rem;
+    width: 100%;
   }
   .optionButton {
     display: flex;
@@ -159,10 +161,15 @@
     border-radius: 8px;
     transition: background-color 0.2s ease, border-color 0.2s ease;
     cursor: pointer;
+    width: 100%;
   }
   .optionButton:hover {
     border-color: #999;
     background-color: #cccccc37;
+  }
+  .optionButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
   }
   .correctOption {
     background-color: #ecfdf5;
@@ -200,24 +207,19 @@
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
   }
   .loadingContainer {
+    display: none;
+  }
+  .loadingText {
+    display: none;
+  }
+  .errorContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 300px;
-    background-color: var(--card-background);
-    border-radius: 12px;
-    margin: 2rem auto;
-    max-width: 800px;
-  }
-  .errorContainer {
+    min-height: 400px;
+    gap: 1rem;
     text-align: center;
-    color: var(--error-color);
-    background-color: var(--card-background);
-    border-radius: 12px;
-    border: 1px solid var(--error-color);
-    margin: 2rem auto;
-    max-width: 800px;
   }
   .optionText {
     font-size: 1rem;
@@ -238,4 +240,15 @@
   }
   .resetButton {
     justify-content: center;
+  }
+  @keyframes pulse {
+    0% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.6;
+    }
   }
