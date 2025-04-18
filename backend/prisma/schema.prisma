@@ -15,6 +15,7 @@ model User {
   createdAt                   DateTime          @default(now())
   hasCompletedProficiencyQuiz Boolean           @default(false)
   Session                     Session?
+  quizCompletions            QuizCompletion[]
 }
 
 model Session {
@@ -82,6 +83,17 @@ model WordsCorrectAnswer {
   wordsOptionId   String        @unique
   wordsOption     WordsOption   @relation(fields: [wordsOptionId], references: [id], onDelete: Cascade)
   wordsQuestion   WordsQuestion @relation(fields: [wordsQuestionId], references: [id], onDelete: Cascade)
+}
+
+model QuizCompletion {
+  id        String     @id @default(uuid())
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  difficulty Difficulty
+  completedAt DateTime  @default(now())
+  score     Int?       
+
+  @@unique([userId, difficulty], name: "userId_difficulty")
 }
 
 enum Difficulty {

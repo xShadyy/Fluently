@@ -48,12 +48,13 @@ export default function LoginForm() {
         email,
         password,
         redirect: false,
+        callbackUrl: "/dashboard"
       });
 
       if (result?.error) {
-        setError(result.error || "Invalid email or password");
-      } else {
-        router.push("/dashboard");
+        setError(result.error);
+      } else if (result?.url) {
+        router.push(result.url);
       }
     } catch (error) {
       setError("An error occurred during login");

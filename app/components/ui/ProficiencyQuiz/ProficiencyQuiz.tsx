@@ -7,6 +7,7 @@ import styles from "./ProficiencyQuiz.module.css";
 import { Button, Loader, Card, Text, Title } from "@mantine/core";
 import React from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface Option {
   id: string;
@@ -20,11 +21,7 @@ interface QuizQuestion {
   correctAnswer: string;
 }
 
-interface LanguageQuizProps {
-  onComplete?: (score: number, level: string) => void;
-}
-
-export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
+export default function ProficiencyQuiz() {
   const { data: session, status } = useSession();
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -36,8 +33,8 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
   const [showWelcome, setShowWelcome] = useState(true);
   const [showResults, setShowResults] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const router = useRouter();
 
-  // Handle NextAuth session errors
   useEffect(() => {
     if (status === "unauthenticated") {
       console.error("NextAuth session error - user is not authenticated");
@@ -107,18 +104,17 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
     setShowResults(true);
     completed.play();
     triggerConfetti();
-
-    if (onComplete) {
-      onComplete(questions.length, getLanguageLevel());
-    }
   };
 
   const completeQuiz = async () => {
+
     setShowResults(true);
     completed.play();
     triggerConfetti();
+  };
 
-    // Call the API to update quiz completion status
+  const handleCloseResults = async () => {
+
     try {
       const response = await fetch('/api/quiz/complete', {
         method: 'POST',
@@ -130,21 +126,24 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
       
       if (!response.ok) {
         console.error('Failed to update quiz completion status');
+      } else {
+
+        localStorage.setItem("quizCompleted", "true");
+        
+
+        if (session) {
+          session.user.hasCompletedProficiencyQuiz = true;
+        }
       }
     } catch (error) {
       console.error('Error updating quiz completion status:', error);
     }
+    
 
-    if (onComplete) {
-      onComplete(score, getLanguageLevel());
-    }
-  };
-
-  const handleCloseResults = async () => {
     setShowResults(false);
-    if (onComplete) {
-      onComplete(score, getLanguageLevel());
-    }
+    
+   
+    window.dispatchEvent(new Event('quizCompleted'));
   };
 
   const getLanguageLevel = () => {
@@ -185,13 +184,7 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
 
   const ResultsScreen = () => {
     const percentage = Math.round((score / questions.length) * 100);
-    const getLanguageLevel = () => {
-      if (percentage >= 90) return "C1";
-      if (percentage >= 75) return "B2";
-      if (percentage >= 60) return "B1";
-      if (percentage >= 40) return "A2";
-      return "A1";
-    };
+    const level = getLanguageLevel();
 
     return (
       <motion.div
@@ -216,138 +209,59 @@ export default function ProficiencyQuiz({ onComplete }: LanguageQuizProps) {
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
+          className={styles.resultContainer}
           style={{
-            width: "90%",
-            maxWidth: "600px",
-            background: "white",
-            borderRadius: "20px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "space-between",
+            minHeight: "500px",
             padding: "2rem",
-            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
-            position: "relative",
-            overflow: "hidden",
           }}
         >
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              height: "4px",
-              background: `linear-gradient(90deg, #4CAF50 ${percentage}%, #f0f0f0 ${percentage}%)`,
-            }}
-          />
-
-          <Title
-            order={2}
-            ta="center"
-            mb="xl"
-            style={{
-              fontSize: "2rem",
-              fontWeight: 700,
-              color: "#2c3e50",
-              marginBottom: "2rem",
-            }}
-          >
-            Quiz Results
-          </Title>
-
-          <div
-            style={
-              {
-                width: "200px",
-                height: "200px",
-                margin: "0 auto 2rem",
-                position: "relative",
-                background:
-                  "conic-gradient(#4CAF50 0% var(--percentage), #f0f0f0 var(--percentage) 100%)",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                "--percentage": `${percentage}%`,
-              } as React.CSSProperties
-            }
-          >
-            <div
-              style={{
-                position: "absolute",
-                width: "180px",
-                height: "180px",
-                background: "white",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "2.5rem",
-                fontWeight: "bold",
-                color: "#4CAF50",
-                boxShadow: "0 0 20px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              {percentage}%
+          <div>
+            <div className={styles.scoreCircle}>
+              <div className={styles.scoreValue}>{percentage}%</div>
             </div>
-          </div>
 
-          <div
-            style={{
-              textAlign: "center",
-              marginBottom: "2rem",
-            }}
-          >
-            <Text
-              size="xl"
-              style={{
-                fontSize: "1.5rem",
-                fontWeight: 600,
-                color: "#2c3e50",
-                marginBottom: "0.5rem",
-              }}
-            >
-              Your language proficiency level is:
-            </Text>
-            <Text
-              size="xl"
-              style={{
-                fontSize: "2rem",
-                fontWeight: 700,
-                color: "#4CAF50",
-                textTransform: "uppercase",
-              }}
-            >
-              {getLanguageLevel()}
+            <div className={styles.resultDetails}>
+              <Text size="xl" style={{ fontWeight: 700 }} ta="center" mb="md">
+                Your Language Proficiency Level
+              </Text>
+              <div className={styles.levelBadge}>{level}</div>
+              <Text className={styles.levelDescription}>
+                {level === "C1" && "Advanced proficiency with near-native fluency"}
+                {level === "B2" && "Upper intermediate level with good fluency"}
+                {level === "B1" && "Intermediate level with functional fluency"}
+                {level === "A2" && "Elementary level with basic communication skills"}
+                {level === "A1" && "Beginner level with very basic understanding"}
+              </Text>
+            </div>
+
+            <Text ta="center" mb="xl">
+              You answered {score} out of {questions.length} questions correctly.
             </Text>
           </div>
-
-          <Text
-            ta="center"
-            style={{
-              fontSize: "1.1rem",
-              color: "#666",
-              marginBottom: "2rem",
-            }}
-          >
-            You answered {score} out of {questions.length} questions correctly.
-          </Text>
 
           <Button
             fullWidth
             size="lg"
             onClick={handleCloseResults}
             style={{
-              background: "#4CAF50",
+              background: "linear-gradient(135deg, #4CAF50, #45a049)",
               color: "white",
-              fontSize: "1.1rem",
+              fontSize: "1.2rem",
               padding: "1rem",
               borderRadius: "10px",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
               transition: "all 0.3s ease",
-              ":hover": {
-                background: "#45a049",
-                transform: "translateY(-2px)",
-              },
+              marginTop: "2rem",
             }}
+            component={motion.button}
+            whileHover={{ scale: 1.05, boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)" }}
+            whileTap={{ scale: 0.98 }}
           >
-            Close Results
+            Return to Dashboard
           </Button>
         </motion.div>
       </motion.div>

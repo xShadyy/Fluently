@@ -5,23 +5,6 @@ import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
-// Define custom types for NextAuth
-declare module "next-auth" {
-  interface User {
-    id: string;
-    email: string;
-    username: string;
-  }
-  
-  interface Session {
-    user: {
-      id: string;
-      email: string;
-      username: string;
-    }
-  }
-}
-
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
@@ -32,52 +15,50 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null;
+          throw new Error("Email and password are required");
         }
 
-        try {
-          const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
-          });
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email }
+        });
 
-          if (!user) {
-            return null;
-          }
-
-          const passwordMatch = await bcrypt.compare(credentials.password, user.password);
-          
-          if (!passwordMatch) {
-            return null;
-          }
-
-          return {
-            id: user.id,
-            email: user.email,
-            username: user.username,
-          };
-        } catch (error) {
-          console.error("Auth error:", error);
-          return null;
+        if (!user) {
+          throw new Error("Invalid email or password");
         }
+
+        const passwordMatch = await bcrypt.compare(credentials.password, user.password);
+        
+        if (!passwordMatch) {
+          throw new Error("Invalid email or password");
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          username: user.username,
+          hasCompletedProficiencyQuiz: user.hasCompletedProficiencyQuiz
+        };
       }
     })
   ],
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.username = user.username;
+        token.hasCompletedProficiencyQuiz = user.hasCompletedProficiencyQuiz;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
-        session.user.username = token.username as string;
+      if (token) {
+        session.user.id = token.id;
+        session.user.username = token.username;
+        session.user.hasCompletedProficiencyQuiz = token.hasCompletedProficiencyQuiz;
       }
       return session;
     }
@@ -86,7 +67,6 @@ const handler = NextAuth({
     signIn: "/login",
     error: "/login",
   },
-  secret: process.env.NEXTAUTH_SECRET || "your-secret-key",
 });
 
 export { handler as GET, handler as POST }; 

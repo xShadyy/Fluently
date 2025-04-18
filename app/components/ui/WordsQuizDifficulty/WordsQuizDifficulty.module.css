@@ -1,13 +1,15 @@
+/* Base styles */
 .container {
   position: relative;
-  height: calc(100vh - 80px); /* Subtract header height */
+  height: calc(100vh - 80px);
   padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: transparent;
-  margin-left: 80px; /* Side menu width */
+  margin-left: 80px;
+  gap: 2rem;
 }
 
 .title {
@@ -21,6 +23,7 @@
 
 .cardsContainer {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   gap: 2rem;
   width: 100%;
@@ -43,60 +46,52 @@
   padding: 2rem;
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: box-shadow 0.2s ease-out;
+  transition: transform 0.2s ease-out;
 }
 
+/* Difficulty-specific base glow */
 .card[data-difficulty="beginner"] {
   border-color: rgba(0, 255, 255, 0.3);
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
 }
-
 .card[data-difficulty="intermediate"] {
   border-color: rgba(255, 100, 100, 0.3);
   box-shadow: 0 0 20px rgba(255, 100, 100, 0.1);
 }
-
 .card[data-difficulty="advanced"] {
   border-color: rgba(255, 0, 0, 0.3);
   box-shadow: 0 0 20px rgba(255, 0, 0, 0.1);
 }
 
-.card:hover {
+/* Hover only for fully-unlocked cards */
+.card:not(.unlockable):not(.locked):hover {
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
-  transition: box-shadow 0.2s ease-in;
 }
-
-.card[data-difficulty="beginner"]:hover {
+.card[data-difficulty="beginner"]:not(.unlockable):not(.locked):hover {
   box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
-  transition: box-shadow 0.2s ease-in;
 }
-
-.card[data-difficulty="intermediate"]:hover {
+.card[data-difficulty="intermediate"]:not(.unlockable):not(.locked):hover {
   box-shadow: 0 0 30px rgba(255, 100, 100, 0.3);
-  transition: box-shadow 0.2s ease-in;
 }
-
-.card[data-difficulty="advanced"]:hover {
+.card[data-difficulty="advanced"]:not(.unlockable):not(.locked):hover {
   box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
-  transition: box-shadow 0.2s ease-in;
 }
 
+/* Selected */
 .selected {
   transform: scale(1.05);
 }
-
 .card[data-difficulty="beginner"].selected {
   box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
 }
-
 .card[data-difficulty="intermediate"].selected {
   box-shadow: 0 0 30px rgba(255, 100, 100, 0.3);
 }
-
 .card[data-difficulty="advanced"].selected {
   box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
 }
 
+/* Card content */
 .cardContent {
   display: flex;
   flex-direction: column;
@@ -105,7 +100,6 @@
   text-align: center;
   z-index: 1;
 }
-
 .iconContainer {
   width: 80px;
   height: 80px;
@@ -116,44 +110,38 @@
   background: rgba(255, 255, 255, 0.1);
   transition: all 0.2s ease-out;
 }
-
 .card[data-difficulty="beginner"] .iconContainer {
   background: rgba(0, 255, 255, 0.1);
   color: #00ffff;
 }
-
 .card[data-difficulty="intermediate"] .iconContainer {
   background: rgba(255, 100, 100, 0.1);
   color: #ff6464;
 }
-
 .card[data-difficulty="advanced"] .iconContainer {
   background: rgba(255, 0, 0, 0.1);
   color: #ff0000;
 }
 
+/* Text */
 .card h3 {
   font-size: 1.8rem;
   font-weight: 600;
   color: white;
   margin: 0;
 }
-
 .card[data-difficulty="beginner"] h3 {
   color: #00ffff;
   text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
 }
-
 .card[data-difficulty="intermediate"] h3 {
   color: #ff6464;
   text-shadow: 0 0 10px rgba(255, 100, 100, 0.3);
 }
-
 .card[data-difficulty="advanced"] h3 {
   color: #ff0000;
   text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
 }
-
 .card p {
   color: rgba(255, 255, 255, 0.7);
   font-size: 1rem;
@@ -161,6 +149,7 @@
   margin: 0;
 }
 
+/* Buttons */
 .confirmButtonBeginner,
 .confirmButtonIntermediate,
 .confirmButtonAdvanced {
@@ -175,104 +164,132 @@
   width: 100%;
   max-width: 200px;
 }
-
 .confirmButtonBeginner {
   background: rgba(0, 255, 255, 0.2);
   color: #00ffff;
   border: 1px solid rgba(0, 255, 255, 0.3);
 }
-
 .confirmButtonIntermediate {
   background: rgba(255, 100, 100, 0.2);
   color: #ff6464;
   border: 1px solid rgba(255, 100, 100, 0.3);
 }
-
 .confirmButtonAdvanced {
   background: rgba(255, 0, 0, 0.2);
   color: #ff0000;
   border: 1px solid rgba(255, 0, 0, 0.3);
 }
-
-.confirmButtonBeginner:hover,
-.confirmButtonIntermediate:hover,
-.confirmButtonAdvanced:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease-in;
-}
-
 .confirmButtonBeginner:hover {
   background: rgba(0, 255, 255, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 255, 255, 0.2);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
 }
-
 .confirmButtonIntermediate:hover {
   background: rgba(255, 100, 100, 0.3);
-  box-shadow: 0 4px 12px rgba(255, 100, 100, 0.2);
+  box-shadow: 0 0 15px rgba(255, 100, 100, 0.5);
 }
-
 .confirmButtonAdvanced:hover {
   background: rgba(255, 0, 0, 0.3);
-  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
 }
 
+/* Back button */
 .backButton {
-  margin-top: 2rem;
-  padding: 1rem 2rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  color: white;
-  font-size: 1.1rem;
-  font-weight: 500;
-  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
   transition: all 0.2s ease-out;
-  backdrop-filter: blur(5px);
+  margin-top: 2rem;
 }
-
 .backButton:hover {
   background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease-in;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
-@media (max-width: 1024px) {
-  .container {
-    margin-left: 0;
-    padding: 1rem;
-  }
-  
-  .cardsContainer {
-    gap: 1.5rem;
-  }
-  
-  .card {
-    width: 280px;
-    height: 380px;
-  }
+/* Locked */
+.locked {
+  opacity: 0.9;
+  cursor: not-allowed;
+}
+.locked:hover {
+  transform: none !important;
+  box-shadow: none !important;
 }
 
+/* Overlay & text */
+.lockOverlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  z-index: 2;
+  pointer-events: none;
+  backdrop-filter: blur(2px);
+}
+.lockText {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-align: center;
+  margin: 0;
+  padding: 0 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Pulsating gold glow for unlockable */
+.unlockable {
+  animation: goldPulse 2s infinite both;
+}
+/* keep it super‑fast on hover, and force it */
+.unlockable:hover {
+  animation: goldPulse 1s infinite both !important;
+  box-shadow: 0 0 35px rgba(255,215,0,0.9) !important;
+}
+
+/* Gold‑pulse keyframes */
+@keyframes goldPulse {
+  0%,100% { box-shadow: 0 0 15px rgba(255,215,0,0.5); }
+  50%     { box-shadow: 0 0 35px rgba(255,215,0,0.9); }
+}
+
+/* Unlock animation */
+.unlocking .lockOverlay {
+  animation: unlockLock 0.8s forwards ease-out;
+}
+@keyframes unlockLock {
+  0%   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+  60%  { opacity: 0.8; transform: scale(1.2) translateY(20px); filter: blur(2px); }
+  100% { opacity: 0; transform: scale(1.5) translateY(-50px); filter: blur(8px); }
+}
+.unlocking {
+  animation: unlockBlast 0.8s ease-out both;
+}
+@keyframes unlockBlast {
+  0%   { transform: scale(1) rotate(0);   box-shadow: 0 0 15px rgba(255,215,0,0.5); }
+  30%  { transform: scale(1.1) rotate(8deg); box-shadow: 0 0 50px rgba(255,215,0,1); }
+  60%  { transform: scale(0.95) rotate(-5deg); box-shadow: 0 0 70px rgba(255,215,0,1); }
+  100% { transform: scale(1) rotate(0);   box-shadow: 0 0 20px rgba(255,215,0,0.6); }
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .cardsContainer {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .card {
-    width: 100%;
-    max-width: 400px;
-    height: 350px;
-  }
-  
-  .title {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-  }
+  .container   { padding: 1rem; margin-left: 0; }
+  .cardsContainer { flex-direction: column; align-items: center; }
+  .card        { width: 100%; max-width: 350px; }
 }
-  
+
+/* padlock icon */
+.padlockIcon {
+  transition: transform 0.5s, opacity 0.5s;
+}

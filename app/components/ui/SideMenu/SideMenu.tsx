@@ -98,7 +98,6 @@ export function SideMenu({
     null as (typeof navItems)[0] | null,
   );
 
-  // Only animate on initial load
   useEffect(() => {
     if (!disableAnimation) {
       const timer = setTimeout(() => {

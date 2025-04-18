@@ -1,19 +1,16 @@
 import { NextResponse, NextRequest } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Difficulty } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
-  console.log("Quiz completion request received");
   const sessionCookie = request.cookies.get("sessionId");
 
   if (!sessionCookie) {
-    console.log("No session cookie found");
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
   const sessionId = sessionCookie.value;
-  console.log("Session ID:", sessionId);
 
   try {
     const session = await prisma.session.findUnique({
@@ -22,28 +19,42 @@ export async function POST(request: NextRequest) {
     });
 
     if (!session) {
-      console.log("No session found");
       return NextResponse.json({ error: "Invalid session" }, { status: 401 });
     }
 
     if (new Date() > session.expiresAt) {
-      console.log("Session expired");
       return NextResponse.json({ error: "Session expired" }, { status: 401 });
     }
 
-    console.log("Updating user quiz status:", session.user.id);
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: { hasCompletedProficiencyQuiz: true },
+    const { level, score } = await request.json();
+
+    const quizCompletion = await prisma.quizCompletion.upsert({
+      where: {
+        userId_difficulty: {
+          userId: session.user.id,
+          difficulty: level as Difficulty,
+        },
+      },
+      update: {
+        score: score,
+        completedAt: new Date(),
+      },
+      create: {
+        userId: session.user.id,
+        difficulty: level as Difficulty,
+        score: score,
+      },
     });
 
-    console.log("Quiz status updated successfully");
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ 
+      success: true,
+      quizCompletion 
+    });
   } catch (error) {
-    console.error("Error updating quiz status:", error);
+    console.error("Error updating quiz achievement:", error);
     return NextResponse.json(
-      { error: "Failed to update quiz status" },
+      { error: "Failed to update quiz achievement" },
       { status: 500 },
     );
   }
-}
+} 

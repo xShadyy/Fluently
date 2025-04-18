@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from "react";
+
+import React, { useState, useCallback, useRef } from "react";
 import styles from "./Translator.module.css";
 import { uiClick } from "@/utils/sound";
 import {
@@ -16,10 +17,15 @@ interface Language {
 
 const languages: Language[] = [
   { code: "pl", name: "Polish" },
-  { code: "en", name: "English" },
+  { code: "en-gb", name: "English (UK)" },
+  { code: "en-us", name: "English (US)" },
   { code: "es", name: "Spanish" },
   { code: "de", name: "German" },
   { code: "fr", name: "French" },
+  { code: "it", name: "Italian" },
+  { code: "pt-pt", name: "Portuguese (EU)" },
+  { code: "ru", name: "Russian" },
+  { code: "zh", name: "Chinese" },
 ];
 
 const Translator: React.FC = () => {
@@ -31,13 +37,38 @@ const Translator: React.FC = () => {
   const [targetLang, setTargetLang] = useState<Language>(languages[1]);
   const [characterCount, setCharacterCount] = useState(0);
   const maxCharacters = 500;
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   const swapLanguages = () => {
-    const temp = sourceLang;
-    setSourceLang(targetLang);
-    setTargetLang(temp);
-    setSourceText(translatedText);
-    setTranslatedText(sourceText);
+
+    const oldSourceLang = sourceLang;
+    const oldTargetLang = targetLang;
+    const oldSourceText = sourceText;
+    const oldTranslatedText = translatedText;
+
+
+    setSourceLang(oldTargetLang);
+    setTargetLang(oldSourceLang);
+
+ 
+    setSourceText(oldTranslatedText);
+    setTranslatedText(oldSourceText);
+
+  
+    setCharacterCount(oldTranslatedText.length);
+
+
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+
+
+    if (oldTranslatedText) {
+      debounceTimer.current = setTimeout(() => {
+        translateText(oldTranslatedText, oldTargetLang.code, oldSourceLang.code);
+      }, 100);
+    }
+
     uiClick.play();
   };
 
@@ -59,46 +90,80 @@ const Translator: React.FC = () => {
       if (text.length <= maxCharacters) {
         setSourceText(text);
         setCharacterCount(text.length);
-        if (text.length > 0) {
-          handleTranslate(undefined, text);
-        } else {
-          setTranslatedText("");
+
+      
+        if (debounceTimer.current) {
+          clearTimeout(debounceTimer.current);
         }
+
+       
+        debounceTimer.current = setTimeout(() => {
+          if (text.length > 0) {
+            translateText(text, sourceLang.code, targetLang.code);
+          } else {
+            setTranslatedText("");
+          }
+        }, 500);
       }
     },
-    [],
+    [sourceLang.code, targetLang.code],
   );
 
-  const handleTranslate = async (
-    event?: React.FormEvent,
-    textToTranslate: string = sourceText,
+  const translateText = async (
+    text: string,
+    fromLang: string,
+    toLang: string,
   ) => {
-    if (event) {
-      event.preventDefault();
-    }
-    if (!textToTranslate.trim()) return;
-
+ 
     setError("");
+    setTranslatedText("");
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `https://api.mymemory.translated.net/get?q=${encodeURIComponent(
-          textToTranslate,
-        )}&langpair=${sourceLang.code}|${targetLang.code}`,
-      );
+     
+      const normalizedFromLang = fromLang.toUpperCase();
+      const normalizedToLang = toLang.toUpperCase();
+
+      const response = await fetch('/api/translate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          text,
+          sourceLang: normalizedFromLang,
+          targetLang: normalizedToLang,
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error("Translation API error");
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Translation failed');
       }
 
       const data = await response.json();
-      setTranslatedText(data.responseData.translatedText);
+      setTranslatedText(data.translatedText);
     } catch (error) {
+      console.error("Translation error:", error);
       setError("Translation failed. Please try again.");
-      console.error(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSourceLangChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLang = languages.find((l) => l.code === event.target.value)!;
+    setSourceLang(newLang);
+    if (sourceText) {
+      translateText(sourceText, newLang.code, targetLang.code);
+    }
+  };
+
+  const handleTargetLangChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLang = languages.find((l) => l.code === event.target.value)!;
+    setTargetLang(newLang);
+    if (sourceText) {
+      translateText(sourceText, sourceLang.code, newLang.code);
     }
   };
 
@@ -108,9 +173,7 @@ const Translator: React.FC = () => {
         <div className={styles.languageControls}>
           <select
             value={sourceLang.code}
-            onChange={(e) =>
-              setSourceLang(languages.find((l) => l.code === e.target.value)!)
-            }
+            onChange={handleSourceLangChange}
             className={styles.languageSelect}
           >
             {languages.map((lang) => (
@@ -126,9 +189,7 @@ const Translator: React.FC = () => {
 
           <select
             value={targetLang.code}
-            onChange={(e) =>
-              setTargetLang(languages.find((l) => l.code === e.target.value)!)
-            }
+            onChange={handleTargetLangChange}
             className={styles.languageSelect}
           >
             {languages.map((lang) => (

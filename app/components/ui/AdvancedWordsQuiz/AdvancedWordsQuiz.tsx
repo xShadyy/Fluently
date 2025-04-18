@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Card,
   Button,
@@ -18,6 +18,8 @@ import { correct, wrong, completed, uiClick } from "@/utils/sound";
 import styles from "./AdvancedWordsQuiz.module.css";
 import React from "react";
 import { useSession } from "next-auth/react";
+import confetti from "canvas-confetti";
+import { useRouter } from "next/navigation";
 
 interface Option {
   id: string;
@@ -50,6 +52,7 @@ export default function AdvancedWordsQuiz() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
+  const router = useRouter();
 
 
   useEffect(() => {
@@ -86,15 +89,8 @@ export default function AdvancedWordsQuiz() {
     if (selectedAnswer || showFeedback) return;
     const currentQ = questions[currentQuestion];
     const isAnswerCorrect = optionId === currentQ.correctAnswer?.wordsOptionId;
-    if (optionId === null) {
-      wrong.play();
-      const correctText =
-        currentQ.options.find(
-          (opt) => opt.id === currentQ.correctAnswer?.wordsOptionId,
-        )?.text || "N/A";
-      setFeedback(`Time expired! The correct answer is: ${correctText}`);
-      setLives((prev) => prev - 1);
-    } else if (isAnswerCorrect) {
+
+    if (isAnswerCorrect) {
       correct.play();
       setScore((prev) => prev + 1);
       setFeedback("Correct, good job!");
@@ -107,6 +103,7 @@ export default function AdvancedWordsQuiz() {
       setFeedback(`Incorrect. The correct answer is: ${correctText}`);
       setLives((prev) => prev - 1);
     }
+
     setResults((prev) => [...prev, isAnswerCorrect]);
     setSelectedAnswer(optionId);
     setShowFeedback(true);
@@ -115,7 +112,7 @@ export default function AdvancedWordsQuiz() {
       setSelectedAnswer(null);
       setFeedback(null);
       if (
-        lives - (optionId === null || isAnswerCorrect ? 0 : 1) <= 0 ||
+        lives - (isAnswerCorrect ? 0 : 1) <= 0 ||
         currentQuestion === questions.length - 1
       ) {
         setQuizOver(true);
@@ -161,8 +158,62 @@ export default function AdvancedWordsQuiz() {
   };
 
   const handleCloseResults = () => {
-    setQuizOver(false);
-    setShowResults(false);
+    router.push("/dashboard/words");
+  };
+
+  const triggerConfetti = useCallback(() => {
+    const duration = 3000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+    const randomInRange = (min: number, max: number) => {
+      return Math.random() * (max - min) + min;
+    };
+    const interval = setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+      if (timeLeft <= 0) {
+        clearInterval(interval);
+        return;
+      }
+      const particleCount = 50 * (timeLeft / duration);
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+      });
+    }, 250);
+  }, []);
+
+  const completeQuiz = async () => {
+    setShowResults(true);
+    completed.play();
+    triggerConfetti();
+
+    const percentage = Math.round((score / questions.length) * 100);
+
+    try {
+      const response = await fetch('/api/quiz/achievements/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          level: 'ADVANCED',
+          score: percentage
+        }),
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        console.error('Failed to update quiz achievement');
+      }
+    } catch (error) {
+      console.error('Error updating quiz achievement:', error);
+    }
   };
 
   if (isLoading) {
@@ -358,6 +409,7 @@ export default function AdvancedWordsQuiz() {
                 onClick={() => {
                   setQuizOver(true);
                   completed.play();
+                  completeQuiz();
                 }}
               >
                 Skip to End (Testing)

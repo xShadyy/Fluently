@@ -1,41 +1,96 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Skull, Flame, Zap, ArrowLeft } from "lucide-react";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import styles from "./WordsQuizDifficulty.module.css";
-import { uiClick } from "@/utils/sound";
-import React from "react";
+import { FaArrowLeft, FaLock } from 'react-icons/fa';
+import { MdSchool } from 'react-icons/md';
+import { toast } from 'react-hot-toast';
+import { uiClick, unlocked } from "@/utils/sound";
 
-interface DifficultySelectorProps {
-  onSelect?: (difficulty: "beginner" | "intermediate" | "advanced") => void;
-}
+type Difficulty = 'beginner' | 'intermediate' | 'advanced';
 
-export default function WordsQuiz({
-  onSelect = () => {},
-}: DifficultySelectorProps) {
+export default function WordsQuizDifficulty() {
   const router = useRouter();
-  const [selectedDifficulty, setSelectedDifficulty] = useState<
-    "beginner" | "intermediate" | "advanced" | null
-  >(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | null>(null);
+  const [quizCompletions, setQuizCompletions] = useState<any[]>([]);
+  const [unlockedQuizzes, setUnlockedQuizzes] = useState<Set<Difficulty>>(new Set<Difficulty>(['beginner']));
+  const [isUnlocking, setIsUnlocking] = useState<Difficulty | null>(null);
 
-  const handleSelect = (
-    difficulty: "beginner" | "intermediate" | "advanced",
-  ) => {
-    if (selectedDifficulty === difficulty) return;
-    setSelectedDifficulty(difficulty);
+  useEffect(() => {
+    const loadState = async () => {
+      try {
+        const [completionRes, achievementsRes] = await Promise.all([
+          fetch('/api/quiz/completion', { credentials: 'include' }),
+          fetch('/api/quiz/achievements/check', { credentials: 'include' })
+        ]);
+        const completion = await completionRes.json();
+        const achievements = await achievementsRes.json();
+
+    
+        const raw = sessionStorage.getItem('unlockedQuizzes') || JSON.stringify(['beginner']);
+        const sessionUnlocked = JSON.parse(raw) as Difficulty[];
+        const unlockedSet = new Set<Difficulty>(sessionUnlocked);
+
+     
+        if (!completion.beginner && !completion.intermediate) {
+          sessionStorage.removeItem('unlockedQuizzes');
+          unlockedSet.clear();
+          unlockedSet.add('beginner');
+        } else {
+          sessionStorage.setItem(
+            'unlockedQuizzes',
+            JSON.stringify(Array.from(unlockedSet))
+          );
+        }
+
+        setUnlockedQuizzes(unlockedSet);
+        setQuizCompletions(achievements.completions || []);
+      } catch (err) {
+        console.error('Error loading quiz state:', err);
+      }
+    };
+    loadState();
+  }, []);
+
+  const hasCompletedBeginner = quizCompletions.some(c => c.difficulty === "BEGINNER");
+  const hasCompletedIntermediate = quizCompletions.some(c => c.difficulty === "INTERMEDIATE");
+
+  const isQuizLocked = (d: Difficulty) => !unlockedQuizzes.has(d);
+  const isQuizUnlockable = (d: Difficulty) => {
+    if (d === 'intermediate') return hasCompletedBeginner && !unlockedQuizzes.has('intermediate');
+    if (d === 'advanced')     return hasCompletedIntermediate && !unlockedQuizzes.has('advanced');
+    return false;
+  };
+
+  const handleUnlock = (d: Difficulty) => {
+    if (!isQuizUnlockable(d)) return;
+    unlocked.play();
+    setIsUnlocking(d);
+    setTimeout(() => {
+      setUnlockedQuizzes(prev => {
+        const next = new Set(prev).add(d);
+        sessionStorage.setItem('unlockedQuizzes', JSON.stringify(Array.from(next)));
+        return next;
+      });
+      setIsUnlocking(null);
+    }, 1000);
+  };
+
+  const handleCardClick = (d: Difficulty) => {
+    if (isQuizUnlockable(d)) {
+      handleUnlock(d);
+    } else if (!isQuizLocked(d)) {
+      uiClick.play();
+      setSelectedDifficulty(d);
+    } else {
+      toast.error('Complete the previous quiz first!');
+    }
   };
 
   const handleConfirm = () => {
     if (selectedDifficulty) {
-      setIsLoading(true);
-      onSelect(selectedDifficulty);
       router.push(`/dashboard/words/${selectedDifficulty}`);
     }
-  };
-
-  const handleGoBack = () => {
-    router.push("/dashboard");
   };
 
   return (
@@ -60,162 +115,86 @@ export default function WordsQuiz({
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
       >
-        {["beginner", "intermediate", "advanced"].map((difficulty, index) => (
-          <motion.div
-            key={difficulty}
-            className={`${styles.card} ${selectedDifficulty === difficulty ? styles.selected : ""}`}
-            data-difficulty={difficulty}
-            onClick={() =>
-              uiClick.play() &&
-              handleSelect(
-                difficulty as "beginner" | "intermediate" | "advanced",
-              )
-            }
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              transition: {
-                duration: 0.7,
-                delay: 0.6 + index * 0.15,
-                ease: [0.16, 1, 0.3, 1],
-              },
-            }}
-            whileHover={{
-              scale: 1.02,
-              y: -5,
-              transition: {
-                duration: 0.3,
-                ease: "easeOut",
-              },
-            }}
-            whileTap={{
-              scale: 0.98,
-              transition: {
-                duration: 0.2,
-                ease: "easeOut",
-              },
-            }}
-          >
+        {(['beginner','intermediate','advanced'] as Difficulty[]).map((d, i) => {
+          const locked = isQuizLocked(d);
+          const unlockable = isQuizUnlockable(d);
+          const unlocking = isUnlocking === d;
+          const selected = selectedDifficulty === d;
+
+          return (
             <motion.div
-              className={styles.cardContent}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{
-                duration: 0.5,
-                delay: 0.8 + index * 0.15,
-                ease: "easeOut",
-              }}
+              key={d}
+              data-difficulty={d}
+              className={[
+                styles.card,
+                locked ? styles.locked : '',
+                unlockable ? styles.unlockable : '',
+                unlocking ? styles.unlocking : '',
+                selected ? styles.selected : ''
+              ].join(' ')}
+              onClick={() => handleCardClick(d)}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: i * 0.1 }}
             >
-              <motion.div
-                className={styles.iconContainer}
-                whileHover={{
-                  rotate: 360,
-                  scale: 1.1,
-                  transition: {
-                    duration: 0.6,
-                    ease: [0.16, 1, 0.3, 1],
-                  },
-                }}
-              >
-                {difficulty === "beginner" && <Zap size={40} />}
-                {difficulty === "intermediate" && <Flame size={40} />}
-                {difficulty === "advanced" && <Skull size={40} />}
-              </motion.div>
-              <motion.h3
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.5,
-                  delay: 0.9 + index * 0.15,
-                  ease: "easeOut",
-                }}
-              >
-                {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
-              </motion.h3>
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{
-                  duration: 0.5,
-                  delay: 1 + index * 0.15,
-                  ease: "easeOut",
-                }}
-              >
-                {difficulty === "beginner"
-                  ? "Start your journey with basic challenges"
-                  : difficulty === "intermediate"
-                    ? "Face greater challenges with increased difficulty"
-                    : "Only for the brave. Ultimate challenge"}
-              </motion.p>
-              {selectedDifficulty === difficulty && (
-                <motion.button
-                  className={
-                    styles[
-                      `confirmButton${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`
-                    ]
-                  }
-                  onClick={() => {
-                    handleConfirm();
-                    uiClick.play();
-                  }}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.4,
-                    ease: "easeOut",
-                  }}
-                  whileHover={{
-                    scale: 1.05,
-                    transition: {
-                      duration: 0.2,
-                      ease: "easeOut",
-                    },
-                  }}
-                  whileTap={{
-                    scale: 0.95,
-                    transition: {
-                      duration: 0.1,
-                      ease: "easeOut",
-                    },
-                  }}
-                >
-                  Confirm
-                </motion.button>
+              <div className={styles.cardContent}>
+                <div className={styles.iconContainer}>
+                  <MdSchool size={40} />
+                </div>
+                <h3>{d.charAt(0).toUpperCase() + d.slice(1)}</h3>
+                <p>
+                  {d === "beginner"
+                    ? "Start your journey"
+                    : d === "intermediate"
+                    ? "Challenge yourself"
+                    : "Master your skills"}
+                </p>
+                {selected && !locked && (
+                  <motion.button
+                    className={
+                      d === "beginner"
+                        ? styles.confirmButtonBeginner
+                        : d === "intermediate"
+                        ? styles.confirmButtonIntermediate
+                        : styles.confirmButtonAdvanced
+                    }
+                    onClick={handleConfirm}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    Start Quiz
+                  </motion.button>
+                )}
+              </div>
+
+              {(locked || unlockable || unlocking) && (
+                <div className={styles.lockOverlay}>
+                  <FaLock size={30} />
+                 {(locked || unlockable) && !unlocking && (
+                    <p className={styles.lockText}>
+                  {d === "intermediate"
+                    ? "Complete Beginner first"
+                    : d === "advanced"
+                    ? "Complete Intermediate first"
+                    : ""}
+                    </p>
+                  )}
+                </div>
               )}
             </motion.div>
-          </motion.div>
-        ))}
+          );
+        })}
       </motion.div>
 
       <motion.button
         className={styles.backButton}
-        onClick={handleGoBack}
+        onClick={() => router.push("/dashboard/words")}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{
-          duration: 0.5,
-          delay: 1.2,
-          ease: "easeOut",
-        }}
-        whileHover={{
-          scale: 1.05,
-          transition: {
-            duration: 0.2,
-            ease: "easeOut",
-          },
-        }}
-        whileTap={{
-          scale: 0.95,
-          transition: {
-            duration: 0.1,
-            ease: "easeOut",
-          },
-        }}
+        transition={{ duration: 0.5, delay: 1.2, ease: "easeOut" }}
       >
-        <ArrowLeft size={20} />
-        Back to Dashboard
+        <FaArrowLeft /> Back to Dashboard
       </motion.button>
     </motion.div>
   );

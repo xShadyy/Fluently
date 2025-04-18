@@ -90,15 +90,8 @@ export default function BeginnerWordsQuiz({ onComplete }: LanguageQuizProps) {
     if (selectedAnswer || showFeedback) return;
     const currentQ = questions[currentQuestion];
     const isAnswerCorrect = optionId === currentQ.correctAnswer?.wordsOptionId;
-    if (optionId === null) {
-      wrong.play();
-      const correctText =
-        currentQ.options.find(
-          (opt) => opt.id === currentQ.correctAnswer?.wordsOptionId,
-        )?.text || "N/A";
-      setFeedback(`Time expired! The correct answer is: ${correctText}`);
-      setLives((prev) => prev - 1);
-    } else if (isAnswerCorrect) {
+
+    if (isAnswerCorrect) {
       correct.play();
       setScore((prev) => prev + 1);
       setFeedback("Correct, good job!");
@@ -111,6 +104,7 @@ export default function BeginnerWordsQuiz({ onComplete }: LanguageQuizProps) {
       setFeedback(`Incorrect. The correct answer is: ${correctText}`);
       setLives((prev) => prev - 1);
     }
+
     setResults((prev) => [...prev, isAnswerCorrect]);
     setSelectedAnswer(optionId);
     setShowFeedback(true);
@@ -119,7 +113,7 @@ export default function BeginnerWordsQuiz({ onComplete }: LanguageQuizProps) {
       setSelectedAnswer(null);
       setFeedback(null);
       if (
-        lives - (optionId === null || isAnswerCorrect ? 0 : 1) <= 0 ||
+        lives - (isAnswerCorrect ? 0 : 1) <= 0 ||
         currentQuestion === questions.length - 1
       ) {
         setQuizOver(true);
@@ -173,10 +167,9 @@ export default function BeginnerWordsQuiz({ onComplete }: LanguageQuizProps) {
     completed.play();
     triggerConfetti();
 
-    // Calculate percentage score
+
     const percentage = Math.round((score / questions.length) * 100);
 
-    // Call the API to update quiz achievement
     try {
       const response = await fetch('/api/quiz/achievements/update', {
         method: 'POST',
@@ -197,7 +190,6 @@ export default function BeginnerWordsQuiz({ onComplete }: LanguageQuizProps) {
       console.error('Error updating quiz achievement:', error);
     }
 
-    // Call onComplete callback if provided
     if (onComplete) {
       onComplete(percentage, getLanguageLevel());
     }
@@ -423,6 +415,7 @@ export default function BeginnerWordsQuiz({ onComplete }: LanguageQuizProps) {
                 onClick={() => {
                   setQuizOver(true);
                   completed.play();
+                  completeQuiz();
                 }}
               >
                 Skip to End (Testing)
