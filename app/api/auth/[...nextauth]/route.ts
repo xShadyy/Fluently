@@ -11,7 +11,7 @@ const handler = NextAuth({
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -19,15 +19,18 @@ const handler = NextAuth({
         }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
+          where: { email: credentials.email },
         });
 
         if (!user) {
           throw new Error("Invalid email or password");
         }
 
-        const passwordMatch = await bcrypt.compare(credentials.password, user.password);
-        
+        const passwordMatch = await bcrypt.compare(
+          credentials.password,
+          user.password,
+        );
+
         if (!passwordMatch) {
           throw new Error("Invalid email or password");
         }
@@ -36,10 +39,10 @@ const handler = NextAuth({
           id: user.id,
           email: user.email,
           username: user.username,
-          hasCompletedProficiencyQuiz: user.hasCompletedProficiencyQuiz
+          hasCompletedProficiencyQuiz: user.hasCompletedProficiencyQuiz,
         };
-      }
-    })
+      },
+    }),
   ],
   session: {
     strategy: "jwt",
@@ -58,10 +61,11 @@ const handler = NextAuth({
       if (token) {
         session.user.id = token.id;
         session.user.username = token.username;
-        session.user.hasCompletedProficiencyQuiz = token.hasCompletedProficiencyQuiz;
+        session.user.hasCompletedProficiencyQuiz =
+          token.hasCompletedProficiencyQuiz;
       }
       return session;
-    }
+    },
   },
   pages: {
     signIn: "/login",
@@ -69,4 +73,4 @@ const handler = NextAuth({
   },
 });
 
-export { handler as GET, handler as POST }; 
+export { handler as GET, handler as POST };

@@ -107,43 +107,37 @@ export default function ProficiencyQuiz() {
   };
 
   const completeQuiz = async () => {
-
     setShowResults(true);
     completed.play();
     triggerConfetti();
   };
 
   const handleCloseResults = async () => {
-
     try {
-      const response = await fetch('/api/quiz/complete', {
-        method: 'POST',
+      const response = await fetch("/api/quiz/complete", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        credentials: 'include',
+        credentials: "include",
       });
-      
-      if (!response.ok) {
-        console.error('Failed to update quiz completion status');
-      } else {
 
+      if (!response.ok) {
+        console.error("Failed to update quiz completion status");
+      } else {
         localStorage.setItem("quizCompleted", "true");
-        
 
         if (session) {
           session.user.hasCompletedProficiencyQuiz = true;
         }
       }
     } catch (error) {
-      console.error('Error updating quiz completion status:', error);
+      console.error("Error updating quiz completion status:", error);
     }
-    
 
     setShowResults(false);
-    
-   
-    window.dispatchEvent(new Event('quizCompleted'));
+
+    window.dispatchEvent(new Event("quizCompleted"));
   };
 
   const getLanguageLevel = () => {
@@ -230,16 +224,20 @@ export default function ProficiencyQuiz() {
               </Text>
               <div className={styles.levelBadge}>{level}</div>
               <Text className={styles.levelDescription}>
-                {level === "C1" && "Advanced proficiency with near-native fluency"}
+                {level === "C1" &&
+                  "Advanced proficiency with near-native fluency"}
                 {level === "B2" && "Upper intermediate level with good fluency"}
                 {level === "B1" && "Intermediate level with functional fluency"}
-                {level === "A2" && "Elementary level with basic communication skills"}
-                {level === "A1" && "Beginner level with very basic understanding"}
+                {level === "A2" &&
+                  "Elementary level with basic communication skills"}
+                {level === "A1" &&
+                  "Beginner level with very basic understanding"}
               </Text>
             </div>
 
             <Text ta="center" mb="xl">
-              You answered {score} out of {questions.length} questions correctly.
+              You answered {score} out of {questions.length} questions
+              correctly.
             </Text>
           </div>
 
@@ -258,7 +256,10 @@ export default function ProficiencyQuiz() {
               marginTop: "2rem",
             }}
             component={motion.button}
-            whileHover={{ scale: 1.05, boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)" }}
+            whileHover={{
+              scale: 1.05,
+              boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
+            }}
             whileTap={{ scale: 0.98 }}
           >
             Return to Dashboard

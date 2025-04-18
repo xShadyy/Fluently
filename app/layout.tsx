@@ -10,7 +10,7 @@ import {
   mantineHtmlProps,
   MantineProvider,
 } from "@mantine/core";
-import { Notifications } from '@mantine/notifications';
+import { Notifications } from "@mantine/notifications";
 import { theme } from "../theme";
 
 const inter = Inter({ subsets: ["latin"] });

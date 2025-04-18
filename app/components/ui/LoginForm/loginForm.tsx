@@ -48,7 +48,7 @@ export default function LoginForm() {
         email,
         password,
         redirect: false,
-        callbackUrl: "/dashboard"
+        callbackUrl: "/dashboard",
       });
 
       if (result?.error) {

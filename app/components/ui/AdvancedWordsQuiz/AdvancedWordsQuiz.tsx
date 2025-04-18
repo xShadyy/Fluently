@@ -12,7 +12,7 @@ import {
   Group,
   Stack,
 } from "@mantine/core";
-import { IconTrophy } from '@tabler/icons-react';
+import { IconTrophy } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { correct, wrong, completed, uiClick } from "@/utils/sound";
 import styles from "./AdvancedWordsQuiz.module.css";
@@ -53,7 +53,6 @@ export default function AdvancedWordsQuiz() {
   const [error, setError] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
   const router = useRouter();
-
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -196,30 +195,32 @@ export default function AdvancedWordsQuiz() {
     const percentage = Math.round((score / questions.length) * 100);
 
     try {
-      const response = await fetch('/api/quiz/achievements/update', {
-        method: 'POST',
+      const response = await fetch("/api/quiz/achievements/update", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          level: 'ADVANCED',
-          score: percentage
+          level: "ADVANCED",
+          score: percentage,
         }),
-        credentials: 'include',
+        credentials: "include",
       });
-      
+
       if (!response.ok) {
-        console.error('Failed to update quiz achievement');
+        console.error("Failed to update quiz achievement");
       }
     } catch (error) {
-      console.error('Error updating quiz achievement:', error);
+      console.error("Error updating quiz achievement:", error);
     }
   };
 
   if (isLoading) {
     return (
       <Container className={styles.errorContainer}>
-        <Text size="xl" ta="center" fw={700}>Loading...</Text>
+        <Text size="xl" ta="center" fw={700}>
+          Loading...
+        </Text>
       </Container>
     );
   }
@@ -378,7 +379,8 @@ export default function AdvancedWordsQuiz() {
                 marginBottom: "2rem",
               }}
             >
-              You answered {score} out of {questions.length} questions correctly.
+              You answered {score} out of {questions.length} questions
+              correctly.
             </Text>
 
             <Group mt="2rem" className={styles.resetButton}>
@@ -402,9 +404,9 @@ export default function AdvancedWordsQuiz() {
         >
           <Card className={styles.quizContainer} shadow="sm" p="lg">
             <Group justify="flex-end" mb="md">
-              <Button 
-                size="xs" 
-                variant="outline" 
+              <Button
+                size="xs"
+                variant="outline"
                 color="gray"
                 onClick={() => {
                   setQuizOver(true);
@@ -415,7 +417,7 @@ export default function AdvancedWordsQuiz() {
                 Skip to End (Testing)
               </Button>
             </Group>
-            
+
             <Progress
               value={(currentQuestion / questions.length) * 100}
               size="xl"

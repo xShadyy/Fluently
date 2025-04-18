@@ -31,13 +31,13 @@ export async function GET(request: NextRequest) {
         userId: session.user.id,
       },
       orderBy: {
-        completedAt: 'desc',
+        completedAt: "desc",
       },
     });
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
-      completions 
+      completions,
     });
   } catch (error) {
     console.error("Error fetching quiz completions:", error);
@@ -46,4 +46,4 @@ export async function GET(request: NextRequest) {
       { status: 500 },
     );
   }
-} 
+}

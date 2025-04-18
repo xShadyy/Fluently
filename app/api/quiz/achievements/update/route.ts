@@ -46,9 +46,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
-      quizCompletion 
+      quizCompletion,
     });
   } catch (error) {
     console.error("Error updating quiz achievement:", error);
@@ -57,4 +57,4 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
-} 
+}

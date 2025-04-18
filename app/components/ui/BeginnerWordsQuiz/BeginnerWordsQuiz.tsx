@@ -11,7 +11,7 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { IconTrophy } from '@tabler/icons-react';
+import { IconTrophy } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import styles from "./BeginnerWordsQuiz.module.css";
@@ -167,27 +167,26 @@ export default function BeginnerWordsQuiz({ onComplete }: LanguageQuizProps) {
     completed.play();
     triggerConfetti();
 
-
     const percentage = Math.round((score / questions.length) * 100);
 
     try {
-      const response = await fetch('/api/quiz/achievements/update', {
-        method: 'POST',
+      const response = await fetch("/api/quiz/achievements/update", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          level: 'BEGINNER',
-          score: percentage
+          level: "BEGINNER",
+          score: percentage,
         }),
-        credentials: 'include',
+        credentials: "include",
       });
-      
+
       if (!response.ok) {
-        console.error('Failed to update quiz achievement');
+        console.error("Failed to update quiz achievement");
       }
     } catch (error) {
-      console.error('Error updating quiz achievement:', error);
+      console.error("Error updating quiz achievement:", error);
     }
 
     if (onComplete) {
@@ -234,7 +233,9 @@ export default function BeginnerWordsQuiz({ onComplete }: LanguageQuizProps) {
   if (isLoading) {
     return (
       <Container className={styles.errorContainer}>
-        <Text size="xl" ta="center" fw={700}>Loading...</Text>
+        <Text size="xl" ta="center" fw={700}>
+          Loading...
+        </Text>
       </Container>
     );
   }
@@ -384,7 +385,8 @@ export default function BeginnerWordsQuiz({ onComplete }: LanguageQuizProps) {
                 marginBottom: "2rem",
               }}
             >
-              You answered {score} out of {questions.length} questions correctly.
+              You answered {score} out of {questions.length} questions
+              correctly.
             </Text>
 
             <Group mt="2rem" className={styles.resetButton}>
@@ -408,9 +410,9 @@ export default function BeginnerWordsQuiz({ onComplete }: LanguageQuizProps) {
         >
           <Card className={styles.quizContainer} shadow="sm" p="lg">
             <Group justify="flex-end" mb="md">
-              <Button 
-                size="xs" 
-                variant="outline" 
+              <Button
+                size="xs"
+                variant="outline"
                 color="gray"
                 onClick={() => {
                   setQuizOver(true);
@@ -421,7 +423,7 @@ export default function BeginnerWordsQuiz({ onComplete }: LanguageQuizProps) {
                 Skip to End (Testing)
               </Button>
             </Group>
-            
+
             <Progress
               value={(currentQuestion / questions.length) * 100}
               size="xl"

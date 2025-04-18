@@ -78,13 +78,15 @@ const LanguageDashboard = () => {
   const [startTime, setStartTime] = useState<Date | null>(null);
 
   useEffect(() => {
-    fetch('/api/quiz/completion')
-      .then(res => res.json())
-      .then(data => setCompletions({
-        beginner: data.beginner,
-        intermediate: data.intermediate,
-        advanced: data.advanced,
-      }))
+    fetch("/api/quiz/completion")
+      .then((res) => res.json())
+      .then((data) =>
+        setCompletions({
+          beginner: data.beginner,
+          intermediate: data.intermediate,
+          advanced: data.advanced,
+        }),
+      )
       .catch(console.error);
   }, []);
 
@@ -105,14 +107,14 @@ const LanguageDashboard = () => {
       const diff = now.getTime() - startTime.getTime();
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      setStats(prev => ({ ...prev, timeSpent: `${hours}h ${minutes}m` }));
+      setStats((prev) => ({ ...prev, timeSpent: `${hours}h ${minutes}m` }));
     }, 1000);
     return () => clearInterval(timer);
   }, [startTime]);
 
   const handleAddWords = () => {
     if (newWords > 0) {
-      setStats(prev => ({
+      setStats((prev) => ({
         ...prev,
         totalWordsLearned: prev.totalWordsLearned + newWords,
         dailyGoal: Math.min(100, prev.dailyGoal + 10),
@@ -136,65 +138,144 @@ const LanguageDashboard = () => {
           <Grid gutter="xl">
             {/* Main Stats Cards */}
             <Grid.Col span={3}>
-              <Card shadow="sm" padding="lg" radius="md" className={styles.card}>
+              <Card
+                shadow="sm"
+                padding="lg"
+                radius="md"
+                className={styles.card}
+              >
                 <Group justify="space-between" mb="xs">
-                  <Title order={3} className={styles.cardTitle}>Words Learned</Title>
+                  <Title order={3} className={styles.cardTitle}>
+                    Words Learned
+                  </Title>
                   <Button
                     variant="subtle"
                     color="pink"
                     size="xs"
                     onClick={() => setShowAddWordsModal(true)}
                     leftSection={<IconPlus size={16} />}
-                  >Add</Button>
+                  >
+                    Add
+                  </Button>
                 </Group>
-                <Text size="xl" fw={700} className={styles.statsValue}>{stats.totalWordsLearned}</Text>
-                <Progress value={(stats.totalWordsLearned / 2000) * 100} color={accentColor} size="lg" radius="xl" className={styles.progressBar} />
-                <Text size="sm" c="dimmed" mt="sm">Next milestone: {stats.nextMilestone}</Text>
+                <Text size="xl" fw={700} className={styles.statsValue}>
+                  {stats.totalWordsLearned}
+                </Text>
+                <Progress
+                  value={(stats.totalWordsLearned / 2000) * 100}
+                  color={accentColor}
+                  size="lg"
+                  radius="xl"
+                  className={styles.progressBar}
+                />
+                <Text size="sm" c="dimmed" mt="sm">
+                  Next milestone: {stats.nextMilestone}
+                </Text>
               </Card>
             </Grid.Col>
 
             <Grid.Col span={3}>
-              <Card shadow="sm" padding="lg" radius="md" className={styles.card}>
+              <Card
+                shadow="sm"
+                padding="lg"
+                radius="md"
+                className={styles.card}
+              >
                 <Group justify="space-between" mb="xs">
-                  <Title order={3} className={styles.cardTitle}>Daily Goal</Title>
+                  <Title order={3} className={styles.cardTitle}>
+                    Daily Goal
+                  </Title>
                   <IconTarget size={24} color={accentColor} />
                 </Group>
-                <Text size="xl" fw={700} className={styles.statsValue}>{stats.dailyGoal}%</Text>
-                <RingProgress size={120} thickness={12} sections={[{ value: stats.dailyGoal, color: accentColor }]} label={<Text size="xs" ta="center" px="xs" style={{ pointerEvents: 'none' }}>Today</Text>} />
+                <Text size="xl" fw={700} className={styles.statsValue}>
+                  {stats.dailyGoal}%
+                </Text>
+                <RingProgress
+                  size={120}
+                  thickness={12}
+                  sections={[{ value: stats.dailyGoal, color: accentColor }]}
+                  label={
+                    <Text
+                      size="xs"
+                      ta="center"
+                      px="xs"
+                      style={{ pointerEvents: "none" }}
+                    >
+                      Today
+                    </Text>
+                  }
+                />
               </Card>
             </Grid.Col>
 
             <Grid.Col span={3}>
-              <Card shadow="sm" padding="lg" radius="md" className={styles.card}>
+              <Card
+                shadow="sm"
+                padding="lg"
+                radius="md"
+                className={styles.card}
+              >
                 <Group justify="space-between" mb="xs">
-                  <Title order={3} className={styles.cardTitle}>Current Streak</Title>
+                  <Title order={3} className={styles.cardTitle}>
+                    Current Streak
+                  </Title>
                   <IconTrophy size={24} color={accentColor} />
                 </Group>
-                <Text size="xl" fw={700} className={styles.statsValue}>{stats.currentStreak} days</Text>
-                <Text size="sm" c="dimmed">Keep it up! 🔥</Text>
+                <Text size="xl" fw={700} className={styles.statsValue}>
+                  {stats.currentStreak} days
+                </Text>
+                <Text size="sm" c="dimmed">
+                  Keep it up! 🔥
+                </Text>
               </Card>
             </Grid.Col>
 
             <Grid.Col span={3}>
-              <Card shadow="sm" padding="lg" radius="md" className={styles.card}>
+              <Card
+                shadow="sm"
+                padding="lg"
+                radius="md"
+                className={styles.card}
+              >
                 <Group justify="space-between" mb="xs">
-                  <Title order={3} className={styles.cardTitle}>Time Spent</Title>
+                  <Title order={3} className={styles.cardTitle}>
+                    Time Spent
+                  </Title>
                   <IconClock size={24} color={accentColor} />
                 </Group>
-                <Text size="xl" fw={700} className={styles.statsValue}>{stats.timeSpent}</Text>
-                <Text size="sm" c="dimmed">Total learning time</Text>
+                <Text size="xl" fw={700} className={styles.statsValue}>
+                  {stats.timeSpent}
+                </Text>
+                <Text size="sm" c="dimmed">
+                  Total learning time
+                </Text>
               </Card>
             </Grid.Col>
 
             {/* Skill Breakdown */}
             <Grid.Col span={8}>
-              <Card shadow="sm" padding="lg" radius="md" className={styles.skillCard}>
-                <Title order={3} className={styles.skillTitle}>Skill Breakdown</Title>
+              <Card
+                shadow="sm"
+                padding="lg"
+                radius="md"
+                className={styles.skillCard}
+              >
+                <Title order={3} className={styles.skillTitle}>
+                  Skill Breakdown
+                </Title>
                 <Stack className={styles.skillList}>
-                  {stats.skillBreakdown.map(skill => (
+                  {stats.skillBreakdown.map((skill) => (
                     <div key={skill.skill}>
-                      <Group justify="space-between" mb="xs"><Text fw={500}>{skill.skill}</Text><Text fw={700}>{skill.value}%</Text></Group>
-                      <Progress value={skill.value} color={accentColor} size="lg" radius="xl" />
+                      <Group justify="space-between" mb="xs">
+                        <Text fw={500}>{skill.skill}</Text>
+                        <Text fw={700}>{skill.value}%</Text>
+                      </Group>
+                      <Progress
+                        value={skill.value}
+                        color={accentColor}
+                        size="lg"
+                        radius="xl"
+                      />
                     </div>
                   ))}
                 </Stack>
@@ -203,13 +284,28 @@ const LanguageDashboard = () => {
 
             {/* Weekly Progress */}
             <Grid.Col span={4}>
-              <Card shadow="sm" padding="lg" radius="md" className={styles.skillCard}>
-                <Title order={3} className={styles.skillTitle}>Weekly Progress</Title>
+              <Card
+                shadow="sm"
+                padding="lg"
+                radius="md"
+                className={styles.skillCard}
+              >
+                <Title order={3} className={styles.skillTitle}>
+                  Weekly Progress
+                </Title>
                 <Stack className={styles.weeklyProgress}>
-                  {stats.weeklyProgress.map(day => (
+                  {stats.weeklyProgress.map((day) => (
                     <div key={day.day}>
-                      <Group justify="space-between" mb="xs"><Text fw={500}>{day.day}</Text><Text fw={700}>{day.value}%</Text></Group>
-                      <Progress value={day.value} color={accentColor} size="sm" radius="xl" />
+                      <Group justify="space-between" mb="xs">
+                        <Text fw={500}>{day.day}</Text>
+                        <Text fw={700}>{day.value}%</Text>
+                      </Group>
+                      <Progress
+                        value={day.value}
+                        color={accentColor}
+                        size="sm"
+                        radius="xl"
+                      />
                     </div>
                   ))}
                 </Stack>
@@ -218,18 +314,25 @@ const LanguageDashboard = () => {
 
             {/* Word Quiz Achievements */}
             <Grid.Col span={12}>
-              <Card shadow="sm" padding="lg" radius="md" className={styles.skillCard}>
-                <Title order={3} className={styles.skillTitle}>Word Quiz Achievements</Title>
+              <Card
+                shadow="sm"
+                padding="lg"
+                radius="md"
+                className={styles.skillCard}
+              >
+                <Title order={3} className={styles.skillTitle}>
+                  Word Quiz Achievements
+                </Title>
                 <Grid>
-                  {achievements.map(a => {
-                    const key = a.id.split('_')[0] as keyof typeof completions;
+                  {achievements.map((a) => {
+                    const key = a.id.split("_")[0] as keyof typeof completions;
                     const unlocked = completions[key];
                     return (
                       <Grid.Col span={4} key={a.id}>
                         <Card
                           padding="md"
                           radius="md"
-                          className={`${styles.achievementCard} ${!unlocked ? styles.lockedAchievement : ''}`}
+                          className={`${styles.achievementCard} ${!unlocked ? styles.lockedAchievement : ""}`}
                           style={unlocked ? glowStyle : undefined}
                         >
                           <div className={styles.achievementContent}>
@@ -240,8 +343,17 @@ const LanguageDashboard = () => {
                                 <IconLock size={24} color={accentColor} />
                               )}
                             </div>
-                            <Text size="lg" className={styles.achievementTitle}>{a.title}</Text>
-                            {!unlocked && <Text size="sm" className={styles.achievementDesc}>{a.desc}</Text>}
+                            <Text size="lg" className={styles.achievementTitle}>
+                              {a.title}
+                            </Text>
+                            {!unlocked && (
+                              <Text
+                                size="sm"
+                                className={styles.achievementDesc}
+                              >
+                                {a.desc}
+                              </Text>
+                            )}
                           </div>
                         </Card>
                       </Grid.Col>
@@ -266,10 +378,14 @@ const LanguageDashboard = () => {
           <input
             type="number"
             value={newWords}
-            onChange={e => setNewWords(Number(e.target.value))}
+            onChange={(e) => setNewWords(Number(e.target.value))}
             className={styles.wordInput}
           />
-          <Button onClick={handleAddWords} variant="gradient" gradient={{ from: accentColor, to: accentColor }}>
+          <Button
+            onClick={handleAddWords}
+            variant="gradient"
+            gradient={{ from: accentColor, to: accentColor }}
+          >
             Add Words
           </Button>
         </Stack>

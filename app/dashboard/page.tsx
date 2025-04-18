@@ -15,47 +15,43 @@ export default function Dashboard() {
   useEffect(() => {
     const checkQuizStatus = async () => {
       try {
-      
-        const hasCompletedQuiz = localStorage.getItem("quizCompleted") === "true";
-        
-      
-        const response = await fetch('/api/quiz/status', {
-          credentials: 'include',
+        const hasCompletedQuiz =
+          localStorage.getItem("quizCompleted") === "true";
+
+        const response = await fetch("/api/quiz/status", {
+          credentials: "include",
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           const apiQuizCompleted = data.hasCompleted;
-          
-        
+
           setQuizCompleted(apiQuizCompleted);
           setShowQuiz(!apiQuizCompleted);
-          
-         
+
           if (apiQuizCompleted) {
             localStorage.setItem("quizCompleted", "true");
           } else {
             localStorage.removeItem("quizCompleted");
           }
         } else {
-         
           setQuizCompleted(hasCompletedQuiz);
           setShowQuiz(!hasCompletedQuiz);
         }
       } catch (error) {
         console.error("Error checking quiz status:", error);
-        
-        const hasCompletedQuiz = localStorage.getItem("quizCompleted") === "true";
+
+        const hasCompletedQuiz =
+          localStorage.getItem("quizCompleted") === "true";
         setQuizCompleted(hasCompletedQuiz);
         setShowQuiz(!hasCompletedQuiz);
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     checkQuizStatus();
   }, []);
-
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -69,20 +65,19 @@ export default function Dashboard() {
       setShowQuiz(false);
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('quizCompleted', handleQuizCompleted);
-    
- 
-    window.addEventListener('focus', () => {
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("quizCompleted", handleQuizCompleted);
+
+    window.addEventListener("focus", () => {
       const hasCompletedQuiz = localStorage.getItem("quizCompleted") === "true";
       setQuizCompleted(hasCompletedQuiz);
       setShowQuiz(!hasCompletedQuiz);
     });
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('quizCompleted', handleQuizCompleted);
-      window.removeEventListener('focus', () => {});
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("quizCompleted", handleQuizCompleted);
+      window.removeEventListener("focus", () => {});
     };
   }, []);
 

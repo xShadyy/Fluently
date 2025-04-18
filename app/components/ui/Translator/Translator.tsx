@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useRef } from "react";
 import styles from "./Translator.module.css";
 import { uiClick } from "@/utils/sound";
@@ -40,32 +39,30 @@ const Translator: React.FC = () => {
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   const swapLanguages = () => {
-
     const oldSourceLang = sourceLang;
     const oldTargetLang = targetLang;
     const oldSourceText = sourceText;
     const oldTranslatedText = translatedText;
 
-
     setSourceLang(oldTargetLang);
     setTargetLang(oldSourceLang);
 
- 
     setSourceText(oldTranslatedText);
     setTranslatedText(oldSourceText);
 
-  
     setCharacterCount(oldTranslatedText.length);
-
 
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
     }
 
-
     if (oldTranslatedText) {
       debounceTimer.current = setTimeout(() => {
-        translateText(oldTranslatedText, oldTargetLang.code, oldSourceLang.code);
+        translateText(
+          oldTranslatedText,
+          oldTargetLang.code,
+          oldSourceLang.code,
+        );
       }, 100);
     }
 
@@ -91,12 +88,10 @@ const Translator: React.FC = () => {
         setSourceText(text);
         setCharacterCount(text.length);
 
-      
         if (debounceTimer.current) {
           clearTimeout(debounceTimer.current);
         }
 
-       
         debounceTimer.current = setTimeout(() => {
           if (text.length > 0) {
             translateText(text, sourceLang.code, targetLang.code);
@@ -114,20 +109,18 @@ const Translator: React.FC = () => {
     fromLang: string,
     toLang: string,
   ) => {
- 
     setError("");
     setTranslatedText("");
     setLoading(true);
 
     try {
-     
       const normalizedFromLang = fromLang.toUpperCase();
       const normalizedToLang = toLang.toUpperCase();
 
-      const response = await fetch('/api/translate', {
-        method: 'POST',
+      const response = await fetch("/api/translate", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           text,
@@ -138,7 +131,7 @@ const Translator: React.FC = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Translation failed');
+        throw new Error(errorData.error || "Translation failed");
       }
 
       const data = await response.json();
@@ -151,7 +144,9 @@ const Translator: React.FC = () => {
     }
   };
 
-  const handleSourceLangChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSourceLangChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     const newLang = languages.find((l) => l.code === event.target.value)!;
     setSourceLang(newLang);
     if (sourceText) {
@@ -159,7 +154,9 @@ const Translator: React.FC = () => {
     }
   };
 
-  const handleTargetLangChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleTargetLangChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     const newLang = languages.find((l) => l.code === event.target.value)!;
     setTargetLang(newLang);
     if (sourceText) {

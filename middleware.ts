@@ -9,7 +9,7 @@ export default withAuth(
     callbacks: {
       authorized: ({ token }) => !!token,
     },
-  }
+  },
 );
 
 export const config = {
@@ -19,4 +19,4 @@ export const config = {
     "/profile/:path*",
     "/settings/:path*",
   ],
-}; 
+};
