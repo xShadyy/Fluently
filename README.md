@@ -46,12 +46,13 @@ fluently
 
 3. Inside the **backend** folder run: 
 ```shell
+npx prisma generate
 npx prisma migrate dev --name init
 ```
 
 4. Create .env file inside the **backend** folder - look inside **.env.example** for exact instructions
 
-5. From the **root** of the project run:
+5. From the **backend** folder run:
 ```shell
 npm run seed
 ```
@@ -74,8 +75,6 @@ localhost:3000/register
 - `typecheck` – checks TypeScript types
 - `prettier:check` – checks files with Prettier
 - `prettier:write` – formats files
-- `jest` – runs jest tests
-- `jest:watch` – starts jest watch
 - `test` – runs `prettier:check`, `typecheck` and `vitest` scripts
 - `vitest` – runs only vitest tests 
 
@@ -85,7 +84,7 @@ localhost:3000/register
 ***
 ## Database structure
 
-![prisma-erd](prisma-erd.svg)
+![prismaerd](prismaerd.svg)
 
    # Fluently Application Schema Documentation
 
@@ -108,33 +107,31 @@ The schema is designed for a PostgreSQL database and utilizes the Prisma Client.
   - [WordsQuestion](#wordsquestion)
   - [WordsOption](#wordsoption)
   - [WordsCorrectAnswer](#wordscorrectanswer)
+  - [QuizCompletion](#quizcompletion)
 
 ---
 
 ## Overview
 
-This Prisma schema represents a relational database structure for a Fluently application. It defines several entities and their relationships, enabling functionalities such as user management, game sessions, and handling different types of questions (generic and word-based). The schema emphasizes data integrity with unique constraints and cascading delete operations where necessary.
+This Prisma schema defines the relational database structure for the Fluently application, supporting user management, game sessions, quiz tracking, and various question types (generic and word-based). It ensures data integrity through unique constraints and cascaded deletes, and it captures users' proficiency quiz completions.
 
 ---
 
 ## Datasource
 
-- **Datasource:**
-  - **Provider:** `postgresql`
-  - **URL:** Configured using an environment variable (`DATABASE_URL`)
+- **Provider:** `postgresql`
+- **URL:** Configured via environment variable (`DATABASE_URL`)
 
 ---
 
 ## Enumerations
 
-- **Difficulty:**  
-  Represents the difficulty levels for word-based questions.
+- **Difficulty:** Levels for word-based questions and quiz completions.
   - `BEGINNER`
   - `INTERMEDIATE`
   - `ADVANCED`
 
-- **GameType:**  
-  Specifies the types of games available in the application.
+- **GameType:** Available game categories.
   - `WORDS`
   - `ENGLISH_GRAMMAR_TEST`
 
@@ -146,111 +143,124 @@ This Prisma schema represents a relational database structure for a Fluently app
 
 - **Fields:**
   - `id`: UUID, primary key, auto-generated.
-  - `username`: Unique string identifier.
+  - `username`: Unique string.
   - `email`: Unique email address.
   - `password`: User's password.
-  - `createdAt`: Date and time when the account was created (defaults to current time).
-- **Relationships:**
-  - Optional one-to-one relationship with the `Session` model.
+  - `createdAt`: Timestamp of account creation (defaults to now).
+  - `hasCompletedProficiencyQuiz`: Boolean flag indicating if the user finished the initial proficiency quiz (defaults to `false`).
 
----
+- **Relationships:**
+  - `Session?`: Optional one-to-one relation with `Session` (cascade on delete).
+  - `quizCompletions`: One-to-many relation with `QuizCompletion` (records user scores by difficulty).
 
 ### Session
 
 - **Fields:**
   - `id`: UUID, primary key, auto-generated.
   - `userId`: Unique reference to a `User`.
-  - `createdAt`: Timestamp of session creation (defaults to current time).
-  - `expiresAt`: Timestamp when the session expires.
-- **Relationships:**
-  - One-to-one relation with the `User` model (with cascade on delete).
+  - `createdAt`: Session creation timestamp (defaults to now).
+  - `expiresAt`: Expiration timestamp.
 
----
+- **Relationships:**
+  - `user`: One-to-one relation to `User` with `onDelete: Cascade`.
 
 ### Game
 
 - **Fields:**
   - `id`: UUID, primary key, auto-generated.
-  - `name`: Name of the game.
-  - `type`: Game type, using the `GameType` enum (defaults to `WORDS`).
-- **Relationships:**
-  - One-to-many relationship with the `Question` model.
-  - One-to-many relationship with the `WordsQuestion` model.
+  - `name`: Game name.
+  - `type`: Uses `GameType` enum (defaults to `WORDS`).
 
----
+- **Relationships:**
+  - `questions`: One-to-many with `Question`.
+  - `wordsQuestions`: One-to-many with `WordsQuestion`.
 
 ### Question
 
 - **Fields:**
   - `id`: UUID, primary key, auto-generated.
-  - `text`: Content of the question.
-  - `gameId`: Foreign key reference to the associated `Game`.
-- **Relationships:**
-  - Belongs to a `Game`.
-  - One-to-many relationship with the `Option` model.
-  - Optional one-to-one relationship with the `CorrectAnswer` model.
+  - `text`: Question content.
+  - `gameId`: Foreign key to `Game`.
 
----
+- **Relationships:**
+  - `game`: Belongs to `Game` (cascade on delete).
+  - `options`: One-to-many with `Option`.
+  - `correctAnswer?`: Optional one-to-one with `CorrectAnswer`.
 
 ### Option
 
 - **Fields:**
   - `id`: UUID, primary key, auto-generated.
-  - `text`: Text for the option.
-  - `questionId`: Foreign key reference to the associated `Question`.
-- **Relationships:**
-  - Belongs to a `Question`.
-  - Optional one-to-one relationship with the `CorrectAnswer` model.
+  - `text`: Option text.
+  - `questionId`: Foreign key to `Question`.
 
----
+- **Relationships:**
+  - `question`: Belongs to `Question` (cascade on delete).
+  - `correctAnswer?`: Optional one-to-one with `CorrectAnswer`.
 
 ### CorrectAnswer
 
 - **Fields:**
   - `id`: UUID, primary key, auto-generated.
-  - `questionId`: Unique foreign key reference to the associated `Question`.
-  - `optionId`: Unique foreign key reference to the associated `Option`.
-- **Relationships:**
-  - Establishes a one-to-one mapping back to a `Question` and an `Option`.
+  - `questionId`: Unique foreign key to `Question`.
+  - `optionId`: Unique foreign key to `Option`.
 
----
+- **Relationships:**
+  - `question`: One-to-one back to `Question` (cascade on delete).
+  - `option`: One-to-one back to `Option` (cascade on delete).
 
 ### WordsQuestion
 
 - **Fields:**
   - `id`: UUID, primary key, auto-generated.
-  - `text`: Content of the word-based question.
-  - `difficulty`: Difficulty level, using the `Difficulty` enum.
-  - `gameId`: Foreign key reference to the associated `Game`.
-- **Relationships:**
-  - Belongs to a `Game`.
-  - One-to-many relationship with the `WordsOption` model.
-  - Optional one-to-one relationship with the `WordsCorrectAnswer` model.
+  - `text`: Question content.
+  - `difficulty`: Uses `Difficulty` enum.
+  - `gameId`: Foreign key to `Game`.
 
----
+- **Relationships:**
+  - `game`: Belongs to `Game` (cascade on delete).
+  - `options`: One-to-many with `WordsOption`.
+  - `correctAnswer?`: Optional one-to-one with `WordsCorrectAnswer`.
 
 ### WordsOption
 
 - **Fields:**
   - `id`: UUID, primary key, auto-generated.
-  - `text`: Text for the word option.
-  - `wordsQuestionId`: Foreign key reference to the associated `WordsQuestion`.
-- **Relationships:**
-  - Belongs to a `WordsQuestion`.
-  - Optional one-to-one relationship with the `WordsCorrectAnswer` model.
+  - `text`: Option text.
+  - `wordsQuestionId`: Foreign key to `WordsQuestion`.
 
----
+- **Relationships:**
+  - `wordsQuestion`: Belongs to `WordsQuestion` (cascade on delete).
+  - `correctAnswer?`: Optional one-to-one with `WordsCorrectAnswer`.
 
 ### WordsCorrectAnswer
 
 - **Fields:**
   - `id`: UUID, primary key, auto-generated.
-  - `wordsQuestionId`: Unique foreign key reference to the associated `WordsQuestion`.
-  - `wordsOptionId`: Unique foreign key reference to the associated `WordsOption`.
+  - `wordsQuestionId`: Unique foreign key to `WordsQuestion`.
+  - `wordsOptionId`: Unique foreign key to `WordsOption`.
+
 - **Relationships:**
-  - Establishes a one-to-one mapping back to a `WordsQuestion` and a `WordsOption`.
+  - `wordsQuestion`: One-to-one back to `WordsQuestion` (cascade on delete).
+  - `wordsOption`: One-to-one back to `WordsOption` (cascade on delete).
+
+### QuizCompletion
+
+- **Fields:**
+  - `id`: UUID, primary key, auto-generated.
+  - `userId`: Foreign key to `User`.
+  - `difficulty`: Difficulty level completed (uses `Difficulty` enum).
+  - `completedAt`: Timestamp of completion (defaults to now).
+  - `score`: Optional integer score.
+
+- **Relationships:**
+  - `user`: Belongs to `User` (cascade on delete).
+
+- **Constraints:**
+  - Unique composite index on `[userId, difficulty]` to ensure one record per user per difficulty.
 
 ---
+
 # Fluently Application Testing Documentation
 
 ## Overview
