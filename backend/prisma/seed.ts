@@ -1,35 +1,64 @@
 import { PrismaClient } from "@prisma/client";
-import fs from "fs";
-import path from "path";
+import { readFileSync } from "fs";
+import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+import * as dotenv from "dotenv";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
-const prisma = new PrismaClient();
+dotenv.config({ path: join(dirname(__dirname), "..", ".env") });
+
+type Datasources = { db: { url?: string } };
+const prisma = new PrismaClient({
+  datasources: { db: { url: process.env.DATABASE_URL } as Datasources["db"] },
+});
+
+console.log(
+  `Using database: ${process.env.DATABASE_URL?.split("@")[1] || "undefined"}
+`,
+);
 
 async function main() {
-  const seedFilePath = path.join(__dirname, "seed.sql");
-  const seedSQL = fs.readFileSync(seedFilePath, "utf-8");
+  const sqlFile = join(__dirname, "seed.sql");
+  let sql = readFileSync(sqlFile, "utf-8");
 
-  const queries = seedSQL
-    .split(";")
-    .map((query) => query.trim())
-    .filter((query) => query.length > 0);
+  console.log(`Clearing existing test data...`);
 
-  console.log(`Seeding database with ${queries.length} queries...`);
+  const truncateStmt = `TRUNCATE TABLE
+    public._prisma_migrations,
+    public."WordsCorrectAnswer",
+    public."WordsOption",
+    public."WordsQuestion",
+    public."CorrectAnswer",
+    public."Option",
+    public."Question",
+    public."Session",
+    public."QuizCompletion",
+    public."User",
+    public."Game"
+  RESTART IDENTITY CASCADE;`;
+  await prisma.$executeRawUnsafe(truncateStmt);
 
-  for (const query of queries) {
-    console.log(`Executing query: ${query.substring(0, 50)}...`);
-    await prisma.$executeRawUnsafe(query);
-  }
+  console.log(`Executing seed SQL script (${sqlFile}) in a DO block...`);
 
-  console.log("Database seeded successfully!");
+  sql = sql.replace(
+    /SELECT\s+pg_catalog\.set_config\(/g,
+    "PERFORM pg_catalog.set_config(",
+  );
+
+  const wrappedSql = `DO $$
+BEGIN
+${sql}
+END$$ LANGUAGE plpgsql;`;
+
+  await prisma.$executeRawUnsafe(wrappedSql);
+  console.log("Seed data injected successfully into test database");
 }
 
 main()
-  .catch((error) => {
-    console.error("Error seeding database:", error);
+  .catch((e) => {
+    console.error("Test seed failed:", e);
     process.exit(1);
   })
   .finally(async () => {

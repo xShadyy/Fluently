@@ -6,6 +6,7 @@ import { FaArrowLeft, FaLock } from "react-icons/fa";
 import { MdSchool } from "react-icons/md";
 import { toast } from "react-hot-toast";
 import { uiClick, unlocked } from "@/utils/sound";
+import React from "react";
 
 type Difficulty = "beginner" | "intermediate" | "advanced";
 

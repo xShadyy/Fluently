@@ -1,3 +1,5 @@
+migrationId = "20250418120000_init"
+datamodel = @'
 generator client {
   provider = "prisma-client-js"
 }
@@ -106,3 +108,5 @@ enum GameType {
   WORDS
   ENGLISH_GRAMMAR_TEST
 }
+
+'@

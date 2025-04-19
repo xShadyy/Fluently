@@ -1,6 +1,7 @@
 "use client";
 
 import { Group, Stack, Text, Avatar, Menu } from "@mantine/core";
+import React from "react";
 
 function getInitials(name: string): string {
   if (!name) {

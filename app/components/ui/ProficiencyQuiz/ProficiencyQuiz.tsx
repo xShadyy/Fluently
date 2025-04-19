@@ -99,13 +99,6 @@ export default function ProficiencyQuiz() {
     }, 2500);
   };
 
-  const skipToResults = () => {
-    setScore(questions.length);
-    setShowResults(true);
-    completed.play();
-    triggerConfetti();
-  };
-
   const completeQuiz = async () => {
     setShowResults(true);
     completed.play();
@@ -409,13 +402,6 @@ export default function ProficiencyQuiz() {
               }}
             >
               <Card className={styles.quizContainer} shadow="sm" p="lg">
-                <Button
-                  onClick={skipToResults}
-                  variant="subtle"
-                  className={styles.skipButton}
-                >
-                  Skip to Results
-                </Button>
                 <motion.div
                   key={currentQuestionIndex}
                   initial={{ opacity: 0, x: 50 }}
