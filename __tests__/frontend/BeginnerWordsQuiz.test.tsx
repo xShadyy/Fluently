@@ -1,90 +1,212 @@
+import { describe, it, expect, vi, beforeEach, Mock } from "vitest";
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { MantineProvider } from "@mantine/core";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import BeginnerWordsQuiz from "@/components/ui/BeginnerWordsQuiz/BeginnerWordsQuiz";
-import "@testing-library/jest-dom";
-import { vi } from "vitest";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { MantineProvider } from "@mantine/core";
 
-vi.mock("@/utils/sound", () => ({
-  correct: { play: vi.fn() },
-  wrong: { play: vi.fn() },
-  completed: { play: vi.fn() },
-  uiClick: { play: vi.fn() },
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+  }),
 }));
 
-beforeAll(() => {
-  Object.defineProperty(window, "matchMedia", {
-    writable: true,
-    value: vi.fn().mockImplementation((query) => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
-  });
-});
+vi.mock("next-auth/react", () => ({
+  useSession: vi.fn(),
+}));
 
-const mockQuestions = [
-  {
-    id: "q1",
-    text: "What is the capital of France?",
-    options: [
-      { id: "a1", text: "Paris" },
-      { id: "a2", text: "London" },
-      { id: "a3", text: "Berlin" },
-    ],
-    correctAnswer: { wordsOptionId: "a1" },
-  },
-];
+vi.mock("@/utils/sound", () => ({
+  completed: { play: vi.fn() },
+  correct: { play: vi.fn() },
+  uiClick: { play: vi.fn() },
+  wrong: { play: vi.fn() },
+}));
 
-beforeEach(() => {
-  vi.stubGlobal(
-    "fetch",
-    vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ questions: mockQuestions }),
-      }),
-    ),
-  );
-});
+vi.mock("canvas-confetti", () => ({
+  default: vi.fn(),
+}));
 
-afterEach(() => {
-  vi.unstubAllGlobals();
-});
+global.fetch = vi.fn();
 
-const renderWithMantine = (ui: React.ReactElement) =>
-  render(<MantineProvider>{ui}</MantineProvider>);
+const renderWithMantine = (ui: React.ReactElement) => {
+  return render(<MantineProvider>{ui}</MantineProvider>);
+};
 
-describe("AdvancedWordsQuiz component", () => {
-  it("renders loading state initially", () => {
-    renderWithMantine(<BeginnerWordsQuiz />);
-    expect(screen.getByText(/loading quiz questions/i)).toBeInTheDocument();
-  });
+describe("BeginnerWordsQuiz Component", () => {
+  const mockQuestions = [
+    {
+      id: "1",
+      text: "What is 'hello' in Spanish?",
+      options: [
+        { id: "opt1", text: "Hola" },
+        { id: "opt2", text: "Adiós" },
+        { id: "opt3", text: "Gracias" },
+        { id: "opt4", text: "Por favor" },
+      ],
+      correctAnswer: { wordsOptionId: "opt1" },
+    },
+    {
+      id: "2",
+      text: "What is 'goodbye' in Spanish?",
+      options: [
+        { id: "opt5", text: "Hola" },
+        { id: "opt6", text: "Adiós" },
+        { id: "opt7", text: "Gracias" },
+        { id: "opt8", text: "Por favor" },
+      ],
+      correctAnswer: { wordsOptionId: "opt6" },
+    },
+  ];
 
-  it("renders first question after loading", async () => {
-    renderWithMantine(<BeginnerWordsQuiz />);
-    await screen.findByText(/what is the capital of france/i);
-    expect(screen.getByText(/question 1 out of 1/i)).toBeInTheDocument();
-  });
+  beforeEach(() => {
+    vi.clearAllMocks();
 
-  it("shows correct feedback when correct answer is selected", async () => {
-    renderWithMantine(<BeginnerWordsQuiz />);
-    await screen.findByText(/what is the capital of france/i);
-    const correctBtn = screen.getByRole("button", { name: /paris/i });
-    fireEvent.click(correctBtn);
-    await screen.findByText(/correct, good job/i);
+    (useSession as Mock).mockReturnValue({
+      data: { user: { id: "user1" } },
+      status: "authenticated",
+    });
+
+    (global.fetch as Mock).mockResolvedValue({
+      ok: true,
+      json: async () => ({ questions: mockQuestions }),
+    });
   });
 
-  it("shows incorrect feedback when wrong answer is selected", async () => {
+  it("renders loading state initially", async () => {
     renderWithMantine(<BeginnerWordsQuiz />);
-    await screen.findByText(/what is the capital of france/i);
-    const wrongBtn = screen.getByRole("button", { name: /london/i });
-    fireEvent.click(wrongBtn);
-    await screen.findByText(/incorrect. the correct answer is: paris/i);
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+  });
+
+  it("renders quiz questions after loading", async () => {
+    renderWithMantine(<BeginnerWordsQuiz />);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+
+    expect(screen.getByText("Question 1 out of 2")).toBeInTheDocument();
+    expect(screen.getByText("What is 'hello' in Spanish?")).toBeInTheDocument();
+
+    const holaOption = screen.getByText((content) => {
+      return content.includes("Hola");
+    });
+    expect(holaOption).toBeInTheDocument();
+  });
+
+  it("handles correct answer selection", async () => {
+    const user = userEvent.setup();
+    renderWithMantine(<BeginnerWordsQuiz />);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+
+    const correctOption = screen.getByText((content) =>
+      content.includes("Hola"),
+    );
+    await user.click(correctOption);
+
+    await waitFor(() => {
+      expect(screen.getByText("Correct, good job!")).toBeInTheDocument();
+    });
+  });
+
+  it("handles incorrect answer selection", async () => {
+    const user = userEvent.setup();
+    renderWithMantine(<BeginnerWordsQuiz />);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+
+    const incorrectOption = screen.getByText((content) =>
+      content.includes("Adiós"),
+    );
+    await user.click(incorrectOption);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Incorrect/)).toBeInTheDocument();
+    });
+  });
+
+  it("completes the quiz when all questions are answered", async () => {
+    const user = userEvent.setup();
+    renderWithMantine(<BeginnerWordsQuiz />);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+
+    const skipButton = screen.getByText("Skip to End (Testing)");
+    await user.click(skipButton);
+
+    await waitFor(() => {
+      expect(screen.getByText("Quiz Results")).toBeInTheDocument();
+    });
+  });
+
+  it("calls onComplete callback with correct score when quiz is finished", async () => {
+    const mockOnComplete = vi.fn();
+    const user = userEvent.setup();
+
+    renderWithMantine(<BeginnerWordsQuiz onComplete={mockOnComplete} />);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+
+    const skipButton = screen.getByText("Skip to End (Testing)");
+    await user.click(skipButton);
+
+    await waitFor(() => {
+      expect(mockOnComplete).toHaveBeenCalledWith(
+        expect.any(Number),
+        expect.any(String),
+      );
+    });
+  });
+
+  it("handles API error when fetching questions", async () => {
+    (global.fetch as Mock).mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: "Failed to fetch questions" }),
+    });
+
+    renderWithMantine(<BeginnerWordsQuiz />);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+
+    expect(
+      screen.getByText("No questions available. Please try again later."),
+    ).toBeInTheDocument();
+  });
+
+  it("sends achievement update when quiz is completed", async () => {
+    const user = userEvent.setup();
+    renderWithMantine(<BeginnerWordsQuiz />);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    });
+
+    const skipButton = screen.getByText("Skip to End (Testing)");
+    await user.click(skipButton);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        "/api/quiz/achievements/update",
+        expect.objectContaining({
+          method: "POST",
+          headers: expect.objectContaining({
+            "Content-Type": "application/json",
+          }),
+          body: expect.stringContaining("BEGINNER"),
+        }),
+      );
+    });
   });
 });

@@ -22,6 +22,7 @@ import {
 } from "@tabler/icons-react";
 import { useState, useEffect } from "react";
 import styles from "./LanguageDashboard.module.css";
+import React from "react";
 
 const LanguageDashboard = () => {
   const [stats, setStats] = useState({

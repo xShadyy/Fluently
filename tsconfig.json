@@ -1,50 +1,42 @@
 {
   "compilerOptions": {
-    "types": [
-      "vitest/globals",
-      "vitest",
-      "node",
-      "@testing-library/jest-dom"
-    ],
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext",
-      "es2022"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
+    "lib": ["dom", "dom.iterable", "esnext", "es2022"],
+    "jsx": "preserve",
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowJs": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
     "incremental": true,
+    "noEmit": true,
+
+  
+    "types": ["vitest/globals", "vitest", "node", "@testing-library/jest-dom"],
+
+
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./app/*"
-      ]
+      "@/*": ["app/*"]
     },
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+
+
+    "plugins": [{ "name": "next" }]
   },
+
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "vitest.setup.mjs"
+    "vitest.setup.mjs",
+    "__tests__/**/*.ts",
+    "__tests__/**/*.tsx"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+
+  "exclude": ["node_modules"]
 }

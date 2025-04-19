@@ -25,9 +25,11 @@ Embrace power of learning and broaden your horizons
 
 ## Features
 
-- Personalized User Experience
-- Student friendly interface
-- Sleek and modern design
+- **Personalized Learning Paths**: Adapts to each user's unique style and pace.
+- **Interactive Tools**: Includes games, quizzes, and exercises to make learning fun.
+- **Responsive Design**: Optimized for both desktop and mobile devices.
+- **Modern UI**: Sleek and intuitive interface for a seamless user experience.
+- **Database Integration**: Powered by PostgreSQL and Prisma for efficient data management.
 
 ## Quick Start
 ```shell
@@ -74,13 +76,13 @@ localhost:3000/register
 - `prettier:write` – formats files
 - `jest` – runs jest tests
 - `jest:watch` – starts jest watch
-- `test` – runs `jest`, `prettier:check` and `typecheck` scripts
+- `test` – runs `prettier:check`, `typecheck` and `vitest` scripts
+- `vitest` – runs only vitest tests 
 
 ### Other scripts
 - `seed` – inserts fixtures to DB
 
 ***
-
 ## Database structure
 
 ![prisma-erd](prisma-erd.svg)
@@ -249,4 +251,26 @@ This Prisma schema represents a relational database structure for a Fluently app
   - Establishes a one-to-one mapping back to a `WordsQuestion` and a `WordsOption`.
 
 ---
+# Fluently Application Testing Documentation
 
+## Overview
+This document summarizes the unit tests executed on both the backend and frontend of the application using the **Vitest** testing framework. The primary goal of these tests was to validate the functionality and stability of the system. All tests executed successfully without any issues.
+
+## Test Execution Process
+
+1. **Environment Setup**
+   - Installed and configured **Vitest** as the testing framework.
+   - Set up the test environments for both backend and frontend components.
+   - Integrated the **Mantine Provider** into the frontend testing setup as required by the project.
+
+2. **Test Implementation**
+   - Developed a comprehensive suite of unit tests covering the key functionalities of both the backend and frontend.
+   - Included tests for both positive scenarios and edge cases to ensure robust validation.
+
+3. **Test Execution**
+   - Ran the tests using the command `npm run vitest`.
+   - All tests passed successfully, confirming that both backend and frontend components are functioning correctly.
+
+## Results
+- **Backend**: All unit tests confirmed that the server-side functionalities are implemented correctly.
+- **Frontend**: The tests validated the user interface, with the Mantine Provider ensuring consistent and reliable theming.

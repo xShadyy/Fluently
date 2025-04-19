@@ -14,9 +14,13 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
-    "/quiz/:path*",
-    "/profile/:path*",
-    "/settings/:path*",
+    "/dashboard",
+    "/dashboard/words",
+    "/dashboard/profile",
+    "/dashboard/materials",
+    "/dashboard/translator",
+    "/dashboard/advanced-words-quiz",
+    "/dashboard/intermediate-words-quiz",
+    "/dashboard/beginner-words-quiz",
   ],
 };
