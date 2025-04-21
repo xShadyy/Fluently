@@ -50,7 +50,7 @@ npx prisma generate
 npx prisma migrate dev --name init
 ```
 
-4. Create .env file inside the **backend** folder - look inside **.env.example** for exact instructions
+4. Create .env file inside the **root project** folder - look inside **.env.example** for exact instructions
 
 5. From the **backend** folder run:
 ```shell
