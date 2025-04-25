@@ -2,12 +2,14 @@
   text-align: center;
   background: linear-gradient(135deg, #ffffff, #f7f7f7);
   border-radius: 20px;
-  margin: 3rem auto;
+  margin: 1rem auto;
   max-width: 900px;
-  padding: 2.5rem 3rem;
+  width: 100%;
+  padding: 2rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   border: 1px solid #e0e0e0;
   position: relative;
+  overflow: hidden;
 }
 
 .scoreCircle {
@@ -109,20 +111,24 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 65vh;
-  margin: 2rem auto;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
   border-radius: 12px;
   background-color: rgb(248, 249, 250);
+  overflow: hidden;
 }
 
 .welcomeContainer {
   max-width: 800px;
-  margin: 2rem auto;
+  width: 100%;
+  margin: 0 auto;
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 12px;
   box-shadow: 0 0 30px rgb(251, 207, 232);
   text-align: center;
   color: white;
+  overflow: hidden;
 }
 
 .welcomeTitle {

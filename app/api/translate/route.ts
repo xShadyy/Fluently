@@ -5,7 +5,7 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch (err) {
-    console.error("🚨 Invalid JSON body:", err);
+    console.error("Invalid JSON body:", err);
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
   const DEEPL_API_KEY = process.env.DEEPL_API_KEY;
   if (!DEEPL_API_KEY) {
-    console.error("🚨 DeepL API key not configured");
+    console.error("DeepL API key not configured");
     return NextResponse.json(
       { error: "DeepL API key not configured" },
       { status: 500 },
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     const data = await res.json();
 
     if (!res.ok) {
-      console.error("🛑 DeepL API error:", data);
+      console.error("DeepL API error:", data);
       return NextResponse.json(
         { error: "DeepL API error", details: data },
         { status: res.status },
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
 
     const translatedText = data.translations?.[0]?.text;
     if (typeof translatedText !== "string") {
-      console.error("🧐 Unexpected DeepL response shape:", data);
+      console.error("Unexpected DeepL response shape:", data);
       return NextResponse.json(
         { error: "Unexpected DeepL response" },
         { status: 500 },

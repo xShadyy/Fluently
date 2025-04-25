@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IconChevronDown, IconExternalLink } from "@tabler/icons-react";
 import { Card, Text, Title, Group, Badge, Button, Tabs } from "@mantine/core";
@@ -34,9 +33,11 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
               <div className={styles.resourceIcon}>
                 {getIconForType(resource.type)}
               </div>
-              <Title order={3}>{resource.title}</Title>
+              <Title order={3} style={{ color: "#ffffff" }}>
+                {resource.title}
+              </Title>
             </Group>
-            <Button variant="subtle" size="md">
+            <Button variant="subtle" size="md" color="gray">
               <motion.div
                 initial={{ rotate: 0 }}
                 animate={{ rotate: expanded ? 180 : 0 }}
@@ -47,18 +48,20 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
               </motion.div>
             </Button>
           </Group>
+
           <Group gap="xs" mt="md">
             <Badge
               color={
                 resource.level === "beginner"
                   ? "green"
                   : resource.level === "intermediate"
-                    ? "blue"
-                    : resource.level === "advanced"
-                      ? "violet"
-                      : "orange"
+                  ? "blue"
+                  : resource.level === "advanced"
+                  ? "violet"
+                  : "orange"
               }
-              variant="light"
+              variant="filled"
+              radius="sm"
             >
               {resource.level}
             </Badge>
@@ -67,12 +70,13 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
                 resource.type === "reading"
                   ? "pink"
                   : resource.type === "video"
-                    ? "red"
-                    : resource.type === "audio"
-                      ? "yellow"
-                      : "teal"
+                  ? "red"
+                  : resource.type === "audio"
+                  ? "yellow"
+                  : "teal"
               }
-              variant="light"
+              variant="filled"
+              radius="sm"
             >
               {resource.type}
             </Badge>
@@ -88,7 +92,7 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <Text size="md" color="dimmed" mt="md">
+              <Text size="md" color="white" mt="md">
                 {resource.description}
               </Text>
               <Group gap="xs" mt="md">
@@ -105,6 +109,8 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   size="md"
+                  variant="light"
+                  color="gray"
                   leftSection={<IconExternalLink size={14} />}
                 >
                   Visit Resource
@@ -148,8 +154,10 @@ const ResourceList = ({
       ))
     ) : (
       <div className={styles.noResults}>
-        <Text size="md">{noResultsText}</Text>
-        <Button mt="md" size="md" onClick={resetAction}>
+        <Text size="md" color="gray">
+          {noResultsText}
+        </Text>
+        <Button mt="md" size="md" color="gray" onClick={resetAction}>
           {noResultsText.includes("filters")
             ? "Reset Filters"
             : "Reset Level Filter"}
@@ -178,11 +186,7 @@ const Materials = () => {
     { value: "reading", label: "Reading", icon: getIconForType("reading") },
     { value: "video", label: "Video", icon: getIconForType("video") },
     { value: "audio", label: "Audio", icon: getIconForType("audio") },
-    {
-      value: "interactive",
-      label: "Interactive",
-      icon: getIconForType("interactive"),
-    },
+    { value: "interactive", label: "Interactive", icon: getIconForType("interactive") },
   ];
 
   const getNoResultsText = (tab: string) =>
@@ -206,10 +210,10 @@ const Materials = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Title mb="sm" fw="700" size="3.5rem">
+        <Title mb="sm" fw="700" size="3.5rem" style={{ color: "#ffffff" }}>
           English Learning Materials
         </Title>
-        <Text size="1.3rem" m="auto">
+        <Text size="1.3rem" m="auto" style={{ color: "#ffffff" }}>
           Discover the best resources to improve your English skills
         </Text>
       </motion.div>
@@ -217,9 +221,10 @@ const Materials = () => {
       <Tabs
         value={activeTab}
         onChange={(value) => setActiveTab(value ?? "all")}
+        color="rgb(251, 207, 232)"
       >
         <Card
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+          style={{ backgroundColor: "rgb(86, 86, 86)" }}
           shadow="sm"
           p="lg"
           radius="md"
@@ -227,7 +232,7 @@ const Materials = () => {
         >
           <Group align="flex-start">
             <div>
-              <Text fw={500} size="md" mb="xs">
+              <Text fw={500} size="md" mb="xs" style={{ color: "white" }}>
                 Resource Type
               </Text>
               <Tabs.List>
@@ -244,13 +249,14 @@ const Materials = () => {
             </div>
 
             <div>
-              <Text fw={500} size="md" mb="xs">
+              <Text fw={500} size="md" mb="xs" style={{ color: "white" }}>
                 Level
               </Text>
               <Group gap="sm">
                 <Button
                   variant={levelFilter === "all" ? "filled" : "outline"}
                   size="sm"
+                  color="gray"
                   onClick={() => setLevelFilter("all")}
                 >
                   All Levels
@@ -264,9 +270,7 @@ const Materials = () => {
                   Beginner
                 </Button>
                 <Button
-                  variant={
-                    levelFilter === "intermediate" ? "filled" : "outline"
-                  }
+                  variant={levelFilter === "intermediate" ? "filled" : "outline"}
                   size="sm"
                   color="blue"
                   onClick={() => setLevelFilter("intermediate")}

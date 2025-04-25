@@ -393,21 +393,6 @@ export default function IntermediateWordsQuiz() {
           transition={{ duration: 0.3 }}
         >
           <Card className={styles.quizContainer} shadow="sm" p="lg">
-            <Group justify="flex-end" mb="md">
-              <Button
-                size="xs"
-                variant="outline"
-                color="gray"
-                onClick={() => {
-                  setQuizOver(true);
-                  completed.play();
-                  completeQuiz();
-                }}
-              >
-                Skip to End (Testing)
-              </Button>
-            </Group>
-
             <Progress
               value={(currentQuestion / questions.length) * 100}
               size="xl"

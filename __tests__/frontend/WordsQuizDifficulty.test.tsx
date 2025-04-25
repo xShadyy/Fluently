@@ -177,7 +177,7 @@ describe("WordsQuizDifficulty Component", () => {
   it("navigates back to dashboard when back button is clicked", () => {
     render(<WordsQuizDifficulty />);
     fireEvent.click(screen.getByText("Back to Dashboard"));
-    expect(mockPush).toHaveBeenCalledWith("/dashboard/words");
+    expect(mockPush).toHaveBeenCalledWith("/dashboard");
   });
 
   it("resets unlocked quizzes when neither beginner nor intermediate are completed", async () => {

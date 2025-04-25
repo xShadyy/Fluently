@@ -107,29 +107,16 @@ export default function ProficiencyQuiz() {
 
   const handleCloseResults = async () => {
     try {
-      const response = await fetch("/api/quiz/complete", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+      localStorage.setItem("quizCompleted", "true");
 
-      if (!response.ok) {
-        console.error("Failed to update quiz completion status");
-      } else {
-        localStorage.setItem("quizCompleted", "true");
-
-        if (session) {
-          session.user.hasCompletedProficiencyQuiz = true;
-        }
+      if (session) {
+        session.user.hasCompletedProficiencyQuiz = true;
       }
     } catch (error) {
       console.error("Error updating quiz completion status:", error);
     }
 
     setShowResults(false);
-
     window.dispatchEvent(new Event("quizCompleted"));
   };
 
@@ -184,12 +171,13 @@ export default function ProficiencyQuiz() {
           top: 0,
           left: 0,
           width: "100%",
-          height: "100%",
+          height: "100vh", 
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           background: "rgba(0, 0, 0, 0.5)",
           zIndex: 1000,
+          overflow: "auto",
         }}
       >
         <motion.div
@@ -291,7 +279,6 @@ export default function ProficiencyQuiz() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            minHeight: "100vh",
             padding: "1rem",
           }}
         >
@@ -367,7 +354,6 @@ export default function ProficiencyQuiz() {
           style={{
             position: "relative",
             width: "100%",
-            minHeight: "100vh",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

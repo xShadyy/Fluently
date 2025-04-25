@@ -204,7 +204,7 @@ export default function WordsQuizDifficulty() {
 
       <motion.button
         className={styles.backButton}
-        onClick={() => router.push("/dashboard/words")}
+        onClick={() => router.push("/dashboard")}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 1.2, ease: "easeOut" }}
