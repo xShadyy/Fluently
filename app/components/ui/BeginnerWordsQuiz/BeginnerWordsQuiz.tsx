@@ -118,6 +118,9 @@ export default function BeginnerWordsQuiz({ onComplete }: LanguageQuizProps) {
       ) {
         setQuizOver(true);
         completed.play();
+        if (lives - (isAnswerCorrect ? 0 : 1) > 0) {
+          completeQuiz();
+        }
       } else {
         setCurrentQuestion((prev) => prev + 1);
       }

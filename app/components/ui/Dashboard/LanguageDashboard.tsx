@@ -79,15 +79,19 @@ const LanguageDashboard = () => {
   const [startTime, setStartTime] = useState<Date | null>(null);
 
   useEffect(() => {
-    fetch("/api/quiz/completion")
+    fetch("/api/quiz/achievements/check")
       .then((res) => res.json())
-      .then((data) =>
+      .then((data) => {
+        const completedDifficulties = data.completions
+          ? data.completions.map((c: any) => c.difficulty?.toLowerCase())
+          : [];
+
         setCompletions({
-          beginner: data.beginner,
-          intermediate: data.intermediate,
-          advanced: data.advanced,
-        }),
-      )
+          beginner: completedDifficulties.includes("beginner"),
+          intermediate: completedDifficulties.includes("intermediate"),
+          advanced: completedDifficulties.includes("advanced"),
+        });
+      })
       .catch(console.error);
   }, []);
 

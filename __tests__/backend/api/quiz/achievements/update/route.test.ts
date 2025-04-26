@@ -1,37 +1,42 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { NextRequest } from "next/server";
 
-let POST: (req: NextRequest) => Promise<import("next/server").NextResponse>;
-
 const mockFindUnique = vi.fn();
+const mockFindFirst = vi.fn();
 const mockUpsert = vi.fn();
+const mockGetServerSession = vi.fn();
 
-function makeRequest(
-  sessionId?: string,
-  body?: Record<string, any>,
-): NextRequest {
+vi.mock("next-auth", () => ({
+  getServerSession: mockGetServerSession,
+}));
+
+vi.mock("@/api/auth/[...nextauth]/route", () => ({
+  authOptions: {},
+}));
+
+function makeRequest(body?: any): NextRequest {
   return {
-    cookies: {
-      get: vi
-        .fn()
-        .mockImplementation((name: string) =>
-          name === "sessionId" && sessionId ? { value: sessionId } : undefined,
-        ),
-    },
-    json: vi.fn().mockResolvedValue(body || {}),
+    json: () => Promise.resolve(body || {}),
   } as unknown as NextRequest;
 }
 
 describe("POST /route", () => {
+  let POST: (req: NextRequest) => Promise<import("next/server").NextResponse>;
+
   beforeEach(async () => {
     vi.resetModules();
     mockFindUnique.mockReset();
+    mockFindFirst.mockReset();
     mockUpsert.mockReset();
+    mockGetServerSession.mockReset();
 
     vi.mock("@prisma/client", () => ({
       PrismaClient: vi.fn().mockImplementation(() => ({
-        session: { findUnique: mockFindUnique },
-        quizCompletion: { upsert: mockUpsert },
+        user: { findUnique: mockFindUnique },
+        quizCompletion: {
+          upsert: mockUpsert,
+          findFirst: mockFindFirst,
+        },
       })),
     }));
 
@@ -40,6 +45,8 @@ describe("POST /route", () => {
   });
 
   it("401 Not authenticated when no sessionId cookie", async () => {
+    mockGetServerSession.mockResolvedValue(null);
+
     const req = makeRequest();
     const res = await POST(req);
 
@@ -48,64 +55,52 @@ describe("POST /route", () => {
   });
 
   it("401 Invalid session when session not found", async () => {
+    mockGetServerSession.mockResolvedValue({
+      user: { email: "test@example.com" },
+    });
     mockFindUnique.mockResolvedValue(null);
 
-    const req = makeRequest("nope");
+    const req = makeRequest();
     const res = await POST(req);
 
     expect(mockFindUnique).toHaveBeenCalledWith({
-      where: { id: "nope" },
-      include: { user: true },
+      where: { email: "test@example.com" },
     });
-    expect(res.status).toBe(401);
-    expect(await res.json()).toEqual({ error: "Invalid session" });
-  });
-
-  it("401 Session expired when session.expiresAt is in the past", async () => {
-    const past = new Date(Date.now() - 1000);
-    mockFindUnique.mockResolvedValue({
-      id: "sess1",
-      expiresAt: past,
-      user: { id: "user1" },
-    });
-
-    const req = makeRequest("sess1");
-    const res = await POST(req);
-
-    expect(mockFindUnique).toHaveBeenCalledWith({
-      where: { id: "sess1" },
-      include: { user: true },
-    });
-    expect(res.status).toBe(401);
-    expect(await res.json()).toEqual({ error: "Session expired" });
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: "User not found" });
   });
 
   it("200 returns success + quizCompletion on upsert", async () => {
-    const future = new Date(Date.now() + 1000);
+    mockGetServerSession.mockResolvedValue({
+      user: { email: "test@example.com" },
+    });
     mockFindUnique.mockResolvedValue({
-      id: "sess2",
-      expiresAt: future,
-      user: { id: "user2" },
+      id: "user1",
+      email: "test@example.com",
     });
 
-    const body = { level: "BEGINNER", score: 85 };
+    mockFindFirst.mockResolvedValue({ id: "prev-completion" });
 
-    const returnedQC = {
+    const completedAt = new Date();
+    const mockQuizCompletion = {
       id: "qc1",
-      userId: "user2",
+      userId: "user1",
       difficulty: "BEGINNER",
       score: 85,
-      completedAt: new Date(),
+      completedAt,
     };
-    mockUpsert.mockResolvedValue(returnedQC);
+    mockUpsert.mockResolvedValue(mockQuizCompletion);
 
-    const req = makeRequest("sess2", body);
+    const req = makeRequest({
+      level: "BEGINNER",
+      score: 85,
+    });
     const res = await POST(req);
 
     expect(mockUpsert).toHaveBeenCalledWith({
       where: {
         userId_difficulty: {
-          userId: "user2",
+          userId: "user1",
           difficulty: "BEGINNER",
         },
       },
@@ -114,39 +109,37 @@ describe("POST /route", () => {
         completedAt: expect.any(Date),
       },
       create: {
-        userId: "user2",
+        userId: "user1",
         difficulty: "BEGINNER",
         score: 85,
       },
     });
-
     expect(res.status).toBe(200);
 
     const json = await res.json();
-    const expectedQC = {
-      ...returnedQC,
-      completedAt: returnedQC.completedAt.toISOString(),
-    };
-
     expect(json).toEqual({
       success: true,
-      quizCompletion: expectedQC,
+      quizCompletion: {
+        ...mockQuizCompletion,
+        completedAt: completedAt.toISOString(),
+      },
     });
   });
 
   it("500 if upsert throws an error", async () => {
-    const future = new Date(Date.now() + 1000);
+    mockGetServerSession.mockResolvedValue({
+      user: { email: "test@example.com" },
+    });
     mockFindUnique.mockResolvedValue({
-      id: "sess3",
-      expiresAt: future,
-      user: { id: "user3" },
+      id: "user1",
+      email: "test@example.com",
     });
+    mockUpsert.mockRejectedValue(new Error("db error"));
 
-    mockUpsert.mockImplementation(() => {
-      throw new Error("boom");
+    const req = makeRequest({
+      level: "BEGINNER",
+      score: 85,
     });
-
-    const req = makeRequest("sess3", { level: "ADVANCED", score: 50 });
     const res = await POST(req);
 
     expect(res.status).toBe(500);

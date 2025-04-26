@@ -113,6 +113,9 @@ export default function IntermediateWordsQuiz() {
       ) {
         setQuizOver(true);
         completed.play();
+        if (lives - (isAnswerCorrect ? 0 : 1) > 0) {
+          completeQuiz();
+        }
       } else {
         setCurrentQuestion((prev) => prev + 1);
       }

@@ -106,24 +106,6 @@ export default function UserCard() {
             </Avatar>
           </Menu.Target>
         </div>
-
-        <Menu.Dropdown>
-          <Menu.Label>Account</Menu.Label>
-          <Menu.Item
-            leftSection={<IconUser size="0.9rem" />}
-            onClick={() => router.push("/dashboard/profile")}
-          >
-            Profile
-          </Menu.Item>
-          <Menu.Divider />
-          <Menu.Item
-            color="red"
-            leftSection={<IconLogout size="0.9rem" />}
-            onClick={handleLogout}
-          >
-            Logout
-          </Menu.Item>
-        </Menu.Dropdown>
       </Menu>
     </Group>
   );

@@ -1,31 +1,32 @@
 import { NextResponse, NextRequest } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/route";
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
-  const sessionCookie = request.cookies.get("sessionId");
+  const session = await getServerSession(authOptions);
 
-  if (!sessionCookie) {
+  if (!session?.user?.email) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const sessionId = sessionCookie.value;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { hasCompletedProficiencyQuiz: true },
+    });
 
-  const session = await prisma.session.findUnique({
-    where: { id: sessionId },
-    include: { user: true },
-  });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
 
-  if (!session) {
-    return NextResponse.json({ error: "Invalid session" }, { status: 401 });
+    return NextResponse.json({
+      hasCompleted: user.hasCompletedProficiencyQuiz,
+    });
+  } catch (error) {
+    console.error("Error fetching quiz status from database:", error);
+    return NextResponse.json({ error: "Database error" }, { status: 500 });
   }
-
-  if (new Date() > session.expiresAt) {
-    return NextResponse.json({ error: "Session expired" }, { status: 401 });
-  }
-
-  return NextResponse.json({
-    hasCompleted: session.user.hasCompletedProficiencyQuiz,
-  });
 }

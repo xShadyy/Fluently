@@ -1,29 +1,36 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { NextRequest } from "next/server";
 
-let GET: (req: NextRequest) => Promise<import("next/server").NextResponse>;
 const mockFindUnique = vi.fn();
+const mockGetServerSession = vi.fn();
 
-function makeRequest(sessionId?: string): NextRequest {
+vi.mock("next-auth", () => ({
+  getServerSession: mockGetServerSession,
+}));
+
+vi.mock("@/api/auth/[...nextauth]/route", () => ({
+  authOptions: {},
+}));
+
+function makeRequest(searchParams?: Record<string, string>): NextRequest {
   return {
-    cookies: {
-      get: vi
-        .fn()
-        .mockImplementation((name: string) =>
-          name === "sessionId" && sessionId ? { value: sessionId } : undefined,
-        ),
+    nextUrl: {
+      searchParams: new URLSearchParams(searchParams),
     },
   } as unknown as NextRequest;
 }
 
 describe("GET /route", () => {
+  let GET: (req: NextRequest) => Promise<import("next/server").NextResponse>;
+
   beforeEach(async () => {
     vi.resetModules();
     mockFindUnique.mockReset();
+    mockGetServerSession.mockReset();
 
     vi.mock("@prisma/client", () => ({
       PrismaClient: vi.fn().mockImplementation(() => ({
-        session: { findUnique: mockFindUnique },
+        user: { findUnique: mockFindUnique },
       })),
     }));
 
@@ -32,68 +39,71 @@ describe("GET /route", () => {
   });
 
   it("401 Not authenticated when no sessionId cookie", async () => {
+    mockGetServerSession.mockResolvedValue(null);
+
     const req = makeRequest();
     const res = await GET(req);
+
     expect(res.status).toBe(401);
     expect(await res.json()).toEqual({ error: "Not authenticated" });
   });
 
   it("401 Invalid session when session not found", async () => {
+    mockGetServerSession.mockResolvedValue({
+      user: { email: "test@example.com" },
+    });
     mockFindUnique.mockResolvedValue(null);
-    const req = makeRequest("nope");
+
+    const req = makeRequest();
     const res = await GET(req);
 
     expect(mockFindUnique).toHaveBeenCalledWith({
-      where: { id: "nope" },
-      include: { user: true },
+      where: { email: "test@example.com" },
+      select: { hasCompletedProficiencyQuiz: true },
     });
-    expect(res.status).toBe(401);
-    expect(await res.json()).toEqual({ error: "Invalid session" });
-  });
-
-  it("401 Session expired when expiresAt is in the past", async () => {
-    const past = new Date(Date.now() - 1000);
-    mockFindUnique.mockResolvedValue({
-      id: "sess1",
-      expiresAt: past,
-      user: { hasCompletedProficiencyQuiz: true },
-    });
-    const req = makeRequest("sess1");
-    const res = await GET(req);
-
-    expect(mockFindUnique).toHaveBeenCalledWith({
-      where: { id: "sess1" },
-      include: { user: true },
-    });
-    expect(res.status).toBe(401);
-    expect(await res.json()).toEqual({ error: "Session expired" });
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: "User not found" });
   });
 
   it("200 returns hasCompleted=true when user has completed the quiz", async () => {
-    const future = new Date(Date.now() + 1000);
-    mockFindUnique.mockResolvedValue({
-      id: "sess2",
-      expiresAt: future,
-      user: { hasCompletedProficiencyQuiz: true },
+    mockGetServerSession.mockResolvedValue({
+      user: { email: "test@example.com" },
     });
-    const req = makeRequest("sess2");
+    mockFindUnique.mockResolvedValue({
+      hasCompletedProficiencyQuiz: true,
+    });
+
+    const req = makeRequest();
     const res = await GET(req);
 
+    expect(mockFindUnique).toHaveBeenCalledWith({
+      where: { email: "test@example.com" },
+      select: { hasCompletedProficiencyQuiz: true },
+    });
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ hasCompleted: true });
+    expect(await res.json()).toEqual({
+      hasCompleted: true,
+    });
   });
 
   it("200 returns hasCompleted=false when user has not completed the quiz", async () => {
-    const future = new Date(Date.now() + 1000);
-    mockFindUnique.mockResolvedValue({
-      id: "sess3",
-      expiresAt: future,
-      user: { hasCompletedProficiencyQuiz: false },
+    mockGetServerSession.mockResolvedValue({
+      user: { email: "test@example.com" },
     });
-    const req = makeRequest("sess3");
+    mockFindUnique.mockResolvedValue({
+      hasCompletedProficiencyQuiz: false,
+    });
+
+    const req = makeRequest();
     const res = await GET(req);
 
+    expect(mockFindUnique).toHaveBeenCalledWith({
+      where: { email: "test@example.com" },
+      select: { hasCompletedProficiencyQuiz: true },
+    });
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ hasCompleted: false });
+    expect(await res.json()).toEqual({
+      hasCompleted: false,
+    });
   });
 });

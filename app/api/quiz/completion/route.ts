@@ -1,37 +1,43 @@
 import { NextResponse, NextRequest } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/api/auth/[...nextauth]/route";
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
-  try {
-    const sessionId = request.cookies.get("sessionId")?.value;
-    if (!sessionId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  const session = await getServerSession(authOptions);
 
-    const session = await prisma.session.findUnique({
-      where: { id: sessionId },
-      select: { userId: true },
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email as string },
     });
-    if (!session) {
-      return NextResponse.json({ error: "Invalid session" }, { status: 401 });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     const completions = await prisma.quizCompletion.findMany({
-      where: { userId: session.userId },
-      select: { difficulty: true },
+      where: {
+        userId: user.id,
+      },
+      orderBy: {
+        completedAt: "desc",
+      },
     });
 
     return NextResponse.json({
-      beginner: completions.some((c) => c.difficulty === "BEGINNER"),
-      intermediate: completions.some((c) => c.difficulty === "INTERMEDIATE"),
-      advanced: completions.some((c) => c.difficulty === "ADVANCED"),
+      success: true,
+      completions,
     });
   } catch (error) {
-    console.error("Error fetching completion status:", error);
+    console.error("Error fetching quiz completions:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Failed to fetch quiz completions" },
       { status: 500 },
     );
   }

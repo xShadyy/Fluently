@@ -4,17 +4,18 @@ import type { NextRequest } from "next/server";
 let GET: (req: NextRequest) => Promise<import("next/server").NextResponse>;
 const mockFindUnique = vi.fn();
 const mockFindMany = vi.fn();
+const mockGetServerSession = vi.fn();
 
-function makeRequest(sessionId?: string): NextRequest {
-  return {
-    cookies: {
-      get: vi
-        .fn()
-        .mockImplementation((name: string) =>
-          name === "sessionId" && sessionId ? { value: sessionId } : undefined,
-        ),
-    },
-  } as unknown as NextRequest;
+vi.mock("next-auth", () => ({
+  getServerSession: mockGetServerSession,
+}));
+
+vi.mock("@/api/auth/[...nextauth]/route", () => ({
+  authOptions: {},
+}));
+
+function makeRequest(): NextRequest {
+  return {} as unknown as NextRequest;
 }
 
 describe("GET /route", () => {
@@ -22,10 +23,11 @@ describe("GET /route", () => {
     vi.resetModules();
     mockFindUnique.mockReset();
     mockFindMany.mockReset();
+    mockGetServerSession.mockReset();
 
     vi.mock("@prisma/client", () => ({
       PrismaClient: vi.fn().mockImplementation(() => ({
-        session: { findUnique: mockFindUnique },
+        user: { findUnique: mockFindUnique },
         quizCompletion: { findMany: mockFindMany },
       })),
     }));
@@ -35,6 +37,8 @@ describe("GET /route", () => {
   });
 
   it("401 Not authenticated when no sessionId cookie", async () => {
+    mockGetServerSession.mockResolvedValue(null);
+
     const req = makeRequest();
     const res = await GET(req);
 
@@ -43,44 +47,28 @@ describe("GET /route", () => {
   });
 
   it("401 Invalid session when session not found", async () => {
+    mockGetServerSession.mockResolvedValue({
+      user: { email: "test@example.com" },
+    });
     mockFindUnique.mockResolvedValue(null);
 
-    const req = makeRequest("nope");
+    const req = makeRequest();
     const res = await GET(req);
 
     expect(mockFindUnique).toHaveBeenCalledWith({
-      where: { id: "nope" },
-      include: { user: true },
+      where: { email: "test@example.com" },
     });
-    expect(res.status).toBe(401);
-    expect(await res.json()).toEqual({ error: "Invalid session" });
-  });
-
-  it("401 Session expired when session.expiresAt is in the past", async () => {
-    const past = new Date(Date.now() - 1000);
-    mockFindUnique.mockResolvedValue({
-      id: "sess1",
-      expiresAt: past,
-      user: { id: "user1" },
-    });
-
-    const req = makeRequest("sess1");
-    const res = await GET(req);
-
-    expect(mockFindUnique).toHaveBeenCalledWith({
-      where: { id: "sess1" },
-      include: { user: true },
-    });
-    expect(res.status).toBe(401);
-    expect(await res.json()).toEqual({ error: "Session expired" });
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: "User not found" });
   });
 
   it("200 returns success + completions in descending order", async () => {
-    const future = new Date(Date.now() + 1000);
+    mockGetServerSession.mockResolvedValue({
+      user: { email: "test@example.com" },
+    });
     mockFindUnique.mockResolvedValue({
-      id: "sess2",
-      expiresAt: future,
-      user: { id: "user2" },
+      id: "user2",
+      email: "test@example.com",
     });
 
     const returnedCompletions = [
@@ -101,7 +89,7 @@ describe("GET /route", () => {
     ];
     mockFindMany.mockResolvedValue(returnedCompletions);
 
-    const req = makeRequest("sess2");
+    const req = makeRequest();
     const res = await GET(req);
 
     expect(mockFindMany).toHaveBeenCalledWith({
@@ -120,17 +108,18 @@ describe("GET /route", () => {
   });
 
   it("500 if findMany throws an error", async () => {
-    const future = new Date(Date.now() + 1000);
+    mockGetServerSession.mockResolvedValue({
+      user: { email: "test@example.com" },
+    });
     mockFindUnique.mockResolvedValue({
-      id: "sess3",
-      expiresAt: future,
-      user: { id: "user3" },
+      id: "user3",
+      email: "test@example.com",
     });
     mockFindMany.mockImplementation(() => {
       throw new Error("db error");
     });
 
-    const req = makeRequest("sess3");
+    const req = makeRequest();
     const res = await GET(req);
 
     expect(res.status).toBe(500);

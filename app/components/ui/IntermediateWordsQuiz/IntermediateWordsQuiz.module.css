@@ -1,286 +1,251 @@
 .resultContainer {
-    text-align: center;
-    background: linear-gradient(135deg, #ffffff, #f7f7f7);
-    border-radius: 20px;
-    margin: 3rem auto;
-    max-width: 900px;
-    padding: 2.5rem 3rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e0e0e0;
+  text-align: center;
+  background: linear-gradient(135deg, #ffffff, #f7f7f7);
+  border-radius: 20px;
+  margin: 3rem auto;
+  max-width: 900px;
+  padding: 2.5rem 3rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+}
+.statusContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.scoreCircle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem;
+  position: relative;
+  background: #ffffff;
+  box-shadow: 0 6px 12px rgba(52, 211, 153, 0.3);
+}
+.scoreCircle::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  z-index: -1;
+}
+.scoreValue {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #34d399;
+}
+.resultDetails {
+  margin-bottom: 2.5rem;
+  font-size: 1.25rem;
+  color: #374151;
+}
+.levelBadge {
+  display: inline-block;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  background-color: #34d399;
+  border-radius: 50px;
+  margin: 1rem 0;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 6px 16px rgba(52, 211, 153, 0.3);
+}
+.levelDescription {
+  font-style: italic;
+  color: #6b7280;
+  max-width: 600px;
+  margin: 0.5rem auto;
+  font-size: 1.1rem;
+}
+.quizContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 90vh;
+  margin: 2rem auto;
+  overflow: hidden;
+  border-radius: 12px;
+  background-color: rgb(248, 249, 250);
+}
+.roadmap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 90%;
+  margin: 0 auto 1rem;
+  overflow-x: auto;
+}
+
+.roadmapItem {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin: 0 0.5rem;
+}
+.active {
+  border: 2px solid #34d399;
+  background-color: #ffffff;
+  color: #34d399;
+  box-shadow: 0 4px 8px rgba(52, 211, 153, 0.4);
+}
+.completedCircle {
+  background-color: #34d399;
+  color: white;
+  box-shadow: 0 4px 8px rgba(52, 211, 153, 0.4);
+}
+.incorrectCompleted {
+  background-color: #ef4444;
+  color: #ffffff;
+  border: 2px solid #ef4444;
+}
+.futureCircle {
+  background-color: #e5e7eb;
+  color: #374151;
+  border: 2px solid #cccccc;
+}
+.line {
+  width: 50px;
+  height: 2px;
+  background-color: #e0e0e0;
+}
+.questionText {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #1a1a1a;
+  line-height: 1.4;
+  font-weight: 600;
+}
+.optionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+.optionsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.optionButton {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 50px;
+  font-size: 1rem;
+  border: 2px solid #cccccc73;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+}
+.optionButton:hover {
+  border-color: #999;
+  background-color: #cccccc37;
+}
+.correctOption {
+  background-color: #ecfdf5;
+  border-color: #10b981;
+  color: #10b981;
+}
+.incorrectOption {
+  background-color: #fef2f2;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+.unselectedOption {
+  background-color: #555 !important;
+  color: white !important;
+  border-color: #555 !important;
+}
+.feedback {
+  border-radius: 8px;
+  margin-top: 1rem;
+  text-align: center;
+  font-weight: 500;
+  padding: 1rem;
+  font-size: 1.5rem;
+}
+.correctFeedback {
+  background-color: rgb(52, 211, 153);
+  border: 1px solid rgb(52, 211, 153);
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+.incorrectFeedback {
+  background-color: rgb(248, 113, 113);
+  border: 1px solid rgb(248, 113, 113);
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+.loadingContainer {
+  display: none;
+}
+
+.loadingText {
+  display: none;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
   }
-  .statusContainer {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 1rem;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+  50% {
+    opacity: 1;
   }
-  .scoreCircle {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 2rem;
-    position: relative;
-    background: #ffffff;
-    box-shadow: 0 6px 12px rgba(52, 211, 153, 0.3);
+  100% {
+    opacity: 0.6;
   }
-  .scoreCircle::before {
-    content: "";
-    position: absolute;
-    top: -8px;
-    left: -8px;
-    right: -8px;
-    bottom: -8px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-    z-index: -1;
-  }
-  .scoreValue {
-    font-size: 3rem;
-    font-weight: 800;
-    color: #34d399;
-  }
-  .resultDetails {
-    margin-bottom: 2.5rem;
-    font-size: 1.25rem;
-    color: #374151;
-  }
-  .levelBadge {
-    display: inline-block;
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #ffffff;
-    background-color: #34d399;
-    border-radius: 50px;
-    margin: 1rem 0;
-    padding: 0.75rem 1.5rem;
-    box-shadow: 0 6px 16px rgba(52, 211, 153, 0.3);
-  }
-  .levelDescription {
-    font-style: italic;
-    color: #6b7280;
-    max-width: 600px;
-    margin: 0.5rem auto;
-    font-size: 1.1rem;
-  }
-  .quizContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 90vh;
-    margin: 2rem auto;
-    overflow: hidden;
-    border-radius: 12px;
-    background-color: rgb(248, 249, 250);
-  }
-  .roadmap {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    max-width: 90%;
-    margin: 0 auto 1rem;
-    overflow-x: auto;
-  }
-  
-  .roadmapItem {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-  }
-  .circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    margin: 0 0.5rem;
-  }
-  .active {
-    border: 2px solid #34d399;
-    background-color: #ffffff;
-    color: #34d399;
-    box-shadow: 0 4px 8px rgba(52, 211, 153, 0.4);
-  }
-  .completedCircle {
-    background-color: #34d399;
-    color: white;
-    box-shadow: 0 4px 8px rgba(52, 211, 153, 0.4);
-  }
-  .incorrectCompleted {
-    background-color: #ef4444;
-    color: #ffffff;
-    border: 2px solid #ef4444;
-  }
-  .futureCircle {
-    background-color: #e5e7eb;
-    color: #374151;
-    border: 2px solid #cccccc;
-  }
-  .line {
-    width: 50px;
-    height: 2px;
-    background-color: #e0e0e0;
-  }
-  .questionText {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    color: #1a1a1a;
-    line-height: 1.4;
-    font-weight: 600;
-  }
-  .optionsContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    margin-bottom: 1rem;
-  }
-  .optionsGrid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-  .optionButton {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 50px;
-    font-size: 1rem;
-    border: 2px solid #cccccc73;
-    border-radius: 8px;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-    cursor: pointer;
-  }
-  .optionButton:hover {
-    border-color: #999;
-    background-color: #cccccc37;
-  }
-  .correctOption {
-    background-color: #ecfdf5;
-    border-color: #10b981;
-    color: #10b981;
-  }
-  .incorrectOption {
-    background-color: #fef2f2;
-    border-color: #ef4444;
-    color: #ef4444;
-  }
-  .unselectedOption {
-    background-color: #555 !important;
-    color: white !important;
-    border-color: #555 !important;
-  }
-  .feedback {
-    border-radius: 8px;
-    margin-top: 1rem;
-    text-align: center;
-    font-weight: 500;
-    padding: 1rem;
-    font-size: 1.5rem;
-  }
-  .correctFeedback {
-    background-color: rgb(52, 211, 153);
-    border: 1px solid rgb(52, 211, 153);
-    color: white;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-  }
-  .incorrectFeedback {
-    background-color: rgb(248, 113, 113);
-    border: 1px solid rgb(248, 113, 113);
-    color: white;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-  }
-  .loadingContainer {
-    display: none;
-  }
-  .loadingText {
-    display: none;
-  }
-  .errorContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 400px;
-    gap: 1rem;
-    text-align: center;
-  }
-  .optionText {
-    font-size: 1rem;
-  }
-  .lives {
-    margin-top: 3rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 1rem 0;
-  }
-  .heart {
-    margin: 0 0.25rem;
-  }
-  .heartIcon {
-    width: 32px;
-    height: 32px;
-  }
-  .resetButton {
-    justify-content: center;
-  }
-  .optionButton {
-    width: 100%;
-    margin: 0.5rem 0;
-    transition: all 0.3s ease;
-  }
-  .optionButton:hover {
-    transform: translateY(-2px);
-  }
-  .correctOption {
-    background-color: rgba(0, 255, 0, 0.2) !important;
-    border-color: #00ff00 !important;
-  }
-  .incorrectOption {
-    background-color: rgba(255, 0, 0, 0.2) !important;
-    border-color: #ff0000 !important;
-  }
-  .unselectedOption {
-    opacity: 0.5;
-  }
-  .feedback {
-    position: absolute;
-    bottom: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 1rem 2rem;
-    border-radius: 1rem;
-    text-align: center;
-    z-index: 10;
-  }
-  .correctFeedback {
-    background-color: rgba(0, 255, 0, 0.2);
-    border: 1px solid #00ff00;
-    color: #00ff00;
-  }
-  .incorrectFeedback {
-    background-color: rgba(255, 0, 0, 0.2);
-    border: 1px solid #ff0000;
-    color: #ff0000;
-  }
-  @keyframes pulse {
-    0% {
-      opacity: 0.6;
-    }
-    50% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0.6;
-    }
-  }
+}
+
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+  text-align: center;
+}
+
+.optionText {
+  font-size: 1rem;
+}
+.lives {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+}
+.heart {
+  margin: 0 0.25rem;
+}
+.heartIcon {
+  width: 32px;
+  height: 32px;
+}
+.resetButton {
+  justify-content: center;
+}
