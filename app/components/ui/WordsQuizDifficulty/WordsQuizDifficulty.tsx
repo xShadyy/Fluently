@@ -23,36 +23,47 @@ export default function WordsQuizDifficulty() {
   useEffect(() => {
     const loadState = async () => {
       try {
-        const [completionRes, achievementsRes] = await Promise.all([
-          fetch("/api/quiz/completion", { credentials: "include" }),
-          fetch("/api/quiz/achievements/check", { credentials: "include" }),
-        ]);
-        const completion = await completionRes.json();
-        const achievements = await achievementsRes.json();
+        const res = await fetch("/api/quiz/achievements/check", {
+          cache: "no-store",
+        });
+        const data = await res.json();
 
-        const raw =
-          sessionStorage.getItem("unlockedQuizzes") ||
-          JSON.stringify(["beginner"]);
-        const sessionUnlocked = JSON.parse(raw) as Difficulty[];
-        const unlockedSet = new Set<Difficulty>(sessionUnlocked);
+        if (!res.ok || !Array.isArray(data.completions)) {
+          console.error("Error loading achievements");
+          return;
+        }
 
-        if (!completion.beginner && !completion.intermediate) {
-          sessionStorage.removeItem("unlockedQuizzes");
-          unlockedSet.clear();
+        const completedDifficulties = data.completions.map((c: any) =>
+          c.difficulty?.toLowerCase(),
+        );
+        const unlockedSet = new Set<Difficulty>();
+
+        if (completedDifficulties.includes("beginner"))
           unlockedSet.add("beginner");
+        if (completedDifficulties.includes("intermediate"))
+          unlockedSet.add("intermediate");
+        if (completedDifficulties.includes("advanced"))
+          unlockedSet.add("advanced");
+
+        unlockedSet.add("beginner");
+
+        if (completedDifficulties.length === 0) {
+          sessionStorage.removeItem("unlockedQuizzes");
         } else {
+          const unlockedArray = Array.from(unlockedSet);
           sessionStorage.setItem(
             "unlockedQuizzes",
-            JSON.stringify(Array.from(unlockedSet)),
+            JSON.stringify(unlockedArray),
           );
         }
 
         setUnlockedQuizzes(unlockedSet);
-        setQuizCompletions(achievements.completions || []);
+        setQuizCompletions(data.completions);
       } catch (err) {
-        console.error("Error loading quiz state:", err);
+        console.error("Error loading quiz completions", err);
       }
     };
+
     loadState();
   }, []);
 
@@ -72,17 +83,14 @@ export default function WordsQuizDifficulty() {
     return false;
   };
 
-  const handleUnlock = (d: Difficulty) => {
+  const handleUnlock = async (d: Difficulty) => {
     if (!isQuizUnlockable(d)) return;
     unlocked.play();
     setIsUnlocking(d);
+
     setTimeout(() => {
       setUnlockedQuizzes((prev) => {
         const next = new Set(prev).add(d);
-        sessionStorage.setItem(
-          "unlockedQuizzes",
-          JSON.stringify(Array.from(next)),
-        );
         return next;
       });
       setIsUnlocking(null);
@@ -204,7 +212,7 @@ export default function WordsQuizDifficulty() {
 
       <motion.button
         className={styles.backButton}
-        onClick={() => router.push("/dashboard/words")}
+        onClick={() => router.push("/dashboard")}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 1.2, ease: "easeOut" }}

@@ -15,15 +15,6 @@ model User {
   createdAt                   DateTime         @default(now())
   hasCompletedProficiencyQuiz Boolean          @default(false)
   quizCompletions             QuizCompletion[]
-  Session                     Session?
-}
-
-model Session {
-  id        String   @id @default(uuid())
-  userId    String   @unique
-  createdAt DateTime @default(now())
-  expiresAt DateTime
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Game {

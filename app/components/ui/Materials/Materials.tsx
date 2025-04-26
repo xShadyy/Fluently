@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { IconChevronDown, IconExternalLink } from "@tabler/icons-react";
 import { Card, Text, Title, Group, Badge, Button, Tabs } from "@mantine/core";
@@ -16,7 +15,7 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ scale: 1.01 }}
     >
       <Card
         shadow="sm"
@@ -29,24 +28,25 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
           className={styles.clickable}
           onClick={() => setExpanded((prev) => !prev)}
         >
-          <Group align="apart" mb="xs">
-            <Group>
+          <Group justify="space-between" align="center" mb="xs">
+            <Group align="center">
               <div className={styles.resourceIcon}>
                 {getIconForType(resource.type)}
               </div>
-              <Title order={3}>{resource.title}</Title>
+              <Title order={3} style={{ color: "#ffffff" }}>
+                {resource.title}
+              </Title>
             </Group>
-            <Button variant="subtle" size="md">
-              <motion.div
-                initial={{ rotate: 0 }}
-                animate={{ rotate: expanded ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-                className={styles.rotateWrapper}
-              >
-                <IconChevronDown size={18} />
-              </motion.div>
-            </Button>
+            <motion.div
+              initial={{ rotate: 0 }}
+              animate={{ rotate: expanded ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+              className={styles.rotateWrapper}
+            >
+              <IconChevronDown size={18} />
+            </motion.div>
           </Group>
+
           <Group gap="xs" mt="md">
             <Badge
               color={
@@ -58,7 +58,8 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
                       ? "violet"
                       : "orange"
               }
-              variant="light"
+              variant="filled"
+              radius="sm"
             >
               {resource.level}
             </Badge>
@@ -72,7 +73,8 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
                       ? "yellow"
                       : "teal"
               }
-              variant="light"
+              variant="filled"
+              radius="sm"
             >
               {resource.type}
             </Badge>
@@ -88,7 +90,7 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <Text size="md" color="dimmed" mt="md">
+              <Text size="md" color="white" mt="md">
                 {resource.description}
               </Text>
               <Group gap="xs" mt="md">
@@ -105,6 +107,8 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   size="md"
+                  variant="light"
+                  color="gray"
                   leftSection={<IconExternalLink size={14} />}
                 >
                   Visit Resource
@@ -129,34 +133,38 @@ const ResourceList = ({
   noResultsText,
   resetAction,
 }: ResourceListProps) => (
-  <motion.div
-    className={styles.resourcesGrid}
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 0.5, delay: 0.2 }}
-  >
-    {resources.length > 0 ? (
-      resources.map((resource, index) => (
-        <motion.div
-          key={resource.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: index * 0.05 }}
-        >
-          <ResourceCard resource={resource} />
-        </motion.div>
-      ))
-    ) : (
-      <div className={styles.noResults}>
-        <Text size="md">{noResultsText}</Text>
-        <Button mt="md" size="md" onClick={resetAction}>
-          {noResultsText.includes("filters")
-            ? "Reset Filters"
-            : "Reset Level Filter"}
-        </Button>
-      </div>
-    )}
-  </motion.div>
+  <div className={styles.scrollableContainer}>
+    <motion.div
+      className={styles.resourcesGrid}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+    >
+      {resources.length > 0 ? (
+        resources.map((resource, index) => (
+          <motion.div
+            key={resource.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.05 }}
+          >
+            <ResourceCard resource={resource} />
+          </motion.div>
+        ))
+      ) : (
+        <div className={styles.noResults}>
+          <Text size="md" color="gray">
+            {noResultsText}
+          </Text>
+          <Button mt="md" size="md" color="gray" onClick={resetAction}>
+            {noResultsText.includes("filters")
+              ? "Reset Filters"
+              : "Reset Level Filter"}
+          </Button>
+        </div>
+      )}
+    </motion.div>
+  </div>
 );
 
 const Materials = () => {
@@ -206,10 +214,10 @@ const Materials = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Title mb="sm" fw="700" size="3.5rem">
+        <Title mb="sm" fw="700" size="3.5rem" style={{ color: "#ffffff" }}>
           English Learning Materials
         </Title>
-        <Text size="1.3rem" m="auto">
+        <Text size="1.3rem" m="auto" style={{ color: "#ffffff" }}>
           Discover the best resources to improve your English skills
         </Text>
       </motion.div>
@@ -217,9 +225,10 @@ const Materials = () => {
       <Tabs
         value={activeTab}
         onChange={(value) => setActiveTab(value ?? "all")}
+        color="rgb(251, 207, 232)"
       >
         <Card
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+          style={{ backgroundColor: "rgb(86, 86, 86)" }}
           shadow="sm"
           p="lg"
           radius="md"
@@ -227,7 +236,7 @@ const Materials = () => {
         >
           <Group align="flex-start">
             <div>
-              <Text fw={500} size="md" mb="xs">
+              <Text fw={500} size="md" mb="xs" style={{ color: "white" }}>
                 Resource Type
               </Text>
               <Tabs.List>
@@ -244,13 +253,14 @@ const Materials = () => {
             </div>
 
             <div>
-              <Text fw={500} size="md" mb="xs">
+              <Text fw={500} size="md" mb="xs" style={{ color: "white" }}>
                 Level
               </Text>
               <Group gap="sm">
                 <Button
                   variant={levelFilter === "all" ? "filled" : "outline"}
                   size="sm"
+                  color="gray"
                   onClick={() => setLevelFilter("all")}
                 >
                   All Levels

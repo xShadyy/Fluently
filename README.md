@@ -34,7 +34,6 @@ Embrace power of learning and broaden your horizons
 ## Quick Start
 ```shell
 npm install
-npm run dev
 ```
 ## Setting up backend
 1. Make sure you have PostgreSQL installed - [Downloads page](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
@@ -44,20 +43,17 @@ npm run dev
 fluently 
 ```
 
-3. Inside the **backend** folder run: 
+3. Inside the **root project** folder run: 
 ```shell
-npx prisma generate
-npx prisma migrate dev --name init
+npm run db:setup
 ```
 
-4. Create .env file inside the **root project** folder - look inside **.env.example** for exact instructions
-
-5. From the **backend** folder run:
+4. Create .env file inside the **root project** folder - look inside **.env.example** for exact instructions then run this script:
 ```shell
-npm run seed
+npm run generate:secret
 ```
- 
-6. You should be good to go, although it's highly recommended to create new user for best experience:
+
+5. You should be good to go, although it's highly recommended to create new user for best experience:
 ```shell
 localhost:3000/register
 ```
@@ -79,8 +75,8 @@ localhost:3000/register
 - `vitest` – runs only vitest tests 
 
 ### Other scripts
-- `seed` – inserts fixtures to DB
-
+- `db:setup` – applies the schema and inserts fixtures into the database
+- `generate:secret` – generates the NEXTAUTH secret key required for application testing
 ***
 ## Database structure
 

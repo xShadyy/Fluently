@@ -1,37 +1,50 @@
 import { NextResponse, NextRequest } from "next/server";
 import { PrismaClient, Difficulty } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/api/auth/[...nextauth]/route";
 
 const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
-  const sessionCookie = request.cookies.get("sessionId");
+  const session = await getServerSession(authOptions);
 
-  if (!sessionCookie) {
+  if (!session || !session.user) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const sessionId = sessionCookie.value;
-
   try {
-    const session = await prisma.session.findUnique({
-      where: { id: sessionId },
-      include: { user: true },
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email as string },
     });
 
-    if (!session) {
-      return NextResponse.json({ error: "Invalid session" }, { status: 401 });
-    }
-
-    if (new Date() > session.expiresAt) {
-      return NextResponse.json({ error: "Session expired" }, { status: 401 });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     const { level, score } = await request.json();
 
+    if (level !== "BEGINNER") {
+      const previousLevel =
+        level === "INTERMEDIATE" ? "BEGINNER" : "INTERMEDIATE";
+      const previousCompletion = await prisma.quizCompletion.findFirst({
+        where: {
+          userId: user.id,
+          difficulty: previousLevel as Difficulty,
+        },
+      });
+
+      if (!previousCompletion) {
+        return NextResponse.json(
+          { error: `Must complete ${previousLevel.toLowerCase()} level first` },
+          { status: 400 },
+        );
+      }
+    }
+
     const quizCompletion = await prisma.quizCompletion.upsert({
       where: {
         userId_difficulty: {
-          userId: session.user.id,
+          userId: user.id,
           difficulty: level as Difficulty,
         },
       },
@@ -40,7 +53,7 @@ export async function POST(request: NextRequest) {
         completedAt: new Date(),
       },
       create: {
-        userId: session.user.id,
+        userId: user.id,
         difficulty: level as Difficulty,
         score: score,
       },

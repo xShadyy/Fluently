@@ -79,15 +79,19 @@ const LanguageDashboard = () => {
   const [startTime, setStartTime] = useState<Date | null>(null);
 
   useEffect(() => {
-    fetch("/api/quiz/completion")
+    fetch("/api/quiz/achievements/check")
       .then((res) => res.json())
-      .then((data) =>
+      .then((data) => {
+        const completedDifficulties = data.completions
+          ? data.completions.map((c: any) => c.difficulty?.toLowerCase())
+          : [];
+
         setCompletions({
-          beginner: data.beginner,
-          intermediate: data.intermediate,
-          advanced: data.advanced,
-        }),
-      )
+          beginner: completedDifficulties.includes("beginner"),
+          intermediate: completedDifficulties.includes("intermediate"),
+          advanced: completedDifficulties.includes("advanced"),
+        });
+      })
       .catch(console.error);
   }, []);
 
@@ -137,7 +141,6 @@ const LanguageDashboard = () => {
       >
         <div className={styles.dashboardContent}>
           <Grid gutter="xl">
-            {/* Main Stats Cards */}
             <Grid.Col span={3}>
               <Card
                 shadow="sm"
@@ -253,7 +256,6 @@ const LanguageDashboard = () => {
               </Card>
             </Grid.Col>
 
-            {/* Skill Breakdown */}
             <Grid.Col span={8}>
               <Card
                 shadow="sm"
@@ -283,7 +285,6 @@ const LanguageDashboard = () => {
               </Card>
             </Grid.Col>
 
-            {/* Weekly Progress */}
             <Grid.Col span={4}>
               <Card
                 shadow="sm"
@@ -313,7 +314,6 @@ const LanguageDashboard = () => {
               </Card>
             </Grid.Col>
 
-            {/* Word Quiz Achievements */}
             <Grid.Col span={12}>
               <Card
                 shadow="sm"

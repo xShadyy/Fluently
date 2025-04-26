@@ -1,13 +1,13 @@
 "use client";
-import { useState, useEffect } from "react";
-import { correct, wrong, completed, uiClick } from "@/utils/sound";
-import { motion, AnimatePresence } from "framer-motion";
+
+import { useState, useEffect, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import confetti from "canvas-confetti";
-import styles from "./ProficiencyQuiz.module.css";
-import { Button, Loader, Card, Text, Title } from "@mantine/core";
-import React from "react";
+import { Button, Card, Loader, Text, Title } from "@mantine/core";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import styles from "./ProficiencyQuiz.module.css";
+import { correct, wrong, completed, uiClick } from "@/utils/sound";
+import React from "react";
 
 interface Option {
   id: string;
@@ -21,31 +21,38 @@ interface QuizQuestion {
   correctAnswer: string;
 }
 
-export default function ProficiencyQuiz() {
-  const { data: session, status } = useSession();
+interface ProficiencyQuizProps {
+  onQuizCompleted?: () => void;
+}
+
+export default function ProficiencyQuiz({
+  onQuizCompleted,
+}: ProficiencyQuizProps) {
+  const { status } = useSession();
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [score, setScore] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
   const [showResults, setShowResults] = useState(false);
-  const [authError, setAuthError] = useState<string | null>(null);
-  const router = useRouter();
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const hasUpdatedDb = useRef(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
       console.error("NextAuth session error - user is not authenticated");
-      setAuthError("Authentication error. Please try refreshing the page.");
     }
   }, [status]);
 
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const res = await fetch("/api/proficiencyquiz");
+        const res = await fetch("/api/proficiencyquiz", {
+          headers: { "cache-control": "no-cache" },
+        });
         const data = await res.json();
         if (res.ok) {
           const formattedQuestions: QuizQuestion[] = data.questions.map(
@@ -56,10 +63,7 @@ export default function ProficiencyQuiz() {
                 id: opt.id.toString(),
                 text: opt.text,
               })),
-              correctAnswer:
-                q.correctAnswer && q.correctAnswer.option
-                  ? q.correctAnswer.option.id.toString()
-                  : "",
+              correctAnswer: q.correctAnswer?.option?.id?.toString() || "",
             }),
           );
           setQuestions(formattedQuestions);
@@ -81,7 +85,7 @@ export default function ProficiencyQuiz() {
     const isAnswerCorrect = optionId === currentQuestion.correctAnswer;
     if (isAnswerCorrect) {
       correct.play();
-      setScore((prevScore) => prevScore + 1);
+      setScore((prev) => prev + 1);
     } else {
       wrong.play();
     }
@@ -92,7 +96,7 @@ export default function ProficiencyQuiz() {
       setShowFeedback(false);
       setSelectedOption(null);
       if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+        setCurrentQuestionIndex((prev) => prev + 1);
       } else {
         completeQuiz();
       }
@@ -100,61 +104,45 @@ export default function ProficiencyQuiz() {
   };
 
   const completeQuiz = async () => {
-    setShowResults(true);
     completed.play();
     triggerConfetti();
-  };
-
-  const handleCloseResults = async () => {
+    setShowResults(true);
+    if (hasUpdatedDb.current) return;
+    hasUpdatedDb.current = true;
     try {
-      const response = await fetch("/api/quiz/complete", {
+      setIsSubmitting(true);
+      const response = await fetch("/api/quiz/completion", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
         },
-        credentials: "include",
+        body: JSON.stringify({ completed: true }),
       });
-
       if (!response.ok) {
         console.error("Failed to update quiz completion status");
-      } else {
-        localStorage.setItem("quizCompleted", "true");
-
-        if (session) {
-          session.user.hasCompletedProficiencyQuiz = true;
-        }
       }
     } catch (error) {
       console.error("Error updating quiz completion status:", error);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setShowResults(false);
-
-    window.dispatchEvent(new Event("quizCompleted"));
   };
 
-  const getLanguageLevel = () => {
-    const percentage = Math.round((score / questions.length) * 100);
-    if (percentage >= 90) return "C1";
-    if (percentage >= 75) return "B2";
-    if (percentage >= 60) return "B1";
-    if (percentage >= 40) return "A2";
-    return "A1";
+  const handleCloseResults = () => {
+    if (isSubmitting) return;
+    if (onQuizCompleted) onQuizCompleted();
   };
 
   const triggerConfetti = () => {
     const duration = 3000;
     const animationEnd = Date.now() + duration;
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-    const randomInRange = (min: number, max: number) => {
-      return Math.random() * (max - min) + min;
-    };
+    const randomInRange = (min: number, max: number) =>
+      Math.random() * (max - min) + min;
     const interval = setInterval(() => {
       const timeLeft = animationEnd - Date.now();
-      if (timeLeft <= 0) {
-        clearInterval(interval);
-        return;
-      }
+      if (timeLeft <= 0) clearInterval(interval);
       const particleCount = 50 * (timeLeft / duration);
       confetti({
         ...defaults,
@@ -167,6 +155,16 @@ export default function ProficiencyQuiz() {
         origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
       });
     }, 250);
+  };
+
+  const getLanguageLevel = () => {
+    const percentage = Math.round((score / questions.length) * 100);
+
+    if (percentage >= 90) return "C1";
+    if (percentage >= 75) return "B2";
+    if (percentage >= 60) return "B1";
+    if (percentage >= 40) return "A2";
+    return "A1";
   };
 
   const ResultsScreen = () => {
@@ -184,12 +182,13 @@ export default function ProficiencyQuiz() {
           top: 0,
           left: 0,
           width: "100%",
-          height: "100%",
+          height: "100vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           background: "rgba(0, 0, 0, 0.5)",
           zIndex: 1000,
+          overflow: "auto",
         }}
       >
         <motion.div
@@ -291,7 +290,6 @@ export default function ProficiencyQuiz() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            minHeight: "100vh",
             padding: "1rem",
           }}
         >
@@ -367,7 +365,6 @@ export default function ProficiencyQuiz() {
           style={{
             position: "relative",
             width: "100%",
-            minHeight: "100vh",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

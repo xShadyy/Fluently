@@ -33,7 +33,6 @@ async function main() {
     public."CorrectAnswer",
     public."Option",
     public."Question",
-    public."Session",
     public."QuizCompletion",
     public."User",
     public."Game"

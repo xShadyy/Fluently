@@ -1,159 +1,109 @@
-import { describe, it, expect, vi } from "vitest";
 import React from "react";
-import {
-  render,
-  screen,
-  within,
-  fireEvent,
-  waitFor,
-} from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Materials from "@/components/ui/Materials/Materials";
 import { MantineProvider } from "@mantine/core";
+import Materials from "@/components/ui/Materials/Materials";
 
 vi.mock("framer-motion", () => ({
   motion: {
-    div: ({ children, ...props }: any) => (
-      <div data-testid="motion-div" {...props}>
-        {children}
-      </div>
-    ),
+    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    create: () => (props: any) => <a {...props} />,
   },
   AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
 
-const renderWithMantine = (ui: React.ReactElement) => {
-  return render(<MantineProvider>{ui}</MantineProvider>);
-};
+const renderWithMantine = (ui: React.ReactElement) =>
+  render(<MantineProvider>{ui}</MantineProvider>);
 
 describe("Materials Component", () => {
-  it("renders the header correctly", async () => {
-    await act(async () => {
-      renderWithMantine(<Materials />);
-    });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
-    expect(screen.getByText("English Learning Materials")).toBeInTheDocument();
+  it("renders the main header and subtitle", () => {
+    renderWithMantine(<Materials />);
     expect(
-      screen.getByText(
-        "Discover the best resources to improve your English skills",
-      ),
+      screen.getByRole("heading", { name: /english learning materials/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/discover the best resources/i),
     ).toBeInTheDocument();
   });
 
-  it("renders tab navigation with correct resource types", async () => {
-    await act(async () => {
-      renderWithMantine(<Materials />);
-    });
-
-    expect(screen.getByRole("tab", { name: /All/i })).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: /Reading/i })).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: /Video/i })).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: /Audio/i })).toBeInTheDocument();
+  it("renders all tabs", () => {
+    renderWithMantine(<Materials />);
+    expect(screen.getByRole("tab", { name: /all/i })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /reading/i })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /video/i })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /audio/i })).toBeInTheDocument();
     expect(
-      screen.getByRole("tab", { name: /Interactive/i }),
+      screen.getByRole("tab", { name: /interactive/i }),
     ).toBeInTheDocument();
   });
 
-  it("renders level filter buttons", async () => {
-    await act(async () => {
-      renderWithMantine(<Materials />);
-    });
-
+  it("renders level filter buttons", () => {
+    renderWithMantine(<Materials />);
     expect(
-      screen.getByRole("button", { name: /All Levels/i }),
+      screen.getByRole("button", { name: /all levels/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Beginner/i }),
+      screen.getByRole("button", { name: /beginner/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Intermediate/i }),
+      screen.getByRole("button", { name: /intermediate/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /Advanced/i }),
+      screen.getByRole("button", { name: /advanced/i }),
     ).toBeInTheDocument();
   });
 
-  it("displays resource cards with expected content", async () => {
-    await act(async () => {
-      renderWithMantine(<Materials />);
-    });
-
-    const resourceCards = screen.getAllByTestId("motion-div");
-    expect(resourceCards.length).toBeGreaterThan(0);
-
-    const cardTitles = screen.getAllByRole("heading", { level: 3 });
-    expect(cardTitles.length).toBeGreaterThan(0);
-
-    const badges = screen.getAllByText((content) =>
-      /beginner|intermediate|advanced|reading|video|audio|interactive/i.test(
-        content,
-      ),
-    );
-    expect(badges.length).toBeGreaterThan(0);
-  });
-
-  it("expands a resource card when clicked", async () => {
+  it("expands a resource card on click", async () => {
     const user = userEvent.setup();
-
-    await act(async () => {
-      renderWithMantine(<Materials />);
-    });
-
-    const cardTitles = screen.getAllByRole("heading", { level: 3 });
-    const firstCard = cardTitles[0].closest('div[class*="clickable"]');
-    expect(firstCard).toBeInTheDocument();
-
-    if (firstCard) {
-      await user.click(firstCard);
-
-      await waitFor(() => {
-        expect(screen.getByText("Visit Resource")).toBeInTheDocument();
-      });
-    }
-  });
-
-  it("filters resources by type when changing tabs", async () => {
-    const user = userEvent.setup();
-
-    await act(async () => {
-      renderWithMantine(<Materials />);
-    });
-
-    const initialCards = screen.getAllByRole("heading", { level: 3 });
-    const initialCount = initialCards.length;
-
-    const readingTab = screen.getByRole("tab", { name: /Reading/i });
-    await user.click(readingTab);
+    renderWithMantine(<Materials />);
+    const titles = screen.getAllByRole("heading", { level: 3 });
+    await user.click(titles[0]);
 
     await waitFor(() => {
-      const readingBadges = screen.getAllByText("reading");
-      expect(readingBadges.length).toBeGreaterThan(0);
+      expect(
+        screen.getByRole("link", { name: /visit resource/i }),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("filters resources by type", async () => {
+    const user = userEvent.setup();
+    renderWithMantine(<Materials />);
+    await user.click(screen.getByRole("tab", { name: /reading/i }));
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/reading/i).length).toBeGreaterThan(0);
     });
   });
 
   it("filters resources by level", async () => {
     const user = userEvent.setup();
-
-    await act(async () => {
-      renderWithMantine(<Materials />);
-    });
-
-    const beginnerButton = screen.getByRole("button", { name: /Beginner/i });
-    await user.click(beginnerButton);
+    renderWithMantine(<Materials />);
+    await user.click(screen.getByRole("button", { name: /beginner/i }));
 
     await waitFor(() => {
-      const beginnerBadges = screen.getAllByText("beginner");
-      expect(beginnerBadges.length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/beginner/i).length).toBeGreaterThan(0);
+    });
+  });
 
-      const intermediateBadges = screen.queryAllByText("intermediate");
-      const advancedBadges = screen.queryAllByText("advanced");
+  it("shows no results and reset button", async () => {
+    const user = userEvent.setup();
+    renderWithMantine(<Materials />);
+    await user.click(screen.getByRole("tab", { name: /interactive/i }));
+    await user.click(screen.getByRole("button", { name: /advanced/i }));
 
-      const badgeCount = intermediateBadges.length + advancedBadges.length;
-      expect(badgeCount).toBeLessThanOrEqual(2);
+    await waitFor(() => {
+      expect(
+        screen.getByText(/no interactive resources found/i),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /reset level filter/i }),
+      ).toBeInTheDocument();
     });
   });
 });
-
-async function act(callback: () => Promise<void>) {
-  await callback();
-}

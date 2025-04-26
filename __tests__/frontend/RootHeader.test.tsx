@@ -13,20 +13,18 @@ vi.mock("./RootHeader.module.css", () => ({
 
 vi.mock("framer-motion", () => ({
   motion: {
-    div: React.forwardRef(({ children, ...props }, ref) => (
-      <div ref={ref} {...props}>
-        {children}
-      </div>
-    )),
-    a: React.forwardRef(({ children, ...props }, ref) => {
-      const {
-        whileHover,
-        whileTap,
-        initial,
-        animate,
-        transition,
-        ...htmlProps
-      } = props;
+    div: React.forwardRef<HTMLDivElement, React.PropsWithChildren<{}>>(
+      ({ children, ...props }, ref) => (
+        <div ref={ref} {...props}>
+          {children}
+        </div>
+      ),
+    ),
+    a: React.forwardRef<
+      HTMLAnchorElement,
+      React.PropsWithChildren<React.AnchorHTMLAttributes<HTMLAnchorElement>>
+    >(({ children, ...props }, ref) => {
+      const { ...htmlProps } = props;
       return (
         <a ref={ref} {...htmlProps}>
           {children}

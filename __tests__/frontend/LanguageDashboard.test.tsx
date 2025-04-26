@@ -34,9 +34,10 @@ describe("LanguageDashboard Component", () => {
     (global.fetch as any).mockResolvedValue({
       ok: true,
       json: async () => ({
-        beginner: true,
-        intermediate: false,
-        advanced: false,
+        success: true,
+        completions: [
+          { difficulty: "Beginner", completedAt: new Date().toISOString() },
+        ],
       }),
     });
   });
@@ -47,7 +48,7 @@ describe("LanguageDashboard Component", () => {
     });
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith("/api/quiz/completion");
+      expect(global.fetch).toHaveBeenCalledWith("/api/quiz/achievements/check");
     });
 
     expect(screen.getByText("Words Learned")).toBeInTheDocument();
@@ -60,6 +61,16 @@ describe("LanguageDashboard Component", () => {
   });
 
   it("shows the correct achievement status", async () => {
+    (global.fetch as any).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        completions: [
+          { difficulty: "Beginner", completedAt: new Date().toISOString() },
+        ],
+      }),
+    });
+
     await act(async () => {
       renderWithMantine(<LanguageDashboard />);
     });
@@ -189,5 +200,58 @@ describe("LanguageDashboard Component", () => {
     weekdays.forEach((day) => {
       expect(screen.getByText(day)).toBeInTheDocument();
     });
+  });
+
+  it("handles achievement data with multiple completed quizzes", async () => {
+    (global.fetch as any).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        completions: [
+          { difficulty: "Beginner", completedAt: new Date().toISOString() },
+          { difficulty: "Intermediate", completedAt: new Date().toISOString() },
+          { difficulty: "Advanced", completedAt: new Date().toISOString() },
+        ],
+      }),
+    });
+
+    await act(async () => {
+      renderWithMantine(<LanguageDashboard />);
+    });
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith("/api/quiz/achievements/check");
+    });
+
+    const achievementsSection = screen
+      .getByText("Word Quiz Achievements")
+      .closest("div");
+    expect(achievementsSection).toBeInTheDocument();
+
+    const achievementCards = screen
+      .getAllByText(/Master|Expert|Champion/)
+      .map((el) => el.closest("[class*='achievementCard']"));
+    expect(achievementCards).toHaveLength(3);
+
+    achievementCards.forEach((card) => {
+      expect(card).not.toHaveClass("lockedAchievement");
+    });
+  });
+
+  it("handles fetch failure gracefully", async () => {
+    (global.fetch as any).mockRejectedValue(new Error("API error"));
+
+    console.error = vi.fn();
+
+    await act(async () => {
+      renderWithMantine(<LanguageDashboard />);
+    });
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith("/api/quiz/achievements/check");
+    });
+
+    expect(screen.getByText("Words Learned")).toBeInTheDocument();
+    expect(console.error).toHaveBeenCalled();
   });
 });

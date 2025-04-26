@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import UserCard from "../UserCard/UserCard";
-import { Button, Container, Group, Image, Text } from "@mantine/core";
+import { Button, Container, Group, Image, Text, Loader } from "@mantine/core";
 import classes from "./UserHeader.module.css";
 import React from "react";
+import { useSession } from "next-auth/react";
 
 export default function UserHeader({
   disableAnimation = false,
@@ -15,25 +15,8 @@ export default function UserHeader({
   disableAnimation?: boolean;
 }) {
   const router = useRouter();
-  const [user, setUser] = useState(null);
+  const { data: session, status } = useSession();
   const MotionLink = motion.create(Link);
-
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const res = await fetch("/api/user", { credentials: "include" });
-        const data = await res.json();
-        if (res.ok && data.user) {
-          setUser(data.user);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    }
-    fetchUser();
-  }, []);
 
   return (
     <Container size="100%" className={classes.container}>
@@ -61,8 +44,10 @@ export default function UserHeader({
               transition: { delay: 0.4, duration: 0.5 },
             })}
           >
-            {user ? (
-              <UserCard user={user} />
+            {status === "loading" ? (
+              <Loader />
+            ) : session?.user ? (
+              <UserCard />
             ) : (
               <Text size="sm" color="dimmed">
                 Not logged in

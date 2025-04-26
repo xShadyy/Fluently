@@ -1,100 +1,94 @@
 "use client";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import ProficiencyQuiz from "@/components/ui/ProficiencyQuiz/ProficiencyQuiz";
 import LanguageDashboard from "@/components/ui/Dashboard/LanguageDashboard";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function Dashboard() {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showQuiz, setShowQuiz] = useState(false);
   const router = useRouter();
+  const { status } = useSession();
+  const initialized = useRef(false);
+  const alreadyCheckedDb = useRef(false);
 
-  useEffect(() => {
-    const checkQuizStatus = async () => {
-      try {
-        const hasCompletedQuiz =
-          localStorage.getItem("quizCompleted") === "true";
+  const checkQuizStatus = useCallback(async () => {
+    if (status !== "authenticated" || alreadyCheckedDb.current) return;
 
-        const response = await fetch("/api/quiz/status", {
-          credentials: "include",
-        });
+    alreadyCheckedDb.current = true;
 
-        if (response.ok) {
-          const data = await response.json();
-          const apiQuizCompleted = data.hasCompleted;
-
-          setQuizCompleted(apiQuizCompleted);
-          setShowQuiz(!apiQuizCompleted);
-
-          if (apiQuizCompleted) {
-            localStorage.setItem("quizCompleted", "true");
-          } else {
-            localStorage.removeItem("quizCompleted");
-          }
-        } else {
-          setQuizCompleted(hasCompletedQuiz);
-          setShowQuiz(!hasCompletedQuiz);
-        }
-      } catch (error) {
-        console.error("Error checking quiz status:", error);
-
-        const hasCompletedQuiz =
-          localStorage.getItem("quizCompleted") === "true";
-        setQuizCompleted(hasCompletedQuiz);
-        setShowQuiz(!hasCompletedQuiz);
-      } finally {
-        setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const response = await fetch(`/api/quiz/status?t=${Date.now()}`, {
+        headers: { "cache-control": "no-cache", pragma: "no-cache" },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setQuizCompleted(data.hasCompleted);
+        setShowQuiz(!data.hasCompleted);
+      } else {
+        setQuizCompleted(false);
+        setShowQuiz(true);
       }
-    };
-
-    checkQuizStatus();
-  }, []);
+    } catch (error) {
+      console.error("Error checking quiz status:", error);
+      setQuizCompleted(false);
+      setShowQuiz(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [status]);
 
   useEffect(() => {
-    const handleStorageChange = () => {
-      const hasCompletedQuiz = localStorage.getItem("quizCompleted") === "true";
-      setQuizCompleted(hasCompletedQuiz);
-      setShowQuiz(!hasCompletedQuiz);
-    };
+    if (!initialized.current && status === "authenticated") {
+      initialized.current = true;
+      checkQuizStatus();
+    } else if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, checkQuizStatus, router]);
 
-    const handleQuizCompleted = () => {
-      setQuizCompleted(true);
-      setShowQuiz(false);
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    window.addEventListener("quizCompleted", handleQuizCompleted);
-
-    window.addEventListener("focus", () => {
-      const hasCompletedQuiz = localStorage.getItem("quizCompleted") === "true";
-      setQuizCompleted(hasCompletedQuiz);
-      setShowQuiz(!hasCompletedQuiz);
-    });
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener("quizCompleted", handleQuizCompleted);
-      window.removeEventListener("focus", () => {});
-    };
+  const handleQuizCompleted = useCallback(() => {
+    setQuizCompleted(true);
+    setShowQuiz(false);
   }, []);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (isLoading || status === "loading") {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        Loading...
+      </div>
+    );
   }
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="wait" initial={false}>
       {showQuiz ? (
-        <ProficiencyQuiz />
-      ) : (
         <motion.div
+          key="quiz"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
+        >
+          <ProficiencyQuiz onQuizCompleted={handleQuizCompleted} />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="dashboard"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
         >
           <LanguageDashboard />
         </motion.div>

@@ -1,57 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { LoadingOverlay } from "@mantine/core";
 import UserProfileData from "../../components/ui/UserProfileData/UserProfileData";
-import styles from "./page.module.css";
 
 export default function ProfilePage() {
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState("");
+  const { status } = useSession();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch("/api/user", {
-          credentials: "include",
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setUser(data.user);
-        } else {
-          setError(data.error || "Failed to fetch user data");
-        }
-      } catch (err) {
-        setError("An error occurred while fetching user data");
-      }
-    };
-    fetchUser();
-  }, []);
-
-  if (error) {
+  if (status === "loading") {
     return (
-      <div className={styles.errorContainer}>
+      <div>
         <LoadingOverlay
           visible={true}
           zIndex={1000}
           overlayProps={{ radius: "sm", blur: 2 }}
         />
-        <div className={styles.errorContent}>
-          <h2 className={styles.errorTitle}>Error</h2>
-          <p>{error}</p>
-        </div>
       </div>
     );
   }
 
-  if (!user) {
+  if (status === "unauthenticated") {
     return (
-      <div className={styles.loadingContainer}>
+      <div>
         <LoadingOverlay
           visible={true}
           zIndex={1000}
           overlayProps={{ radius: "sm", blur: 2 }}
         />
+        <div>
+          <h2>Error</h2>
+          <p>You must be signed in to view this page</p>
+        </div>
       </div>
     );
   }

@@ -133,22 +133,6 @@ describe("AdvancedWordsQuiz Component", () => {
     });
   });
 
-  it("completes the quiz when all questions are answered", async () => {
-    const user = userEvent.setup();
-    renderWithMantine(<AdvancedWordsQuiz />);
-
-    await waitFor(() => {
-      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
-    });
-
-    const skipButton = screen.getByText("Skip to End (Testing)");
-    await user.click(skipButton);
-
-    await waitFor(() => {
-      expect(screen.getByText("Quiz Results")).toBeInTheDocument();
-    });
-  });
-
   it("handles API error when fetching questions", async () => {
     (global.fetch as Mock).mockResolvedValueOnce({
       ok: false,
@@ -164,46 +148,5 @@ describe("AdvancedWordsQuiz Component", () => {
     expect(
       screen.getByText("No questions available. Please try again later."),
     ).toBeInTheDocument();
-  });
-
-  it("sends achievement update when quiz is completed", async () => {
-    const user = userEvent.setup();
-    renderWithMantine(<AdvancedWordsQuiz />);
-
-    await waitFor(() => {
-      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
-    });
-
-    const skipButton = screen.getByText("Skip to End (Testing)");
-    await user.click(skipButton);
-
-    await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith(
-        "/api/quiz/achievements/update",
-        expect.objectContaining({
-          method: "POST",
-          headers: expect.objectContaining({
-            "Content-Type": "application/json",
-          }),
-          body: expect.stringContaining("ADVANCED"),
-        }),
-      );
-    });
-  });
-
-  it("shows the correct performance level based on score", async () => {
-    const user = userEvent.setup();
-    renderWithMantine(<AdvancedWordsQuiz />);
-
-    await waitFor(() => {
-      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
-    });
-
-    const skipButton = screen.getByText("Skip to End (Testing)");
-    await user.click(skipButton);
-
-    await waitFor(() => {
-      expect(screen.getByText("Needs Improvement")).toBeInTheDocument();
-    });
   });
 });

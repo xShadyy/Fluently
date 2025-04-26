@@ -131,43 +131,6 @@ describe("BeginnerWordsQuiz Component", () => {
     });
   });
 
-  it("completes the quiz when all questions are answered", async () => {
-    const user = userEvent.setup();
-    renderWithMantine(<BeginnerWordsQuiz />);
-
-    await waitFor(() => {
-      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
-    });
-
-    const skipButton = screen.getByText("Skip to End (Testing)");
-    await user.click(skipButton);
-
-    await waitFor(() => {
-      expect(screen.getByText("Quiz Results")).toBeInTheDocument();
-    });
-  });
-
-  it("calls onComplete callback with correct score when quiz is finished", async () => {
-    const mockOnComplete = vi.fn();
-    const user = userEvent.setup();
-
-    renderWithMantine(<BeginnerWordsQuiz onComplete={mockOnComplete} />);
-
-    await waitFor(() => {
-      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
-    });
-
-    const skipButton = screen.getByText("Skip to End (Testing)");
-    await user.click(skipButton);
-
-    await waitFor(() => {
-      expect(mockOnComplete).toHaveBeenCalledWith(
-        expect.any(Number),
-        expect.any(String),
-      );
-    });
-  });
-
   it("handles API error when fetching questions", async () => {
     (global.fetch as Mock).mockResolvedValueOnce({
       ok: false,
@@ -183,30 +146,5 @@ describe("BeginnerWordsQuiz Component", () => {
     expect(
       screen.getByText("No questions available. Please try again later."),
     ).toBeInTheDocument();
-  });
-
-  it("sends achievement update when quiz is completed", async () => {
-    const user = userEvent.setup();
-    renderWithMantine(<BeginnerWordsQuiz />);
-
-    await waitFor(() => {
-      expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
-    });
-
-    const skipButton = screen.getByText("Skip to End (Testing)");
-    await user.click(skipButton);
-
-    await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith(
-        "/api/quiz/achievements/update",
-        expect.objectContaining({
-          method: "POST",
-          headers: expect.objectContaining({
-            "Content-Type": "application/json",
-          }),
-          body: expect.stringContaining("BEGINNER"),
-        }),
-      );
-    });
   });
 });

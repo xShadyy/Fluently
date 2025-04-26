@@ -20,7 +20,9 @@ export default function HomePage() {
     }, 2000);
 
     return () => {
-      document.body.removeChild(script);
+      if (script && document.body && document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
     };
   }, []);
 
