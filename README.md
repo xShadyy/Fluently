@@ -43,14 +43,14 @@ npm install
 fluently 
 ```
 
-3. Inside the **root project** folder run: 
-```shell
-npm run db:setup
-```
-
-4. Create .env file inside the **root project** folder - look inside **.env.example** for exact instructions then run this script:
+3. Create .env file inside the **root project** folder - look inside **.env.example** for exact instructions then run this script:
 ```shell
 npm run generate:secret
+```
+
+4. Inside the **root project** folder run: 
+```shell
+npm run db:setup
 ```
 
 5. You should be good to go, although it's highly recommended to create new user for best experience:
