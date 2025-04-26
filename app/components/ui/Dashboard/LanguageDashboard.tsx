@@ -137,7 +137,6 @@ const LanguageDashboard = () => {
       >
         <div className={styles.dashboardContent}>
           <Grid gutter="xl">
-            {/* Main Stats Cards */}
             <Grid.Col span={3}>
               <Card
                 shadow="sm"
@@ -253,7 +252,6 @@ const LanguageDashboard = () => {
               </Card>
             </Grid.Col>
 
-            {/* Skill Breakdown */}
             <Grid.Col span={8}>
               <Card
                 shadow="sm"
@@ -283,7 +281,6 @@ const LanguageDashboard = () => {
               </Card>
             </Grid.Col>
 
-            {/* Weekly Progress */}
             <Grid.Col span={4}>
               <Card
                 shadow="sm"
@@ -313,7 +310,6 @@ const LanguageDashboard = () => {
               </Card>
             </Grid.Col>
 
-            {/* Word Quiz Achievements */}
             <Grid.Col span={12}>
               <Card
                 shadow="sm"

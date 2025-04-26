@@ -128,17 +128,6 @@ INSERT INTO public."User" (id, username, email, password, "createdAt", "hasCompl
 -- Data for Name: QuizCompletion; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
-
-
---
--- TOC entry 4927 (class 0 OID 30573)
--- Dependencies: 219
--- Data for Name: Session; Type: TABLE DATA; Schema: public; Owner: admin
---
-
-INSERT INTO public."Session" (id, "userId", "createdAt", "expiresAt") VALUES ('7d98c33e-3499-4e58-afe6-bfb3b763dc37', '2a54b42a-721d-455a-a042-ba14c4cbb4aa', '2025-03-15 12:00:55.274', '2025-05-16 14:43:36.834');
-
-
 --
 -- TOC entry 4932 (class 0 OID 30610)
 -- Dependencies: 224

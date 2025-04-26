@@ -171,7 +171,7 @@ export default function ProficiencyQuiz() {
           top: 0,
           left: 0,
           width: "100%",
-          height: "100vh", 
+          height: "100vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",

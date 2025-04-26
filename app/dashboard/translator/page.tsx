@@ -1,59 +1,39 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useDisclosure } from "@mantine/hooks";
-import { LoadingOverlay } from "@mantine/core";
+import { useSession } from "next-auth/react";
+import { LoadingOverlay, Center, Text } from "@mantine/core";
 import Translator from "../../components/ui/Translator/Translator";
-import styles from "./page.module.css";
 
 export default function TranslatorPage() {
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState("");
+  const { status } = useSession();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch("/api/user", {
-          credentials: "include",
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setUser(data.user);
-        } else {
-          setError(data.error || "Failed to fetch user data");
-        }
-      } catch (err) {
-        setError("An error occurred while fetching user data");
-      }
-    };
-    fetchUser();
-  }, []);
-
-  if (error) {
+  if (status === "loading") {
     return (
-      <div className={styles.errorContainer}>
+      <Center>
         <LoadingOverlay
           visible={true}
           zIndex={1000}
           overlayProps={{ radius: "sm", blur: 2 }}
         />
-        <div className={styles.errorContent}>
-          <h2 className={styles.errorTitle}>Error</h2>
-          <p>{error}</p>
-        </div>
-      </div>
+      </Center>
     );
   }
 
-  if (!user) {
+  if (status === "unauthenticated") {
     return (
-      <div className={styles.loadingContainer}>
+      <Center>
         <LoadingOverlay
           visible={true}
           zIndex={1000}
           overlayProps={{ radius: "sm", blur: 2 }}
         />
-      </div>
+        <div>
+          <Text size="xl" c="red" fw={600} mb="md">
+            Error
+          </Text>
+          <Text>You must be signed in to use the translator</Text>
+        </div>
+      </Center>
     );
   }
 

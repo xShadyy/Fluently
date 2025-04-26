@@ -14,8 +14,7 @@ export const resources: Resource[] = [
   {
     id: "1",
     title: "British Council",
-    description:
-      "A self-study reference and practice book for intermediate learners of English.",
+    description: "A self-study reference and practice book.",
     url: "https://learnenglish.britishcouncil.org",
     type: "reading",
     level: "intermediate",
@@ -24,8 +23,7 @@ export const resources: Resource[] = [
   {
     id: "2",
     title: "Oxford Online English",
-    description:
-      "Free resources to learn English including videos, podcasts, and interactive exercises.",
+    description: "Free resources to learn English including videos.",
     url: "https://www.bucksmore.com/bucksmore-summer-2025?gad_source=1&gclid=Cj0KCQjwtJ6_BhDWARIsAGanmKd7Ate0PKwOxQzJJkXfkNUulkzexTEhCkA0ZxIBR-O6J_l9GedbtZUaAkBPEALw_wcB",
     type: "interactive",
     level: "beginner",

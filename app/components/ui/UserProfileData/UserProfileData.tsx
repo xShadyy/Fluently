@@ -1,4 +1,5 @@
-import { IconCalendar, IconUser } from "@tabler/icons-react";
+"use client";
+
 import {
   Button,
   Container,
@@ -14,79 +15,117 @@ import {
   Avatar,
   Center,
 } from "@mantine/core";
-import image from "../../../../public/images/image.svg";
-import { IconPencil } from "@tabler/icons-react";
+import {
+  IconCalendar,
+  IconUser,
+  IconAt,
+  IconPencil,
+} from "@tabler/icons-react";
+import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import styles from "./UserProfileData.module.css";
 import { uiClick } from "@/utils/sound";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import image from "../../../../public/images/image.svg";
 import React from "react";
-
-type User = {
-  id: string;
-  username: string;
-  email: string;
-  createdAt: string;
-  avatar?: string;
-};
-
 export default function UserProfileData() {
-  const [user, setUser] = useState<User | null>(null);
+  const { data: session, status, update: updateSession } = useSession();
   const [isEditing, setIsEditing] = useState(false);
   const [newUsername, setNewUsername] = useState("");
+  const [originalUsername, setOriginalUsername] = useState("");
+  const [createdAt, setCreatedAt] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const res = await fetch("/api/user");
-        if (!res.ok) throw new Error("Failed to fetch user");
-        const data = await res.json();
-        setUser(data.user);
-        setNewUsername(data.user.username);
-      } catch (error) {
-        console.error(error);
-        setError("Failed to load user data.");
+  const fetchUserInfo = async () => {
+    if (!session?.user?.id) return;
+
+    try {
+      const response = await fetch(
+        `/api/auth/user-info?userId=${session.user.id}`,
+        {
+          credentials: "include",
+        },
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`API error (${response.status}):`, errorText);
+        throw new Error("Failed to fetch user info");
       }
+
+      const data = await response.json();
+
+      if (data.username) {
+        setNewUsername(data.username);
+        setOriginalUsername(data.username);
+      }
+      if (data.createdAt) {
+        setCreatedAt(data.createdAt);
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
     }
-    fetchUser();
-  }, []);
+  };
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user) {
+      fetchUserInfo();
+    }
+  }, [session, status]);
 
   const handleUsernameUpdate = async () => {
-    if (!user || newUsername.trim() === "" || newUsername === user.username)
+    if (status !== "authenticated" || !session?.user?.id) {
+      setError("You must be logged in to update your username");
       return;
+    }
+
+    if (newUsername.trim() === "" || newUsername === originalUsername) {
+      return;
+    }
 
     setLoading(true);
     setError(null);
     setSuccess(null);
 
     try {
-      const res = await fetch(`/api/user`, {
+      const response = await fetch("/api/auth/update-username", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
         body: JSON.stringify({ username: newUsername.trim() }),
       });
 
-      if (!res.ok) throw new Error("Failed to update username");
+      const data = await response.json();
 
-      const data = await res.json();
-      setUser(data.user);
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update username");
+      }
+
+      await updateSession();
+      await fetchUserInfo();
+
       setIsEditing(false);
       setSuccess("Username updated successfully!");
-    } catch (error) {
-      console.error(error);
-      setError("Error updating username.");
+    } catch (error: any) {
+      console.error("Error updating username:", error);
+      setError(error.message || "Error updating username.");
     } finally {
       setLoading(false);
     }
   };
 
-  if (!user) return <Loader size="lg" className={styles.loader} />;
+  if (status === "loading")
+    return <Loader size="lg" className={styles.loader} />;
+  if (status !== "authenticated" || !session?.user) {
+    return <Text>Please sign in to view your profile.</Text>;
+  }
 
   const isDisabled =
-    loading || newUsername.trim() === "" || newUsername === user.username;
+    loading || newUsername.trim() === "" || newUsername === originalUsername;
 
   return (
     <motion.div
@@ -98,18 +137,15 @@ export default function UserProfileData() {
         <div className={styles.inner}>
           <div className={styles.content}>
             <Title className={styles.title} ta="center">
-              Your <span className={styles.highlight}>fluently</span> user{" "}
-              <br /> informations:
+              Your <span className={styles.highlight}>fluently</span> user
+              informations:
             </Title>
 
             <Group align="center" mt="md">
               <Avatar
                 size="xl"
                 radius="xl"
-                src={
-                  user.avatar ||
-                  `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`
-                }
+                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${newUsername}`}
                 className={styles.avatar}
               />
             </Group>
@@ -139,7 +175,7 @@ export default function UserProfileData() {
                       />
                     ) : (
                       <Text size="xl" ta="center">
-                        Username: {user.username}
+                        Username: {newUsername}
                       </Text>
                     )}
                     {!isEditing && (
@@ -161,13 +197,27 @@ export default function UserProfileData() {
                 <List.Item
                   icon={
                     <ThemeIcon variant="filled" color="black">
+                      <IconAt size={16} style={{ color: "white" }} />
+                    </ThemeIcon>
+                  }
+                >
+                  <Text size="xl" ta="center">
+                    Email: {session.user.email}
+                  </Text>
+                </List.Item>
+
+                <List.Item
+                  icon={
+                    <ThemeIcon variant="filled" color="black">
                       <IconCalendar size={16} style={{ color: "white" }} />
                     </ThemeIcon>
                   }
                 >
                   <Text size="xl" ta="center">
                     Member since:{" "}
-                    {new Date(user.createdAt).toLocaleDateString()}
+                    {createdAt
+                      ? new Date(createdAt).toLocaleDateString()
+                      : "Loading..."}
                   </Text>
                 </List.Item>
               </List>
@@ -216,6 +266,7 @@ export default function UserProfileData() {
               </div>
             )}
           </div>
+
           <Image src={image.src} className={styles.image} />
         </div>
       </Container>

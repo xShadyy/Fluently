@@ -15,7 +15,7 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ scale: 1.01 }}
     >
       <Card
         shadow="sm"
@@ -28,8 +28,8 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
           className={styles.clickable}
           onClick={() => setExpanded((prev) => !prev)}
         >
-          <Group align="apart" mb="xs">
-            <Group>
+          <Group justify="space-between" align="center" mb="xs">
+            <Group align="center">
               <div className={styles.resourceIcon}>
                 {getIconForType(resource.type)}
               </div>
@@ -37,16 +37,14 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
                 {resource.title}
               </Title>
             </Group>
-            <Button variant="subtle" size="md" color="gray">
-              <motion.div
-                initial={{ rotate: 0 }}
-                animate={{ rotate: expanded ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-                className={styles.rotateWrapper}
-              >
-                <IconChevronDown size={18} />
-              </motion.div>
-            </Button>
+            <motion.div
+              initial={{ rotate: 0 }}
+              animate={{ rotate: expanded ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+              className={styles.rotateWrapper}
+            >
+              <IconChevronDown size={18} />
+            </motion.div>
           </Group>
 
           <Group gap="xs" mt="md">
@@ -55,10 +53,10 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
                 resource.level === "beginner"
                   ? "green"
                   : resource.level === "intermediate"
-                  ? "blue"
-                  : resource.level === "advanced"
-                  ? "violet"
-                  : "orange"
+                    ? "blue"
+                    : resource.level === "advanced"
+                      ? "violet"
+                      : "orange"
               }
               variant="filled"
               radius="sm"
@@ -70,10 +68,10 @@ const ResourceCard = ({ resource }: { resource: Resource }) => {
                 resource.type === "reading"
                   ? "pink"
                   : resource.type === "video"
-                  ? "red"
-                  : resource.type === "audio"
-                  ? "yellow"
-                  : "teal"
+                    ? "red"
+                    : resource.type === "audio"
+                      ? "yellow"
+                      : "teal"
               }
               variant="filled"
               radius="sm"
@@ -135,36 +133,38 @@ const ResourceList = ({
   noResultsText,
   resetAction,
 }: ResourceListProps) => (
-  <motion.div
-    className={styles.resourcesGrid}
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 0.5, delay: 0.2 }}
-  >
-    {resources.length > 0 ? (
-      resources.map((resource, index) => (
-        <motion.div
-          key={resource.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: index * 0.05 }}
-        >
-          <ResourceCard resource={resource} />
-        </motion.div>
-      ))
-    ) : (
-      <div className={styles.noResults}>
-        <Text size="md" color="gray">
-          {noResultsText}
-        </Text>
-        <Button mt="md" size="md" color="gray" onClick={resetAction}>
-          {noResultsText.includes("filters")
-            ? "Reset Filters"
-            : "Reset Level Filter"}
-        </Button>
-      </div>
-    )}
-  </motion.div>
+  <div className={styles.scrollableContainer}>
+    <motion.div
+      className={styles.resourcesGrid}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+    >
+      {resources.length > 0 ? (
+        resources.map((resource, index) => (
+          <motion.div
+            key={resource.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.05 }}
+          >
+            <ResourceCard resource={resource} />
+          </motion.div>
+        ))
+      ) : (
+        <div className={styles.noResults}>
+          <Text size="md" color="gray">
+            {noResultsText}
+          </Text>
+          <Button mt="md" size="md" color="gray" onClick={resetAction}>
+            {noResultsText.includes("filters")
+              ? "Reset Filters"
+              : "Reset Level Filter"}
+          </Button>
+        </div>
+      )}
+    </motion.div>
+  </div>
 );
 
 const Materials = () => {
@@ -186,7 +186,11 @@ const Materials = () => {
     { value: "reading", label: "Reading", icon: getIconForType("reading") },
     { value: "video", label: "Video", icon: getIconForType("video") },
     { value: "audio", label: "Audio", icon: getIconForType("audio") },
-    { value: "interactive", label: "Interactive", icon: getIconForType("interactive") },
+    {
+      value: "interactive",
+      label: "Interactive",
+      icon: getIconForType("interactive"),
+    },
   ];
 
   const getNoResultsText = (tab: string) =>
@@ -270,7 +274,9 @@ const Materials = () => {
                   Beginner
                 </Button>
                 <Button
-                  variant={levelFilter === "intermediate" ? "filled" : "outline"}
+                  variant={
+                    levelFilter === "intermediate" ? "filled" : "outline"
+                  }
                   size="sm"
                   color="blue"
                   onClick={() => setLevelFilter("intermediate")}
