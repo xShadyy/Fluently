@@ -13,6 +13,7 @@
     "prettier:write": "prettier --write \"**/*.{ts,tsx}\"",
     "test": "npm run prettier:check && npm run typecheck && npm run vitest",
     "db:setup": "cd backend && npx prisma generate && npx tsx ./prisma/seed.ts",
+    "generate:secret": "node scripts/generate-secret.js",
     "vitest": "vitest"
   },
   "dependencies": {

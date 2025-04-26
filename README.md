@@ -48,7 +48,10 @@ fluently
 npm run db:setup
 ```
 
-4. Create .env file inside the **backend** folder - look inside **.env.example** for exact instructions
+4. Create .env file inside the **root project** folder - look inside **.env.example** for exact instructions then run this script:
+```shell
+npm run generate:secret
+```
 
 5. You should be good to go, although it's highly recommended to create new user for best experience:
 ```shell
@@ -73,7 +76,7 @@ localhost:3000/register
 
 ### Other scripts
 - `db:setup` – applies the schema and inserts fixtures into the database
-
+- `generate:secret` – generates the NEXTAUTH secret key required for application testing
 ***
 ## Database structure
 
