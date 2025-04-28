@@ -121,6 +121,8 @@ export default function ProficiencyQuiz({
       });
       if (!response.ok) {
         console.error("Failed to update quiz completion status");
+      } else {
+        console.log("Successfully updated proficiency quiz status");
       }
     } catch (error) {
       console.error("Error updating quiz completion status:", error);

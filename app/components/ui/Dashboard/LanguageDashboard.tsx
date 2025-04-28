@@ -172,7 +172,7 @@ const LanguageDashboard = () => {
                   radius="xl"
                   className={styles.progressBar}
                 />
-                <Text size="sm" c="dimmed" mt="sm">
+                <Text size="sm" mt="sm">
                   Next milestone: {stats.nextMilestone}
                 </Text>
               </Card>
@@ -203,7 +203,7 @@ const LanguageDashboard = () => {
                       size="xs"
                       ta="center"
                       px="xs"
-                      style={{ pointerEvents: "none" }}
+                      style={{ pointerEvents: "none", color: "white" }}
                     >
                       Today
                     </Text>
@@ -228,7 +228,7 @@ const LanguageDashboard = () => {
                 <Text size="xl" fw={700} className={styles.statsValue}>
                   {stats.currentStreak} days
                 </Text>
-                <Text size="sm" c="dimmed">
+                <Text size="sm">
                   Keep it up! 🔥
                 </Text>
               </Card>
@@ -250,7 +250,7 @@ const LanguageDashboard = () => {
                 <Text size="xl" fw={700} className={styles.statsValue}>
                   {stats.timeSpent}
                 </Text>
-                <Text size="sm" c="dimmed">
+                <Text size="sm">
                   Total learning time
                 </Text>
               </Card>

@@ -42,3 +42,33 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+export async function POST(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { email: session.user.email },
+      data: { hasCompletedProficiencyQuiz: true },
+    });
+
+    if (!updatedUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      hasCompletedProficiencyQuiz: true,
+    });
+  } catch (error) {
+    console.error("Error updating proficiency quiz status:", error);
+    return NextResponse.json(
+      { error: "Failed to update quiz completion status" },
+      { status: 500 }
+    );
+  }
+}
