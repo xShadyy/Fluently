@@ -235,7 +235,7 @@ const Materials = () => {
           mb="md"
         >
           <Group align="flex-start">
-            <div style={{color: "white"}}>
+            <div style={{ color: "white" }}>
               <Text fw={500} size="md" mb="xs">
                 Resource Type
               </Text>

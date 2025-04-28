@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     console.error("Error updating proficiency quiz status:", error);
     return NextResponse.json(
       { error: "Failed to update quiz completion status" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

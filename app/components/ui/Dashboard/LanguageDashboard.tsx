@@ -228,9 +228,7 @@ const LanguageDashboard = () => {
                 <Text size="xl" fw={700} className={styles.statsValue}>
                   {stats.currentStreak} days
                 </Text>
-                <Text size="sm">
-                  Keep it up! 🔥
-                </Text>
+                <Text size="sm">Keep it up! 🔥</Text>
               </Card>
             </Grid.Col>
 
@@ -250,9 +248,7 @@ const LanguageDashboard = () => {
                 <Text size="xl" fw={700} className={styles.statsValue}>
                   {stats.timeSpent}
                 </Text>
-                <Text size="sm">
-                  Total learning time
-                </Text>
+                <Text size="sm">Total learning time</Text>
               </Card>
             </Grid.Col>
 
